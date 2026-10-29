@@ -62,6 +62,12 @@ button { font: inherit; cursor: pointer; }
 @keyframes beat { 50% { transform: scale(1.12); } }
 #status { font-weight: 800; font-size: clamp(14px, 3.6vw, 20px); margin-top: 4px; min-height: 1.2em; white-space: nowrap; }
 #status[data-side="0"] { color: var(--g-accent); }
+#status[data-side="slow"] { color: #FF3B30; }
+#turnbar { height: 5px; margin: 5px auto 0; width: 80%; border-radius: 3px; background: color-mix(in srgb, var(--g-fg) 15%, transparent); overflow: hidden; }
+#turnbar i { display: block; height: 100%; background: var(--g-accent); transform-origin: left; }
+#hint .rules-txt { display: none; }
+#hint.rules .only-phone, #hint.rules .only-computer { display: none !important; }
+#hint.rules .rules-txt { display: inline; }
 .bar { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--g-empty); gap: 0; }
 .bar i { display: block; flex: 0 1 0; transition: flex-grow .4s; }
 #bar0 { background: var(--t0); } #bar1 { background: var(--t1); order: 3; } #bar-empty { order: 2; }
@@ -177,7 +183,7 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
 <main id="game">
   <header class="top">
     <div class="team"><img id="f0" alt="Turkey flag"><div class="txt"><span class="pct" id="p0">0%</span><span class="name" id="n0">TURKEY · YOU</span><span class="balls" id="balls0"></span></div></div>
-    <div class="mid"><div id="turn" aria-label="Time left">1:00</div><div id="status" aria-live="polite">YOUR TURN</div></div>
+    <div class="mid"><div id="turn" aria-label="Time left">1:00</div><div id="status" aria-live="polite">YOUR TURN</div><div id="turnbar" hidden aria-hidden="true"><i></i></div></div>
     <div class="team right"><img id="f1" alt="USA flag"><div class="txt"><span class="pct" id="p1">0%</span><span class="name" id="n1">USA · CPU</span><span class="balls" id="balls1"></span></div></div>
   </header>
   <div class="bar" aria-hidden="true"><i id="bar0"></i><i id="bar-empty"></i><i id="bar1"></i></div>
@@ -193,7 +199,7 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
     </div></div>
   </div>
   <footer class="foot">
-    <p id="hint"><span class="only-phone"><b>Pull</b> one of your balls back with your finger, <b>let go</b> to shoot.</span><span class="only-computer"><b>Click and drag</b> one of your balls back, <b>release</b> to shoot.</span></p>
+    <p id="hint"><span class="only-phone"><b>Pull</b> one of your balls back with your finger, <b>let go</b> to shoot.</span><span class="only-computer"><b>Click and drag</b> one of your balls back, <b>release</b> to shoot.</span><span class="rules-txt">Beat your rival: <b>break their trail</b>, or hold <b>the most space</b> when time runs out.</span></p>
     <button class="icon-btn" id="change" type="button" aria-label="Change country"><img id="change-flag" alt=""></button>
     <button class="icon-btn" id="new" type="button" aria-label="New match">↻</button>
     <button class="icon-btn" id="mute" type="button" aria-label="Sound on or off" aria-pressed="false">🔊</button>
@@ -635,8 +641,8 @@ function trailDist(px, py, b) {
   return d;
 }
 
-function kill(G, b) {
-  G.events.push({t: G.t, kind: 'dead', team: b.team, x: b.x, y: b.y, trail: b.path ? trailPts(b) : null});
+function kill(G, b, by) {   // by = la balle qui a coupé le trait
+  G.events.push({t: G.t, kind: 'dead', team: b.team, x: b.x, y: b.y, by: by ? G.balls.indexOf(by) : -1, trail: b.path ? trailPts(b) : null});
   b.dead = true; b.path = null; b.vx = b.vy = 0;
   G.kills[1 - b.team]++;
   if (!alive(G, b.team).length) {          // équipe éliminée : son terrain redevient vide
@@ -700,7 +706,7 @@ function step(G) {
   for (const a of live) for (const b of live) {
     if (a.team === b.team || a.dead || b.dead || !a.path) continue;
     if (!a.vx && !a.vy && !b.vx && !b.vy) continue;   // rien ne bouge : rien de nouveau
-    if (trailDist(b.x, b.y, a) < R) kill(G, a);
+    if (trailDist(b.x, b.y, a) < R) kill(G, a, b);
   }
   return any;
 }
@@ -829,7 +835,9 @@ document.body.classList.toggle('phone', isPhone);
 let G, T, themeName, lastTheme, lastArena, flags, state = 'aim', aim = null, ai = null;
 let fx = {pops: [], shards: [], confetti: [], rings: []}, clock = 0, play = null, muted = false;
 let timeLeft = GAME_TIME, timerOn = false, lastTick = 99;
-const TIME_SPEED = 60 / 45;   // le chrono affiche 1:00 mais la partie dure 45 vraies secondes (Bazil, 29/10)
+const TIME_SPEED = 60 / 45;
+const TURN_LIMIT = 3.5;       // 3,5 s sans jouer : le tour passe à l'ordi (Bazil, 29/10)
+let turnWait = 0, slowMsgUntil = 0;   // le chrono affiche 1:00 mais la partie dure 45 vraies secondes (Bazil, 29/10)
 
 /* ------------------------------ ralentis (comme les vidéos) ------------------------------ */
 // À chaque tir, on rejoue le tir à l'avance (le moteur est exact) pour savoir s'il va casser un trait ou le frôler.
@@ -844,11 +852,11 @@ function predict() {
   for (let i = 0; i < 240 * 12; i++) {
     const moving = step(S);
     const dead = S.events.find(e => e.kind === 'dead');
-    if (dead) return {...SLOW[alive(S, dead.team).length ? 'kill' : 'final'], kind: alive(S, dead.team).length ? 'kill' : 'final', t: S.t, x: dead.x, y: dead.y};
+    if (dead) { const k = alive(S, dead.team).length ? 'kill' : 'final'; return {...SLOW[k], kind: k, t: S.t, x: dead.x, y: dead.y, ball: dead.by}; }
     S.events.length = 0;
     for (const a of S.balls) if (!a.dead && a.path) for (const b of S.balls) if (!b.dead && b.team !== a.team && (b.vx || b.vy)) {
       const d = trailDist(b.x, b.y, a);
-      if (d < R * 1.9 && (!near || d < near.d)) near = {...SLOW.near, kind: 'near', t: S.t, x: b.x, y: b.y, d};
+      if (d < R * 1.9 && (!near || d < near.d)) near = {...SLOW.near, kind: 'near', t: S.t, x: b.x, y: b.y, d, ball: S.balls.indexOf(b)};
     }
     if (!moving) break;
   }
@@ -859,8 +867,20 @@ function camNow() {
   const a = G.t - (slow.t - slow.before), b = slow.t + slow.after - G.t;
   if (a < 0 || b < 0) return {speed: 1, zoom: 1};
   const f = Math.min(1, a / 0.15, b / 0.2), e = f * f * (3 - 2 * f);
-  if (!slow.started) { slow.started = true; heartbeat(slow.kind); }
-  return {speed: 1 - (1 - slow.speed) * e, zoom: 1 + (slow.zoom - 1) * e, x: slow.x, y: slow.y};
+  if (!slow.started) { slow.started = true; heartbeat(slowLength()); }
+  // la caméra suit la balle qui fait l'action (celle qui bouge), pas celle qui va mourir
+  const f2 = G.balls[slow.ball];
+  if (f2 && !f2.dead) { slow.fx = f2.x; slow.fy = f2.y; }
+  return {speed: 1 - (1 - slow.speed) * e, zoom: 1 + (slow.zoom - 1) * e, x: slow.fx ?? slow.x, y: slow.fy ?? slow.y};
+}
+// durée réelle du ralenti (en secondes vues par le joueur), pour caler le son qui monte et les battements
+function slowLength() {
+  let real = 0;
+  for (let t = slow.t - slow.before; t < slow.t + slow.after; t += 0.005) {
+    const a = t - (slow.t - slow.before), b = slow.t + slow.after - t, f = Math.min(1, a / 0.15, b / 0.2), e = f * f * (3 - 2 * f);
+    real += 0.005 / (1 - (1 - slow.speed) * e);
+  }
+  return real;
 }
 function launch(b, dx, dy, p) { shoot(G, b, dx, dy, p); slow = predict(); }
 let tutoDone = false; try { tutoDone = localStorage.getItem('cc-tuto') === '1'; } catch (e) {}
@@ -886,7 +906,7 @@ function newMatch() {
   flags = [flagOf(PLAYER, ring), flagOf(CPU, ring)];
   G = newGame([PLAYER, CPU], arena);
   fx = {pops: [], shards: [], confetti: [], rings: []};
-  gridDirty = true; flashUntil = 0;
+  gridDirty = true; flashUntil = 0; turnWait = 0;
   state = 'aim'; aim = null; ai = null; slow = null; timeLeft = GAME_TIME; timerOn = false; lastTick = 99;
   const root = document.documentElement.style;
   for (const [k, v] of Object.entries({bg: T.BG, fg: T.FG, muted: T.MUTED, accent: T.ACCENT, empty: T.EMPTY, line: T.LINE || T.FG}))
@@ -924,8 +944,12 @@ function hud() {
   const st = $('#status');
   if (state === 'over') st.textContent = '';
   else if (G.side === 0 && !G.moving) { st.textContent = 'YOUR TURN'; st.dataset.side = 0; }
-  else if (G.side === 1 && !G.moving) { st.textContent = 'THINKING…'; st.dataset.side = 1; }
-  $('#hint').hidden = !(G.side === 0 && !G.moving && state === 'aim');
+  else if (G.side === 1 && !G.moving && !(clock < slowMsgUntil)) { st.textContent = 'THINKING…'; st.dataset.side = 1; }
+  const myTurn = timerOn && G.side === 0 && !G.moving && state === 'aim' && !G.over;
+  $('#turnbar').hidden = !myTurn;
+  if (myTurn) $('#turnbar i').style.transform = `scaleX(${Math.max(0, 1 - turnWait / TURN_LIMIT)})`;
+  $('#hint').classList.toggle('rules', tutoDone);   // après le 1er tir : la règle du jeu au lieu des commandes
+  $('#hint').hidden = !tutoDone && !(G.side === 0 && !G.moving && state === 'aim');
   document.body.classList.toggle('my-turn', G.side === 0 && !G.moving && state === 'aim');
 }
 
@@ -998,7 +1022,8 @@ function sounds(events) {
       fx.rings.push({x: ev.x, y: ev.y, t: clock, team: ev.team, gained: ev.gained});
     }
     if (ev.kind === 'dead') {
-      noise(0.35, 0.5, 2500); tone(110, 0.2, 0.25, 'square', 0.02);
+      glassSound();
+      if (!alive(G, ev.team).length) outSound();
       fx.pops.push({x: ev.x, y: ev.y, t: clock});
       if (ev.trail) shatterFx(ev.trail, ev.team);
     }
@@ -1017,15 +1042,57 @@ function shatterFx(pts, team) {
   }
 }
 // battement de cœur + son qui monte (comme les vidéos)
-function heartbeat(kind) {
+// Sons du ralenti et des éliminations : mêmes formules que les vidéos (writeWav dans gen.js)
+function synth(dur, fill, delay = 0) {
   if (!AC || muted) return;
-  const beats = kind === 'near' ? 1 : 2;
-  for (let i = 0; i < beats; i++) { tone(58, 0.45, 0.16, 'sine', i * 0.42); tone(52, 0.35, 0.16, 'sine', i * 0.42 + 0.17); }
-  const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(), d = kind === 'near' ? 0.5 : 1.1;
-  o.type = 'sawtooth'; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(kind === 'near' ? 320 : 520, t + d);
-  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.05, t + d * 0.8); g.gain.linearRampToValueAtTime(0, t + d);
-  const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1200;
-  o.connect(f).connect(g).connect(AC.destination); o.start(t); o.stop(t + d + 0.05);
+  const SR = AC.sampleRate, n = Math.ceil(dur * SR), buf = AC.createBuffer(1, n, SR);
+  fill(buf.getChannelData(0), SR, n);
+  const src = AC.createBufferSource(); src.buffer = buf; src.connect(AC.destination); src.start(AC.currentTime + delay);
+}
+let seedA = 12345;
+const vnoise = () => { seedA = (seedA * 1103515245 + 12345) >>> 0; return seedA / 2147483648 - 1; };
+function heartSound(delay) {        // battement de cœur : deux coups sourds
+  synth(0.4, (b, SR) => [0, 0.16].forEach((o, j) => {
+    const s0 = Math.floor(o * SR), n = Math.floor(0.22 * SR), amp = j ? 0.35 : 0.5;
+    for (let i = 0; i < n; i++) { const t = i / SR, f = 70 - 30 * t / 0.22; b[s0 + i] += Math.sin(2 * Math.PI * f * t) * amp * Math.min(1, t / 0.005) * Math.exp(-t * 18); }
+  }), delay);
+}
+function riserSound(d) {            // son tendu qui monte (souffle + note qui glisse vers l'aigu)
+  synth(d, (b, SR, n) => {
+    let ph = 0, lp = 0;
+    for (let i = 0; i < n; i++) {
+      const p = i / n, f = 220 * Math.pow(4, p);
+      ph += f / SR; lp += 0.08 * (vnoise() - lp);
+      b[i] = (Math.sin(2 * Math.PI * ph) * 0.07 + Math.sin(2 * Math.PI * ph * 1.007) * 0.07 + lp * 0.5) * p * p;
+    }
+  });
+}
+function glassSound() {             // verre qui se brise : choc + éclats aigus
+  synth(0.9, (b, SR, n) => {
+    let hp = 0, prev = 0;
+    for (let i = 0; i < n; i++) { const t = i / SR, x = vnoise(); hp = 0.85 * (hp + x - prev); prev = x; b[i] += hp * 0.55 * Math.exp(-t * 9); }
+    for (let k = 0; k < 26; k++) {
+      const st = Math.floor(Math.abs(vnoise()) * 0.45 * SR), f = 2500 + Math.abs(vnoise()) * 5000, m = Math.floor(0.12 * SR);
+      for (let i = 0; i < m && st + i < n; i++) { const t = i / SR; b[st + i] += Math.sin(2 * Math.PI * f * t) * 0.07 * Math.exp(-t * 35); }
+    }
+  });
+}
+function outSound() {               // pays éliminé : petit son 8 bits grave et étouffé
+  synth(0.5, (b, SR, N) => {
+    let lp = 0;
+    [329.63, 261.63, 196.0, 130.81].forEach((f, j, all) => {
+      const last = j === all.length - 1, s0 = Math.floor(j * 0.08 * SR), n = Math.floor((last ? 0.14 : 0.08) * SR);
+      for (let i = 0; i < n && s0 + i < N; i++) {
+        const t = i / SR, sq = (f * t) % 1 < 0.5 ? 1 : -1;
+        lp += 0.18 * (sq - lp); b[s0 + i] += lp * 0.14 * Math.min(1, t / 0.004) * (last ? Math.exp(-t * 12) : 1);
+      }
+    });
+  });
+}
+// ralenti : battements toutes les 0,55 s + son qui monte jusqu'au moment chaud (comme les vidéos)
+function heartbeat(real) {
+  for (let t = 0; t < real + 0.05; t += 0.55) heartSound(t);
+  riserSound(Math.max(0.3, real));
 }
 function winSound(w) { const f = NOTES[Math.max(0, w)]; [1, 1.25, 1.5, 2].forEach((m, k) => tone(f * m, 0.16, 1.4, 'triangle', k * 0.11)); }
 
@@ -1046,6 +1113,10 @@ function frame(now) {
     }
     hud();
   }
+  if (timerOn && G.side === 0 && !G.moving && state === 'aim' && !G.over && !G.timeUp) {
+    turnWait += dt;
+    if (turnWait >= TURN_LIMIT) passTurn();
+  }
   if (G.moving) {
     acc += dt * cam.speed;
     let still = false;
@@ -1056,8 +1127,14 @@ function frame(now) {
   } else if (state === 'aim' && G.side === 1 && !G.over && !G.timeUp) cpuTurn(dt);
   draw();
 }
+function passTurn() {
+  aim = null; turnWait = 0; G.side = 1;
+  tone(196, 0.12, 0.18, 'square'); tone(147, 0.12, 0.25, 'square', 0.12);
+  const st = $('#status'); st.textContent = 'TOO SLOW!'; st.dataset.side = 'slow'; slowMsgUntil = clock + 1.2;
+  hud();
+}
 function afterShot() {
-  slow = null;
+  slow = null; turnWait = 0;
   G.t += 0.4; gridDirty = true;                    // les flashs de la dernière coupe vont jusqu'au bout
   const over = endShot(G);
   if (play) track('turn');
