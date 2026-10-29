@@ -149,6 +149,45 @@ body.picking { overflow: hidden; }
 body.inapp #game { padding-top: calc(12px + 34px); }
 @media (prefers-reduced-motion: reduce) { #inapp-btn .arr { animation: none; } }
 
+/* barre du haut du jeu : logo = retour au choix du pays */
+.topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+#logo { background: none; border: 0; padding: 2px 0; font: 800 17px/1 var(--display); letter-spacing: -.01em; }
+#logo span:first-child { color: #FF3B30; } #logo span:last-child { color: #2F7BFF; }
+#logo:hover { opacity: .8; }
+#mode-tag { font: 500 11px var(--mono); letter-spacing: .1em; color: var(--g-muted); }
+/* mode et niveau dans l'accueil */
+.seg { display: flex; background: #18181B; border: 1px solid #2E2E33; border-radius: 22px; padding: 3px; gap: 2px; flex: none; }
+.seg button { border: 0; background: none; color: #A9A8A2; border-radius: 18px; height: 36px; padding: 0 16px; font: 800 14px var(--display); letter-spacing: .04em; }
+.seg button[aria-pressed="true"] { background: #F4F4F2; color: #141416; }
+.seg.small button { height: 30px; padding: 0 12px; font-size: 12px; }
+.seg.small button[aria-pressed="true"] { background: #FFD60A; }
+#pick-note { margin: -6px 0 0; color: #FF6B60; font: 600 14px system-ui, sans-serif; }
+#pick-go:disabled { background: #2A2A2F; color: #6A6A70; box-shadow: none; }
+/* onboarding : 5 petites cartes avec les pictos de How to play */
+#onboard { position: fixed; inset: 0; z-index: 30; background: #0B0B0D; color: #F4F4F2; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 18px; box-sizing: border-box; padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+#ob-skip { position: absolute; top: calc(12px + env(safe-area-inset-top, 0px)); right: max(14px, env(safe-area-inset-right, 0px)); background: none; border: 0; color: #8A8A90; font: 600 15px system-ui, sans-serif; }
+#ob-track { width: min(100%, 420px); overflow: hidden; display: flex; touch-action: pan-y; }
+.ob-slide { flex: 0 0 100%; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; transition: transform .35s cubic-bezier(.2, .8, .2, 1); }
+.ob-slide svg { width: min(100%, 340px); height: auto; margin-bottom: 12px; }
+.ob-slide h2 { margin: 0; font: 800 clamp(28px, 8vw, 40px)/1.05 var(--display); }
+.ob-slide p { margin: 0; color: #C9C9CE; font: 500 18px/1.4 system-ui, sans-serif; max-width: 30ch; }
+#ob-dots { display: flex; gap: 8px; }
+#ob-dots i { width: 8px; height: 8px; border-radius: 50%; background: #3A3A40; transition: background .2s, width .2s; }
+#ob-dots i.on { background: #FFD60A; width: 22px; border-radius: 4px; }
+#ob-next { width: min(100%, 360px); height: 58px; border: 0; border-radius: 29px; background: #FFD60A; color: #141416; font: 800 22px var(--display); letter-spacing: .05em; box-shadow: 0 6px 0 #B89400; }
+#onboard svg .ar { fill: #1C1C21; stroke: #F4F4F2; stroke-width: 3; }
+#onboard svg .red { fill: #FF3B30; } #onboard svg .blue { fill: #2F7BFF; }
+#onboard svg .tr { fill: none; stroke: #FF8A80; stroke-width: 5; stroke-linecap: round; }
+#onboard svg .tr-b { fill: none; stroke: #8DB8FF; stroke-width: 5; stroke-linecap: round; }
+#onboard svg .ol { fill: none; stroke: #0B0B0D; stroke-width: 9; stroke-linecap: round; }
+#onboard svg .aim { fill: none; stroke: #F4F4F2; stroke-width: 3; stroke-dasharray: 2 6; stroke-linecap: round; }
+#onboard svg .arr { fill: #FFD60A; stroke: #0B0B0D; stroke-width: 2; }
+#onboard svg .ball { stroke: #fff; stroke-width: 2.5; }
+#onboard svg .x { stroke: #FFD60A; stroke-width: 4; stroke-linecap: round; }
+#onboard svg .clock { fill: #FFD60A; font: 700 26px var(--mono); }
+@media (prefers-reduced-motion: reduce) { .ob-slide { transition: none; } }
+
 /* ---------- stats ---------- */
 #stats { max-width: 1040px; margin: 0 auto; box-sizing: border-box; padding-block: 28px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -190,6 +229,7 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
 </style>
 
 <main id="game">
+  <div class="topbar"><button id="logo" type="button" aria-label="Back to country selection"><span>COUNTRY</span> <span>CLASH</span></button><span id="mode-tag">VS CPU · MEDIUM</span></div>
   <header class="top">
     <div class="team"><img id="f0" alt="Turkey flag"><div class="txt"><span class="pct" id="p0">0%</span><span class="name" id="n0">TURKEY · YOU</span><span class="balls" id="balls0"></span></div></div>
     <div class="mid"><div id="turn" aria-label="Time left">1:00</div><div id="status" aria-live="polite">YOUR TURN</div><div id="turnbar" hidden aria-hidden="true"><i></i></div></div>
@@ -226,7 +266,51 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
     <button class="pick-arrow" id="pick-next" type="button" aria-label="Next country">▶</button>
   </div>
   <p id="pick-name" aria-live="polite">Turkey</p>
+  <p id="pick-note" hidden>Pick another country</p>
+  <div class="seg" id="mode-seg" role="group" aria-label="Mode">
+    <button type="button" data-mode="cpu">VS CPU</button><button type="button" data-mode="2p">2 PLAYERS</button>
+  </div>
+  <div class="seg small" id="level-seg" role="group" aria-label="Level">
+    <button type="button" data-level="easy">EASY</button><button type="button" data-level="medium">MEDIUM</button><button type="button" data-level="hard">HARD</button>
+  </div>
   <button id="pick-go" type="button">PLAY</button>
+</section>
+
+<section id="onboard" hidden aria-label="How to play">
+  <button id="ob-skip" type="button">Skip</button>
+  <div id="ob-track">
+    <div class="ob-slide">
+      <svg viewBox="0 0 200 140" aria-hidden="true"><rect class="ar" x="6" y="6" width="188" height="128" rx="2"/>
+        <line class="aim" x1="44" y1="118" x2="74" y2="92"/><path class="ol" d="M88 80 L132 42"/><path class="arr" d="M146 30 L126 37 L139 50 Z"/>
+        <circle class="red ball" cx="78" cy="88" r="11"/><circle cx="42" cy="120" r="7" fill="none" stroke="#F4F4F2" stroke-width="2.5"/></svg>
+      <h2>Pull &amp; release</h2><p>Drag one of your balls back, then let go to shoot.</p>
+    </div>
+    <div class="ob-slide">
+      <svg viewBox="0 0 200 140" aria-hidden="true"><rect class="ar" x="6" y="6" width="188" height="128" rx="2"/>
+        <path class="ol" d="M6 52 L118 96"/><path class="tr" d="M6 52 L118 96"/><circle class="red ball" cx="122" cy="98" r="11"/></svg>
+      <h2>Draw a trail</h2><p>After touching a wall, your ball leaves a trail behind it.</p>
+    </div>
+    <div class="ob-slide">
+      <svg viewBox="0 0 200 140" aria-hidden="true"><rect class="ar" x="6" y="6" width="188" height="128" rx="2"/>
+        <path class="red" d="M6 52 L92 134 L6 134 Z" opacity=".9"/><path class="ar" d="M6 52 L92 134" fill="none"/><circle class="red ball" cx="96" cy="122" r="11"/></svg>
+      <h2>Cut the arena</h2><p>When the trail hits another wall, the smaller part becomes yours.</p>
+    </div>
+    <div class="ob-slide">
+      <svg viewBox="0 0 200 140" aria-hidden="true"><rect class="ar" x="6" y="6" width="188" height="128" rx="2"/>
+        <path class="ol" d="M194 40 L80 70"/><path class="tr-b" d="M194 40 L80 70"/><circle class="blue ball" cx="74" cy="72" r="11"/>
+        <path class="ol" d="M120 128 L134 50"/><path class="tr" d="M120 128 L134 50"/><circle class="red ball" cx="137" cy="40" r="11"/>
+        <path class="x" d="M120 46 L134 60 M134 46 L120 60"/></svg>
+      <h2>Break their trails</h2><p>Hit a rival trail to destroy that ball. Keep your own trails short!</p>
+    </div>
+    <div class="ob-slide">
+      <svg viewBox="0 0 200 140" aria-hidden="true"><rect class="ar" x="6" y="6" width="188" height="128" rx="2"/>
+        <path class="red" d="M6 6 L120 6 L70 134 L6 134 Z" opacity=".9"/><path class="blue" d="M150 6 L194 6 L194 70 Z" opacity=".9"/>
+        <text x="132" y="112" class="clock">0:00</text></svg>
+      <h2>Most space wins</h2><p>When the clock hits 0:00, the biggest territory wins.</p>
+    </div>
+  </div>
+  <div id="ob-dots" aria-hidden="true"></div>
+  <button id="ob-next" type="button">NEXT</button>
 </section>
 
 <section id="stats" hidden>
@@ -773,30 +857,38 @@ function trailLen(b) {
   return l;
 }
 // note d'une position pour l'équipe s (plus c'est haut, mieux c'est)
-function evaluate(S, s, before) {
+function evaluate(S, s, before, trailW = 30) {
   const o = 1 - s;
   let v = (S.area[s] - before.area[s]) - 0.8 * (S.area[o] - before.area[o]);
   v += 7000 * (S.kills[s] - before.kills[s]) - 9000 * (S.kills[o] - before.kills[o]);
   if (!alive(S, o).length) v += 1e6;
   if (!alive(S, s).length) v -= 1e6;
-  for (const b of alive(S, s)) { const l = trailLen(b); v -= 30 * l + (l > 4 * R ? 3000 : 0); }   // trait ouvert = risque : finir avec un tout petit trait
+  for (const b of alive(S, s)) { const l = trailLen(b); v -= trailW * l + (l > 4 * R ? trailW * 100 : 0); }   // trait ouvert = risque : finir avec un tout petit trait
   for (const b of alive(S, o)) v += 1.5 * trailLen(b);   // trait adverse ouvert = cible
   return v;
 }
+// 3 niveaux (Bazil, 30/10) : combien de tirs l'ordi essaie, s'il protège ses traits, s'il prend le meilleur, s'il vise juste
+const LEVELS = {
+  easy: {angles: 12, powers: [0.45, 0.8], trailW: 2, top: 14, noise: 0.22},
+  medium: {angles: 20, powers: [0.3, 0.55, 0.8, 1], trailW: 12, top: 4, noise: 0.06},
+  hard: {angles: 30, powers: [0.25, 0.4, 0.55, 0.7, 0.85, 1], trailW: 30, top: 1, noise: 0},
+};
 // choisit un tir pour l'équipe s ; découpé en morceaux pour ne pas bloquer l'écran
-function* aiPlan(G, s) {
+function* aiPlan(G, s, level = 'medium') {
+  const L = LEVELS[level] || LEVELS.medium, last = L.powers[L.powers.length - 1];
   const cands = [], mine = G.balls.map((b, i) => [b, i]).filter(([b]) => !b.dead && b.team === s);
   for (const [, bi] of mine) {
-    for (let a = 0; a < 30; a++) for (const p of [0.25, 0.4, 0.55, 0.7, 0.85, 1]) {
-      const ang = (a + Math.random() * 0.6) / 30 * Math.PI * 2, S = simulate(G, bi, ang, p);
-      cands.push({bi, ang, p, v: evaluate(S, s, G)});
-      if (p === 1 && a % 5 === 4) yield;   // petits morceaux : l'écran reste fluide
+    for (let a = 0; a < L.angles; a++) for (const p of L.powers) {
+      const ang = (a + Math.random() * 0.6) / L.angles * Math.PI * 2, S = simulate(G, bi, ang, p);
+      cands.push({bi, ang, p, v: evaluate(S, s, G, L.trailW)});
+      if (p === last && a % 5 === 4) yield;   // petits morceaux : l'écran reste fluide
     }
   }
   cands.sort((x, y) => y.v - x.v);
-  // pas toujours le meilleur : parmi les 4 meilleurs, au hasard (l'ordi reste battable)
-  const top = cands.slice(0, 4).filter(c => c.v > cands[0].v - Math.abs(cands[0].v) * 0.5 - 500);
-  return top[Math.floor(Math.random() * top.length)] || cands[0];
+  // pas toujours le meilleur : parmi les N meilleurs, au hasard (facile = beaucoup de hasard)
+  const top = cands.slice(0, L.top).filter(c => L.top > 4 || c.v > cands[0].v - Math.abs(cands[0].v) * 0.5 - 500);
+  const c = top[Math.floor(Math.random() * top.length)] || cands[0];
+  return {...c, ang: c.ang + (Math.random() - 0.5) * 2 * L.noise};   // facile : vise un peu à côté
 }
 
 
@@ -804,6 +896,10 @@ function* aiPlan(G, s) {
 // Toi = ton pays (équipe 0, choisi à l'accueil), l'ordi = un pays au hasard, USA ×2 (équipe 1).
 
 let PLAYER = 'Turkey', CPU = 'United States', NAMES = ['TURKEY', 'USA'];
+// mode : 'cpu' (contre l'ordi) ou '2p' (2 joueurs sur le même écran) ; niveau de l'ordi : easy / medium / hard (Bazil, 30/10)
+let MODE = 'cpu', LEVEL = 'medium', PLAYER2 = null;
+try { MODE = localStorage.getItem('cc-mode') === '2p' ? '2p' : 'cpu'; LEVEL = ['easy', 'medium', 'hard'].includes(localStorage.getItem('cc-level')) ? localStorage.getItem('cc-level') : 'medium'; PLAYER2 = localStorage.getItem('cc-p2'); } catch (e) {}
+const human = s => MODE === '2p' || s === 0;   // qui joue avec le doigt ?
 const BANNED = [['India', 'Pakistan'], ['Morocco', 'Algeria'], ['Turkey', 'Greece'], ['Russia', 'Ukraine']];   // comme gen.js
 const short = n => ({'United States': 'USA'}[n] || n).toUpperCase();
 const famOf = hex => {             // famille de couleur d'une couleur de drapeau (comme gen.js)
@@ -916,7 +1012,8 @@ function pick(list, not) { const l = list.filter(x => x !== not); return l[Math.
 
 function newMatch() {
   if (play && play.started && state !== 'over') track('abandon');
-  CPU = pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
+  CPU = MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
+  $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : 'VS CPU · ' + LEVEL.toUpperCase();
   const fams = teamColors(PLAYER, CPU); TEAM_COL = fams.map(f => FAM[f]);
   const white = fams.includes('white');            // une équipe blanche : fond foncé obligatoire (comme les vidéos)
   themeName = pick(Object.keys(THEMES).filter(k => !white || !THEMES[k].LINE), lastTheme); lastTheme = themeName;
@@ -936,13 +1033,13 @@ function newMatch() {
   $('#f0').src = flags[0].toDataURL(); $('#f1').src = flags[1].toDataURL();
   $('#change-flag').src = flags[0].toDataURL();
   $('#f0').alt = PLAYER + ' flag'; $('#f1').alt = CPU + ' flag';
-  for (const [i, tag] of [[0, 'YOU'], [1, 'CPU']]) {
+  for (const [i, tag] of MODE === '2p' ? [[0, 'P1'], [1, 'P2']] : [[0, 'YOU'], [1, 'CPU']]) {
     const el = $('#n' + i), t = document.createElement('small'); t.textContent = tag;
     el.replaceChildren(NAMES[i], ' ', t); el.title = (i ? CPU : PLAYER) + ' · ' + tag;
   }
   $('#end').hidden = true;
   for (const s of [0, 1]) delete $('#balls' + s).dataset.n;
-  play = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), startedAt: Date.now(), arena, theme: themeName, country: PLAYER, opponent: CPU};
+  play = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), startedAt: Date.now(), arena, theme: themeName, country: PLAYER, opponent: CPU, mode: MODE, level: MODE === '2p' ? '' : LEVEL};
   cpuAim = null;
   hud();
 }
@@ -964,14 +1061,16 @@ function hud() {
   tm.classList.toggle('low', timerOn && sec <= 10 && state !== 'over');
   const st = $('#status');
   if (state === 'over') st.textContent = '';
+  else if (clock < slowMsgUntil) {}
+  else if (MODE === '2p' && !G.moving) { st.textContent = NAMES[G.side] + "'S TURN"; st.dataset.side = 0; }
   else if (G.side === 0 && !G.moving) { st.textContent = 'YOUR TURN'; st.dataset.side = 0; }
-  else if (G.side === 1 && !G.moving && !(clock < slowMsgUntil)) { st.textContent = 'THINKING…'; st.dataset.side = 1; }
-  const myTurn = timerOn && G.side === 0 && !G.moving && state === 'aim' && !G.over;
+  else if (G.side === 1 && !G.moving) { st.textContent = 'THINKING…'; st.dataset.side = 1; }
+  const myTurn = timerOn && human(G.side) && !G.moving && state === 'aim' && !G.over;
   $('#turnbar').hidden = !myTurn;
   if (myTurn) $('#turnbar i').style.transform = `scaleX(${Math.max(0, 1 - turnWait / TURN_LIMIT)})`;
   $('#hint').classList.toggle('rules', tutoDone);   // après le 1er tir : la règle du jeu au lieu des commandes
   $('#hint').hidden = !tutoDone && !(G.side === 0 && !G.moving && state === 'aim');
-  document.body.classList.toggle('my-turn', G.side === 0 && !G.moving && state === 'aim');
+  document.body.classList.toggle('my-turn', human(G.side) && !G.moving && state === 'aim');
 }
 
 /* ------------------------------ commandes ------------------------------ */
@@ -982,10 +1081,10 @@ function toWorld(e) {
 }
 cv.addEventListener('pointerdown', e => {
   audio();
-  if (state !== 'aim' || G.side !== 0 || G.moving) return;
+  if (state !== 'aim' || !human(G.side) || G.moving) return;
   const [x, y] = toWorld(e);
   let best = null, bd = R * (isPhone ? 3.2 : 2.2);
-  for (const b of alive(G, 0)) { const d = Math.hypot(b.x - x, b.y - y); if (d < bd) { bd = d; best = b; } }
+  for (const b of alive(G, G.side)) { const d = Math.hypot(b.x - x, b.y - y); if (d < bd) { bd = d; best = b; } }
   if (!best) { nudge(); return; }
   aim = {ball: best, x, y};
   cv.setPointerCapture(e.pointerId);
@@ -1143,7 +1242,7 @@ let acc = 0, prev = null;
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = prev ? Math.min(0.05, (now - prev) / 1000) : 0; prev = now; clock += dt;
-  if (nextLeft !== null && $('#picker').hidden) {   // compte à rebours de fin (rAF s'arrête tout seul si l'onglet est caché)
+  if (nextLeft !== null && $('#picker').hidden && $('#onboard').hidden) {   // compte à rebours de fin (rAF s'arrête tout seul si l'onglet est caché)
     nextLeft -= dt;
     $('#again').style.setProperty('--p', Math.min(1, 1 - nextLeft / NEXT_IN));
     $('#next-in').textContent = 'Next match in ' + Math.max(1, Math.ceil(nextLeft)) + '…';
@@ -1160,7 +1259,7 @@ function frame(now) {
     }
     hud();
   }
-  if (timerOn && G.side === 0 && !G.moving && state === 'aim' && !G.over && !G.timeUp) {
+  if (timerOn && human(G.side) && !G.moving && state === 'aim' && !G.over && !G.timeUp) {
     turnWait += dt;
     if (turnWait >= TURN_LIMIT) passTurn();
   }
@@ -1171,11 +1270,11 @@ function frame(now) {
     sounds(G.events); G.events = [];
     if (still) { acc = 0; afterShot(); }
     hud();
-  } else if (state === 'aim' && G.side === 1 && !G.over && !G.timeUp) cpuTurn(dt);
+  } else if (state === 'aim' && !human(G.side) && !G.over && !G.timeUp) cpuTurn(dt);
   draw();
 }
 function passTurn() {
-  aim = null; turnWait = 0; G.side = 1;
+  aim = null; turnWait = 0; if (G.side === 1) G.turn++; G.side = 1 - G.side;
   tone(196, 0.12, 0.18, 'square'); tone(147, 0.12, 0.25, 'square', 0.12);
   const st = $('#status'); st.textContent = 'TOO SLOW!'; st.dataset.side = 'slow'; slowMsgUntil = clock + 1.2;
   hud();
@@ -1189,7 +1288,7 @@ function afterShot() {
   hud();
 }
 function cpuTurn(dt) {
-  if (!ai) ai = {it: aiPlan(G, 1), res: null, wait: 0};
+  if (!ai) ai = {it: aiPlan(G, 1, LEVEL), res: null, wait: 0};
   ai.wait += dt;
   if (!ai.res) { const r = ai.it.next(); if (r.done) ai.res = r.value; }   // un morceau du calcul par image
   if (!ai.res || ai.wait < 0.7) return;
@@ -1221,7 +1320,8 @@ function finish(over) {
     $('#end-flag').hidden = w < 0;
     $('#end-title').textContent = w < 0 ? 'DRAW' : NAMES[w] + ' WINS';
     const them = CPU === 'United States' ? 'the USA' : CPU;
-    $('#end-sub').textContent = w === 0 ? `You beat ${them}!` : w === 1 ? `${them[0].toUpperCase() + them.slice(1)} beat you. Try again!` : 'Nobody wins this time.';
+    $('#end-sub').textContent = MODE === '2p' ? (w < 0 ? 'Nobody wins this time.' : `Player ${w + 1} wins!`)
+      : w === 0 ? `You beat ${them}!` : w === 1 ? `${them[0].toUpperCase() + them.slice(1)} beat you. Try again!` : 'Nobody wins this time.';
     $('#end-why').textContent = {eliminated: 'All balls destroyed', time: `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%`}[over.reason];
     e.hidden = false; $('#again').focus({preventScroll: true});
     nextLeft = NEXT_IN;
@@ -1309,9 +1409,9 @@ function draw() {
   }
   ctx.globalAlpha = 1;
   // balles jouables : petit halo qui respire
-  const mine = state === 'aim' && G.side === 0 && !G.moving && !aim;
+  const mine = state === 'aim' && human(G.side) && !G.moving && !aim;
   for (const b of G.balls) if (!b.dead) {
-    if (mine && b.team === 0) {
+    if (mine && b.team === G.side) {
       ctx.globalAlpha = 0.35 + 0.25 * Math.sin(clock * 5); ctx.strokeStyle = T.ACCENT; ctx.lineWidth = 5;
       ctx.beginPath(); ctx.arc(b.x, b.y, R + 9, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
     }
@@ -1390,14 +1490,14 @@ function track(kind, reason) {
     durationS: Math.round((Date.now() - play.startedAt) / 1000), lastAt: Date.now()};
   let body;
   if (kind === 'start') body = {...base, result: 'playing', startedAt: play.startedAt, day: new Date().toISOString().slice(0, 10),
-    device: isPhone ? 'phone' : 'computer', arena: play.arena, theme: play.theme, country: play.country, opponent: play.opponent};
+    device: isPhone ? 'phone' : 'computer', arena: play.arena, theme: play.theme, country: play.country, opponent: play.opponent, mode: play.mode, level: play.level};
   else if (kind === 'turn') body = base;
   else body = {...base, result: kind, reason: reason || 'left', endedAt: Date.now()};
   const id = play.id;
   // Google Analytics (seulement sur le vrai site : sur claude.ai, gtag n'existe pas)
   if (typeof window.gtag === 'function' && kind !== 'turn') {
     const ev = kind === 'start' ? 'game_start' : kind === 'abandon' ? 'game_abandon' : 'game_end';
-    window.gtag('event', ev, {country: play.country, opponent: play.opponent, arena: play.arena, theme: play.theme, device_type: isPhone ? 'phone' : 'computer',
+    window.gtag('event', ev, {country: play.country, opponent: play.opponent, mode: play.mode, level: play.level, arena: play.arena, theme: play.theme, device_type: isPhone ? 'phone' : 'computer',
       result: kind === 'start' ? undefined : kind, end_reason: kind === 'start' ? undefined : (reason || 'left'),
       duration_s: base.durationS, turn: base.turn, territory_pct: base.pct, cpu_territory_pct: base.cpuPct,
       transport_type: kind === 'abandon' ? 'beacon' : undefined});
@@ -1420,7 +1520,7 @@ const ORDER = COUNTRIES.map(c => c.name).sort((a, b) => a.localeCompare(b));
 const HOT_START = ['Turkey', 'Brazil', 'Morocco', 'Mexico', 'Indonesia', 'Poland', 'Argentina', 'Egypt', 'Philippines', 'Pakistan', 'Bangladesh', 'Algeria'];
 const FLAG_URL = {};
 const flagUrl = n => FLAG_URL[n] || (FLAG_URL[n] = makeFlag(COUNTRIES.find(c => c.name === n), undefined, 512).toDataURL());   // grand et net, pas gardé en mémoire
-let picked = null, pIdx = 0, slots = null;
+let picked = null, pIdx = 0, slots = null, pickStep = 1;   // 2 joueurs : étape 1 = joueur 1, étape 2 = joueur 2
 const SLOT = o => { const a = Math.abs(o), sg = Math.sign(o);
   return {x: sg * [0, 0.74, 1.18, 1.55][Math.min(a, 3)], k: [1, 0.48, 0.3, 0.2][Math.min(a, 3)], op: [1, 0.65, 0.3, 0][Math.min(a, 3)]}; };
 function placeSlots(shift, anim) {
@@ -1440,8 +1540,9 @@ function showPicker() {
       st.append(im); return im;
     });
   }
+  pickStep = 1;
   const start = saved || HOT_START[Math.floor(Math.random() * HOT_START.length)];
-  pIdx = ORDER.indexOf(start); move(0);
+  pIdx = ORDER.indexOf(start); move(0); pickerUI();
   $('#picker').hidden = false;
   document.body.classList.add('picking');
   $('#pick-go').focus({preventScroll: true});
@@ -1456,7 +1557,23 @@ function move(d) {
   $('#pick-name').textContent = picked === 'United States' ? 'USA' : picked;
   $('#pick-stage').style.setProperty('--ring', FAM[COUNTRIES.find(c => c.name === picked).bar]);
   if (d && AC) tone(520 + 40 * Math.sign(d), 0.07, 0.09, 'square');
+  if (slots) pickerUI();
 }
+const bannedPair = (a, b) => BANNED.some(([x, y]) => (x === a && y === b) || (y === a && x === b));
+// textes et boutons de l'accueil selon le mode et l'étape
+function pickerUI() {
+  for (const b of $('#mode-seg').children) b.setAttribute('aria-pressed', String(b.dataset.mode === MODE));
+  for (const b of $('#level-seg').children) b.setAttribute('aria-pressed', String(b.dataset.level === LEVEL));
+  $('#level-seg').hidden = MODE === '2p' || pickStep === 2;
+  $('#mode-seg').hidden = pickStep === 2;
+  $('.pick-eyebrow').textContent = MODE !== '2p' ? 'CHOOSE YOUR COUNTRY' : pickStep === 1 ? 'PLAYER 1 · CHOOSE YOUR COUNTRY' : 'PLAYER 2 · CHOOSE YOUR COUNTRY';
+  const bad = pickStep === 2 && (picked === PLAYER || bannedPair(PLAYER, picked));
+  $('#pick-note').hidden = !bad;
+  $('#pick-go').disabled = bad;
+  $('#pick-go').textContent = MODE === '2p' && pickStep === 1 ? 'NEXT' : 'PLAY';
+}
+for (const b of document.querySelectorAll('#mode-seg button')) b.addEventListener('click', () => { audio(); MODE = b.dataset.mode; try { localStorage.setItem('cc-mode', MODE); } catch (e) {} pickerUI(); });
+for (const b of document.querySelectorAll('#level-seg button')) b.addEventListener('click', () => { audio(); LEVEL = b.dataset.level; try { localStorage.setItem('cc-level', LEVEL); } catch (e) {} pickerUI(); });
 $('#pick-prev').addEventListener('click', () => { audio(); move(-1); });
 $('#pick-next').addEventListener('click', () => { audio(); move(1); });
 let swipe = null;
@@ -1467,19 +1584,52 @@ $('#pick-stage').addEventListener('pointerup', e => {
   if (Math.abs(dx) > 35) { audio(); move(dx < 0 ? 1 : -1); }
 });
 addEventListener('keydown', e => {
+  if (!$('#onboard').hidden) { if (e.key === 'ArrowRight') obShow(obIdx + 1); if (e.key === 'ArrowLeft') obShow(obIdx - 1); return; }
   if ($('#picker').hidden) return;
   if (e.key === 'ArrowRight') { audio(); move(1); e.preventDefault(); }
   if (e.key === 'ArrowLeft') { audio(); move(-1); e.preventDefault(); }
 });
 $('#pick-go').addEventListener('click', () => {
-  if (!picked) return;
+  if (!picked || $('#pick-go').disabled) return;
   audio();
-  PLAYER = saved = picked; try { localStorage.setItem('cc-country', picked); } catch (e) {}
-  if (typeof window.gtag === 'function') window.gtag('event', 'country_picked', {country: picked});
+  if (MODE === '2p' && pickStep === 1) {          // 2 joueurs : le joueur 1 a choisi, au tour du joueur 2
+    PLAYER = saved = picked; try { localStorage.setItem('cc-country', picked); } catch (e) {}
+    pickStep = 2;
+    const p2 = PLAYER2 && PLAYER2 !== PLAYER && !bannedPair(PLAYER, PLAYER2) ? PLAYER2 : 'United States';
+    pIdx = ORDER.indexOf(p2 === PLAYER ? 'Brazil' : p2); move(0); pickerUI();
+    return;
+  }
+  if (pickStep === 2) { PLAYER2 = picked; try { localStorage.setItem('cc-p2', picked); } catch (e) {} }
+  else { PLAYER = saved = picked; try { localStorage.setItem('cc-country', picked); } catch (e) {} }
+  if (typeof window.gtag === 'function') window.gtag('event', 'country_picked', {country: picked, mode: MODE, level: MODE === '2p' ? '' : LEVEL});
   $('#picker').hidden = true; document.body.classList.remove('picking');
   newMatch(); resize();
+  if (!obDone) showOnboard();
 });
-for (const id of ['#change', '#end-change']) $(id).addEventListener('click', () => { audio(); nextLeft = null; $('#next-in').textContent = ''; showPicker(); });
+
+/* ------------------------------ onboarding : 5 cartes avec les pictos (1re fois seulement) ------------------------------ */
+let obDone = false; try { obDone = localStorage.getItem('cc-onboard') === '1'; } catch (e) {}
+let obIdx = 0;
+const obSlides = [...document.querySelectorAll('.ob-slide')];
+for (let i = 0; i < obSlides.length; i++) $('#ob-dots').append(document.createElement('i'));
+function obShow(i) {
+  obIdx = Math.max(0, Math.min(obSlides.length - 1, i));
+  obSlides.forEach(el => { el.style.transform = `translateX(${-100 * obIdx}%)`; });
+  [...$('#ob-dots').children].forEach((d, k) => d.classList.toggle('on', k === obIdx));
+  $('#ob-next').textContent = obIdx === obSlides.length - 1 ? "LET'S PLAY" : 'NEXT';
+}
+function showOnboard() { obShow(0); $('#onboard').hidden = false; $('#ob-next').focus({preventScroll: true}); }
+function closeOnboard() {
+  obDone = true; try { localStorage.setItem('cc-onboard', '1'); } catch (e) {}
+  $('#onboard').hidden = true;
+  if (typeof window.gtag === 'function') window.gtag('event', 'onboarding_done', {slide: obIdx + 1});
+}
+$('#ob-next').addEventListener('click', () => { audio(); if (obIdx === obSlides.length - 1) closeOnboard(); else { obShow(obIdx + 1); tone(600, 0.06, 0.08, 'square'); } });
+$('#ob-skip').addEventListener('click', closeOnboard);
+let obSwipe = null;
+$('#ob-track').addEventListener('pointerdown', e => { obSwipe = e.clientX; });
+$('#ob-track').addEventListener('pointerup', e => { if (obSwipe === null) return; const dx = e.clientX - obSwipe; obSwipe = null; if (Math.abs(dx) > 35) obShow(obIdx + (dx < 0 ? 1 : -1)); });
+for (const id of ['#change', '#end-change', '#logo']) $(id).addEventListener('click', () => { audio(); nextLeft = null; $('#next-in').textContent = ''; showPicker(); });
 $('.end-help').addEventListener('click', () => { nextLeft = null; });
 
 newMatch();
