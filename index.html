@@ -106,25 +106,24 @@ body.my-turn #arena { cursor: grab; }
 body.picking { overflow: hidden; }
 .logo { margin: 0; font: 800 clamp(34px, 9vw, 64px)/0.95 var(--display); letter-spacing: -.01em; text-align: center; }
 .logo span:first-child { color: #FF3B30; } .logo span:last-child { color: #2F7BFF; }
-.pick-hero { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-#pick-ring { --ring: #8A8A90; width: min(40vw, 24vh, 230px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
-  background: #151518; box-shadow: 0 0 0 5px var(--ring), 0 0 40px color-mix(in srgb, var(--ring) 45%, transparent); transition: box-shadow .3s; }
-#pick-big { width: 100%; height: 100%; border-radius: 50%; }
-#pick-big.pop { animation: pop .35s cubic-bezier(.2, 1.5, .4, 1); }
-#pick-q { font: 800 clamp(60px, 14vw, 110px)/1 var(--display); color: #3A3A40; }
-#pick-name { margin: 0; font: 800 clamp(20px, 5vw, 28px)/1.1 var(--display); text-align: center; min-height: 1.1em; }
-#pick-grid { flex: 1; min-height: 0; width: 100%; max-width: 820px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
-  gap: 6px; align-content: start; padding: 4px; box-sizing: border-box; -webkit-overflow-scrolling: touch;
-  mask-image: linear-gradient(transparent, #000 10px, #000 calc(100% - 18px), transparent); }
-.pick { background: none; border: 0; color: #C9C9CE; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 2px; border-radius: 12px; min-width: 0; }
-.pick img { width: 46px; height: 46px; transition: transform .15s; }
-.pick span { font: 600 11px/1.15 var(--display); text-align: center; overflow-wrap: anywhere; }
-.pick:hover img { transform: scale(1.08); }
-.pick[aria-pressed="true"] { background: #232328; color: #FFD60A; }
-.pick[aria-pressed="true"] img { transform: scale(1.12); }
-#pick-go { width: min(100%, 360px); height: 58px; border: 0; border-radius: 29px; background: #FFD60A; color: #141416; font: 800 22px var(--display); letter-spacing: .05em; flex: none; }
-#pick-go:disabled { background: #2A2A2F; color: #6A6A70; cursor: default; }
-@media (prefers-reduced-motion: reduce) { #pick-big.pop { animation: none; } }
+.pick-eyebrow { margin: 0; font: 500 13px var(--mono); letter-spacing: .18em; color: #8A8A90; }
+.pick-row { flex: 1; min-height: 0; width: 100%; max-width: 900px; position: relative; display: flex; align-items: center; }
+#pick-stage { --S: min(50vw, 34vh, 300px); --ring: #8A8A90; position: relative; flex: 1; height: 100%; min-height: calc(var(--S) + 30px); overflow: hidden;
+  touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
+#pick-stage::before { content: ""; position: absolute; left: 50%; top: 50%; width: var(--S); height: var(--S); transform: translate(-50%, -50%); border-radius: 50%;
+  box-shadow: 0 0 0 6px var(--ring), 0 0 60px color-mix(in srgb, var(--ring) 55%, transparent); transition: box-shadow .3s; z-index: 11; pointer-events: none; }
+.slot { position: absolute; left: 50%; top: 50%; width: var(--S); height: var(--S); border-radius: 50%;
+  transition: transform .32s cubic-bezier(.2, .8, .2, 1), opacity .32s; -webkit-user-drag: none; }
+.pick-arrow { flex: none; width: 52px; height: 52px; border-radius: 50%; border: 2px solid #3A3A40; background: #151518; color: #F4F4F2; font-size: 20px;
+  display: grid; place-items: center; z-index: 12; position: absolute; top: 50%; transform: translateY(-50%); }
+#pick-prev { left: 0; } #pick-next { right: 0; }
+.pick-arrow:hover { border-color: #FFD60A; color: #FFD60A; }
+.pick-arrow:active { transform: translateY(-50%) scale(.92); }
+#pick-name { margin: 0; font: 800 clamp(30px, 8vw, 52px)/1.05 var(--display); text-align: center; text-transform: uppercase; letter-spacing: .02em; min-height: 1.05em; }
+@media (prefers-reduced-motion: reduce) { .slot { transition: none; } }
+#pick-go { width: min(100%, 360px); height: 60px; border: 0; border-radius: 30px; background: #FFD60A; color: #141416; font: 800 24px var(--display);
+  letter-spacing: .06em; flex: none; box-shadow: 0 6px 0 #B89400; margin-bottom: 6px; }
+#pick-go:active { transform: translateY(4px); box-shadow: 0 2px 0 #B89400; }
 
 /* ---------- stats ---------- */
 #stats { max-width: 1040px; margin: 0 auto; box-sizing: border-box; padding-block: 28px 48px;
@@ -195,12 +194,14 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
 
 <section id="picker" hidden aria-label="Pick your country">
   <h1 class="logo"><span>COUNTRY</span> <span>CLASH</span></h1>
-  <div class="pick-hero">
-    <div id="pick-ring"><img id="pick-big" alt="" hidden><span id="pick-q" aria-hidden="true">?</span></div>
-    <p id="pick-name" aria-live="polite">Pick your country</p>
+  <p class="pick-eyebrow">CHOOSE YOUR COUNTRY</p>
+  <div class="pick-row">
+    <button class="pick-arrow" id="pick-prev" type="button" aria-label="Previous country">◀</button>
+    <div id="pick-stage" aria-hidden="true"></div>
+    <button class="pick-arrow" id="pick-next" type="button" aria-label="Next country">▶</button>
   </div>
-  <div id="pick-grid" role="group" aria-label="Countries"></div>
-  <button id="pick-go" type="button" disabled>PLAY</button>
+  <p id="pick-name" aria-live="polite">Turkey</p>
+  <button id="pick-go" type="button">PLAY</button>
 </section>
 
 <section id="stats" hidden>
@@ -779,6 +780,40 @@ document.body.classList.toggle('phone', isPhone);
 let G, T, themeName, lastTheme, lastArena, flags, state = 'aim', aim = null, ai = null;
 let fx = {pops: [], shards: [], confetti: [], rings: []}, clock = 0, play = null, muted = false;
 let timeLeft = GAME_TIME, timerOn = false, lastTick = 99;
+const TIME_SPEED = 60 / 45;   // le chrono affiche 1:00 mais la partie dure 45 vraies secondes (Bazil, 29/10)
+
+/* ------------------------------ ralentis (comme les vidéos) ------------------------------ */
+// À chaque tir, on rejoue le tir à l'avance (le moteur est exact) pour savoir s'il va casser un trait ou le frôler.
+// Le ralenti + zoom commence donc juste AVANT le moment chaud. Un seul ralenti par tir.
+const SLOW = {kill: {before: 0.5, after: 0.35, speed: 0.2, zoom: 1.7}, final: {before: 0.7, after: 0.7, speed: 0.13, zoom: 1.9},
+  near: {before: 0.3, after: 0.25, speed: 0.33, zoom: 1.4}};
+let slow = null;
+const PRED_FLASH = new Float32Array(NC);
+function predict() {
+  const S = cloneGame(G); S.flashAt = PRED_FLASH;
+  let near = null;
+  for (let i = 0; i < 240 * 12; i++) {
+    const moving = step(S);
+    const dead = S.events.find(e => e.kind === 'dead');
+    if (dead) return {...SLOW[alive(S, dead.team).length ? 'kill' : 'final'], kind: alive(S, dead.team).length ? 'kill' : 'final', t: S.t, x: dead.x, y: dead.y};
+    S.events.length = 0;
+    for (const a of S.balls) if (!a.dead && a.path) for (const b of S.balls) if (!b.dead && b.team !== a.team && (b.vx || b.vy)) {
+      const d = trailDist(b.x, b.y, a);
+      if (d < R * 1.9 && (!near || d < near.d)) near = {...SLOW.near, kind: 'near', t: S.t, x: b.x, y: b.y, d};
+    }
+    if (!moving) break;
+  }
+  return near;
+}
+function camNow() {
+  if (!slow) return {speed: 1, zoom: 1};
+  const a = G.t - (slow.t - slow.before), b = slow.t + slow.after - G.t;
+  if (a < 0 || b < 0) return {speed: 1, zoom: 1};
+  const f = Math.min(1, a / 0.15, b / 0.2), e = f * f * (3 - 2 * f);
+  if (!slow.started) { slow.started = true; heartbeat(slow.kind); }
+  return {speed: 1 - (1 - slow.speed) * e, zoom: 1 + (slow.zoom - 1) * e, x: slow.x, y: slow.y};
+}
+function launch(b, dx, dy, p) { shoot(G, b, dx, dy, p); slow = predict(); }
 let tutoDone = false; try { tutoDone = localStorage.getItem('cc-tuto') === '1'; } catch (e) {}
 
 const cv = $('#arena'), ctx = cv.getContext('2d');
@@ -801,7 +836,7 @@ function newMatch() {
   flags = [flagOf(PLAYER, ring), flagOf(CPU, ring)];
   G = newGame([PLAYER, CPU], arena);
   fx = {pops: [], shards: [], confetti: [], rings: []};
-  state = 'aim'; aim = null; ai = null; timeLeft = GAME_TIME; timerOn = false; lastTick = 99;
+  state = 'aim'; aim = null; ai = null; slow = null; timeLeft = GAME_TIME; timerOn = false; lastTick = 99;
   const root = document.documentElement.style;
   for (const [k, v] of Object.entries({bg: T.BG, fg: T.FG, muted: T.MUTED, accent: T.ACCENT, empty: T.EMPTY, line: T.LINE || T.FG}))
     root.setProperty('--g-' + k, v);
@@ -838,7 +873,7 @@ function hud() {
   const st = $('#status');
   if (state === 'over') st.textContent = '';
   else if (G.side === 0 && !G.moving) { st.textContent = 'YOUR TURN'; st.dataset.side = 0; }
-  else if (G.side === 1 && !G.moving) { st.textContent = NAMES[1] + ' IS THINKING…'; st.dataset.side = 1; }
+  else if (G.side === 1 && !G.moving) { st.textContent = 'THINKING…'; st.dataset.side = 1; }
   $('#hint').hidden = !(G.side === 0 && !G.moving && state === 'aim');
   document.body.classList.toggle('my-turn', G.side === 0 && !G.moving && state === 'aim');
 }
@@ -869,7 +904,7 @@ const release = e => {
   if (play && !play.started) { play.started = true; play.startedAt = Date.now(); track('start'); }   // la partie compte au 1er tir
   timerOn = true;                                 // le chrono part au 1er tir (le tuto ne mange pas de temps)
   if (!tutoDone) { tutoDone = true; try { localStorage.setItem('cc-tuto', '1'); } catch (e) {} }
-  shoot(G, b, dx, dy, d / MAX_PULL);
+  launch(b, dx, dy, d / MAX_PULL);
   play.shots = (play.shots || 0) + 1;
   hud();
 };
@@ -929,6 +964,17 @@ function shatterFx(pts, team) {
     }
   }
 }
+// battement de cœur + son qui monte (comme les vidéos)
+function heartbeat(kind) {
+  if (!AC || muted) return;
+  const beats = kind === 'near' ? 1 : 2;
+  for (let i = 0; i < beats; i++) { tone(58, 0.45, 0.16, 'sine', i * 0.42); tone(52, 0.35, 0.16, 'sine', i * 0.42 + 0.17); }
+  const t = AC.currentTime, o = AC.createOscillator(), g = AC.createGain(), d = kind === 'near' ? 0.5 : 1.1;
+  o.type = 'sawtooth'; o.frequency.setValueAtTime(180, t); o.frequency.exponentialRampToValueAtTime(kind === 'near' ? 320 : 520, t + d);
+  g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(0.05, t + d * 0.8); g.gain.linearRampToValueAtTime(0, t + d);
+  const f = AC.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 1200;
+  o.connect(f).connect(g).connect(AC.destination); o.start(t); o.stop(t + d + 0.05);
+}
 function winSound(w) { const f = NOTES[Math.max(0, w)]; [1, 1.25, 1.5, 2].forEach((m, k) => tone(f * m, 0.16, 1.4, 'triangle', k * 0.11)); }
 
 /* ------------------------------ boucle ------------------------------ */
@@ -937,8 +983,9 @@ let acc = 0, prev = null;
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = prev ? Math.min(0.05, (now - prev) / 1000) : 0; prev = now; clock += dt;
+  const cam = camNow();
   if (timerOn && state !== 'over' && !G.timeUp) {
-    timeLeft = Math.max(0, timeLeft - dt);
+    if (cam.speed > 0.95) timeLeft = Math.max(0, timeLeft - dt * TIME_SPEED);   // pause pendant les ralentis
     const sec = Math.ceil(timeLeft);
     if (sec <= 5 && sec < lastTick && sec > 0) { lastTick = sec; tone(880, 0.1, 0.08, 'square'); }
     if (timeLeft === 0) {                          // chrono fini : on laisse finir le tir en cours, puis le plus de terrain gagne
@@ -948,7 +995,7 @@ function frame(now) {
     hud();
   }
   if (G.moving) {
-    acc += dt;
+    acc += dt * cam.speed;
     let still = false;
     while (acc >= DT) { acc -= DT; if (!step(G)) { still = true; break; } }
     sounds(G.events); G.events = [];
@@ -958,6 +1005,7 @@ function frame(now) {
   draw();
 }
 function afterShot() {
+  slow = null;
   const over = endShot(G);
   if (play) track('turn');
   if (over) return finish(over);
@@ -973,7 +1021,7 @@ function cpuTurn(dt) {
   cpuAim = {ball: b, ang: a, p: c.p, t: clock};
   state = 'cpuaim';
   const G0 = G;
-  setTimeout(() => { if (G !== G0 || G.over) return; cpuAim = null; state = 'aim'; shoot(G, b, Math.cos(a), Math.sin(a), c.p); hud(); }, 650);
+  setTimeout(() => { if (G !== G0 || G.over) return; cpuAim = null; state = 'aim'; launch(b, Math.cos(a), Math.sin(a), c.p); hud(); }, 650);
 }
 let cpuAim = null;
 
@@ -1025,7 +1073,11 @@ function draw() {
   const k = cv.width / WORLD;
   ctx.setTransform(1, 0, 0, 1, 0, 0);
   ctx.fillStyle = T.BG; ctx.fillRect(0, 0, cv.width, cv.height);
-  ctx.setTransform(k, 0, 0, k, 0, 0);
+  const cam = camNow();
+  if (cam.zoom > 1.001) {                         // zoom du ralenti, centré sur le moment chaud (sans sortir de l'écran)
+    const z = cam.zoom, h = WORLD / (2 * z), cx = Math.max(h, Math.min(WORLD - h, cam.x)), cy = Math.max(h, Math.min(WORLD - h, cam.y));
+    ctx.setTransform(k * z, 0, 0, k * z, k * (WORLD / 2 - cx * z), k * (WORLD / 2 - cy * z));
+  } else ctx.setTransform(k, 0, 0, k, 0, 0);
   // terrain
   const cols = TEAM_COL.map(rgb), empty = rgb(T.EMPTY), bg = rgb(T.BG), ob = rgb(T.OBST), d = gimg.data;
   for (let i = 0; i < NC; i++) {
@@ -1181,36 +1233,62 @@ addEventListener('pagehide', () => { if (play && play.started && state !== 'over
 
 let saved = null; try { saved = localStorage.getItem('cc-country'); } catch (e) {}
 if (saved && COUNTRIES.some(c => c.name === saved)) PLAYER = saved; else saved = null;
-let picked = null;
+// carrousel « comme FIFA » : un gros drapeau au milieu, ◀ ▶ / swipe / flèches du clavier pour défiler
+const ORDER = COUNTRIES.map(c => c.name).sort((a, b) => a.localeCompare(b));
+const HOT_START = ['Turkey', 'Brazil', 'Morocco', 'Mexico', 'Indonesia', 'Poland', 'Argentina', 'Egypt', 'Philippines', 'Pakistan', 'Bangladesh', 'Algeria'];
+const FLAG_URL = {};
+const flagUrl = n => FLAG_URL[n] || (FLAG_URL[n] = flagOf(n).toDataURL());
+let picked = null, pIdx = 0, slots = null;
+const SLOT = o => { const a = Math.abs(o), sg = Math.sign(o);
+  return {x: sg * [0, 0.74, 1.18, 1.55][Math.min(a, 3)], k: [1, 0.48, 0.3, 0.2][Math.min(a, 3)], op: [1, 0.65, 0.3, 0][Math.min(a, 3)]}; };
+function placeSlots(shift, anim) {
+  slots.forEach((im, i) => {
+    const o = i - 3 + shift, {x, k, op} = SLOT(o);
+    im.style.transition = anim ? '' : 'none';
+    im.style.transform = `translate(-50%, -50%) translateX(calc(var(--S) * ${x})) scale(${k})`;
+    im.style.opacity = op; im.style.zIndex = 10 - Math.abs(Math.round(o));
+  });
+}
 function showPicker() {
-  const gridEl = $('#pick-grid');
-  if (!gridEl.children.length) {
-    for (const c of [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name))) {
-      const bt = document.createElement('button');
-      bt.type = 'button'; bt.className = 'pick'; bt.dataset.name = c.name; bt.setAttribute('aria-pressed', 'false');
-      const im = new Image(); im.src = flagOf(c.name).toDataURL(); im.alt = '';
-      const sp = document.createElement('span'); sp.textContent = c.name === 'United States' ? 'USA' : c.name;
-      bt.append(im, sp); bt.addEventListener('click', () => choose(c.name)); gridEl.append(bt);
-    }
+  if (!slots) {
+    const st = $('#pick-stage');
+    slots = Array.from({length: 7}, (_, i) => {
+      const im = new Image(); im.alt = ''; im.className = 'slot'; im.draggable = false;
+      im.addEventListener('click', () => { const o = i - 3; if (o) move(o); });
+      st.append(im); return im;
+    });
   }
-  choose(saved || null);
+  const start = saved || HOT_START[Math.floor(Math.random() * HOT_START.length)];
+  pIdx = ORDER.indexOf(start); move(0);
   $('#picker').hidden = false;
   document.body.classList.add('picking');
+  $('#pick-go').focus({preventScroll: true});
 }
-function choose(name) {
-  picked = name;
-  for (const b of $('#pick-grid').children) b.setAttribute('aria-pressed', String(b.dataset.name === name));
-  const big = $('#pick-big');
-  big.classList.remove('pop'); void big.offsetWidth;
-  if (name) {
-    big.src = flagOf(name).toDataURL(); big.hidden = false; big.classList.add('pop');
-    $('#pick-q').hidden = true;
-    $('#pick-name').textContent = name === 'United States' ? 'USA' : name;
-    $('#pick-ring').style.setProperty('--ring', FAM[COUNTRIES.find(c => c.name === name).bar]);
-    if (AC) tone(392 + Math.random() * 120, 0.08, 0.15);
-  } else { big.hidden = true; $('#pick-q').hidden = false; $('#pick-name').textContent = 'Pick your country'; }
-  $('#pick-go').disabled = !name;
+function move(d) {
+  const n = ORDER.length;
+  pIdx = ((pIdx + d) % n + n) % n;
+  slots.forEach((im, i) => { im.src = flagUrl(ORDER[(pIdx + i - 3 + n * 3) % n]); });
+  if (d) { placeSlots(Math.sign(d), false); void $('#pick-stage').offsetWidth; }   // on part de l'ancienne place…
+  placeSlots(0, true);                                                             // …et on glisse vers la nouvelle
+  picked = ORDER[pIdx];
+  $('#pick-name').textContent = picked === 'United States' ? 'USA' : picked;
+  $('#pick-stage').style.setProperty('--ring', FAM[COUNTRIES.find(c => c.name === picked).bar]);
+  if (d && AC) tone(520 + 40 * Math.sign(d), 0.07, 0.09, 'square');
 }
+$('#pick-prev').addEventListener('click', () => { audio(); move(-1); });
+$('#pick-next').addEventListener('click', () => { audio(); move(1); });
+let swipe = null;
+$('#pick-stage').addEventListener('pointerdown', e => { swipe = {x: e.clientX, y: e.clientY}; });
+$('#pick-stage').addEventListener('pointerup', e => {
+  if (!swipe) return;
+  const dx = e.clientX - swipe.x; swipe = null;
+  if (Math.abs(dx) > 35) { audio(); move(dx < 0 ? 1 : -1); }
+});
+addEventListener('keydown', e => {
+  if ($('#picker').hidden) return;
+  if (e.key === 'ArrowRight') { audio(); move(1); e.preventDefault(); }
+  if (e.key === 'ArrowLeft') { audio(); move(-1); e.preventDefault(); }
+});
 $('#pick-go').addEventListener('click', () => {
   if (!picked) return;
   audio();
