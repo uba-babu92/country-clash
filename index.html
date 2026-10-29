@@ -2,6 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-02S2YB073X"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'granted'});
+gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Country Clash</title>
 <meta name="description" content="Country Clash: a turn-based flag ball game. Pull, aim and release to cut the arena and take territory for your country. Free to play on phone and computer.">
@@ -1070,6 +1074,14 @@ function track(kind, reason) {
   else if (kind === 'turn') body = base;
   else body = {...base, result: kind, reason: reason || 'left', endedAt: Date.now()};
   const id = play.id;
+  // Google Analytics (seulement sur le vrai site : sur claude.ai, gtag n'existe pas)
+  if (typeof window.gtag === 'function' && kind !== 'turn') {
+    const ev = kind === 'start' ? 'game_start' : kind === 'abandon' ? 'game_abandon' : 'game_end';
+    window.gtag('event', ev, {arena: play.arena, theme: play.theme, device_type: isPhone ? 'phone' : 'computer',
+      result: kind === 'start' ? undefined : kind, end_reason: kind === 'start' ? undefined : (reason || 'left'),
+      duration_s: base.durationS, turn: base.turn, territory_pct: base.pct, cpu_territory_pct: base.cpuPct,
+      transport_type: kind === 'abandon' ? 'beacon' : undefined});
+  }
   if (kind !== 'start' && kind !== 'turn') play = null;
   db().then(d => {
     if (!d) return;
