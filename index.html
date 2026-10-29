@@ -50,7 +50,8 @@ button { font: inherit; cursor: pointer; }
 .team > img { width: clamp(40px, 9vw, 58px); height: auto; flex: none; }
 .team .txt { display: flex; flex-direction: column; min-width: 0; }
 .team .pct { font: 700 clamp(22px, 5.4vw, 34px)/1 var(--mono); font-variant-numeric: tabular-nums; }
-.team .name { font-weight: 800; font-size: clamp(13px, 3.2vw, 17px); letter-spacing: .06em; }
+.team .name { font-weight: 800; font-size: clamp(12px, 3.1vw, 17px); letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.team .name small { font: 500 .72em var(--mono); color: var(--g-muted); letter-spacing: .06em; }
 .balls { display: flex; gap: 3px; margin-top: 4px; }
 .team.right .balls { justify-content: flex-end; }
 .balls img { width: 15px; height: 15px; }
@@ -94,6 +95,37 @@ body.my-turn #arena { cursor: grab; }
   font-weight: 800; font-size: 20px; letter-spacing: .04em; }
 @media (prefers-reduced-motion: reduce) { #end .card, #hint.shake, #turn.low { animation: none; } }
 
+#end .end-links { display: flex; gap: 18px; align-items: center; margin-top: 4px; }
+.linkish { background: none; border: 0; padding: 0; color: var(--g-muted); font-weight: 600; font-size: 14px; text-decoration: underline; }
+#change { padding: 0 9px; display: grid; place-items: center; } #change img { width: 26px; height: 26px; display: block; }
+
+/* ---------- accueil : choix du pays ---------- */
+#picker { position: fixed; inset: 0; z-index: 20; background: #0B0B0D; color: #F4F4F2; display: flex; flex-direction: column; align-items: center;
+  gap: 12px; box-sizing: border-box; padding-top: calc(14px + env(safe-area-inset-top, 0px)); padding-bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+body.picking { overflow: hidden; }
+.logo { margin: 0; font: 800 clamp(34px, 9vw, 64px)/0.95 var(--display); letter-spacing: -.01em; text-align: center; }
+.logo span:first-child { color: #FF3B30; } .logo span:last-child { color: #2F7BFF; }
+.pick-hero { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+#pick-ring { --ring: #8A8A90; width: min(40vw, 24vh, 230px); aspect-ratio: 1; border-radius: 50%; display: grid; place-items: center;
+  background: #151518; box-shadow: 0 0 0 5px var(--ring), 0 0 40px color-mix(in srgb, var(--ring) 45%, transparent); transition: box-shadow .3s; }
+#pick-big { width: 100%; height: 100%; border-radius: 50%; }
+#pick-big.pop { animation: pop .35s cubic-bezier(.2, 1.5, .4, 1); }
+#pick-q { font: 800 clamp(60px, 14vw, 110px)/1 var(--display); color: #3A3A40; }
+#pick-name { margin: 0; font: 800 clamp(20px, 5vw, 28px)/1.1 var(--display); text-align: center; min-height: 1.1em; }
+#pick-grid { flex: 1; min-height: 0; width: 100%; max-width: 820px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(68px, 1fr));
+  gap: 6px; align-content: start; padding: 4px; box-sizing: border-box; -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(transparent, #000 10px, #000 calc(100% - 18px), transparent); }
+.pick { background: none; border: 0; color: #C9C9CE; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 2px; border-radius: 12px; min-width: 0; }
+.pick img { width: 46px; height: 46px; transition: transform .15s; }
+.pick span { font: 600 11px/1.15 var(--display); text-align: center; overflow-wrap: anywhere; }
+.pick:hover img { transform: scale(1.08); }
+.pick[aria-pressed="true"] { background: #232328; color: #FFD60A; }
+.pick[aria-pressed="true"] img { transform: scale(1.12); }
+#pick-go { width: min(100%, 360px); height: 58px; border: 0; border-radius: 29px; background: #FFD60A; color: #141416; font: 800 22px var(--display); letter-spacing: .05em; flex: none; }
+#pick-go:disabled { background: #2A2A2F; color: #6A6A70; cursor: default; }
+@media (prefers-reduced-motion: reduce) { #pick-big.pop { animation: none; } }
+
 /* ---------- stats ---------- */
 #stats { max-width: 1040px; margin: 0 auto; box-sizing: border-box; padding-block: 28px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -136,9 +168,9 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
 
 <main id="game">
   <header class="top">
-    <div class="team"><img id="f0" alt="Turkey flag"><div class="txt"><span class="pct" id="p0">0%</span><span class="name">TURKEY · YOU</span><span class="balls" id="balls0"></span></div></div>
+    <div class="team"><img id="f0" alt="Turkey flag"><div class="txt"><span class="pct" id="p0">0%</span><span class="name" id="n0">TURKEY · YOU</span><span class="balls" id="balls0"></span></div></div>
     <div class="mid"><div id="turn" aria-label="Time left">1:00</div><div id="status" aria-live="polite">YOUR TURN</div></div>
-    <div class="team right"><img id="f1" alt="USA flag"><div class="txt"><span class="pct" id="p1">0%</span><span class="name">USA · CPU</span><span class="balls" id="balls1"></span></div></div>
+    <div class="team right"><img id="f1" alt="USA flag"><div class="txt"><span class="pct" id="p1">0%</span><span class="name" id="n1">USA · CPU</span><span class="balls" id="balls1"></span></div></div>
   </header>
   <div class="bar" aria-hidden="true"><i id="bar0"></i><i id="bar-empty"></i><i id="bar1"></i></div>
   <div id="stage">
@@ -149,16 +181,27 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
       <p id="end-sub"></p>
       <p id="end-why"></p>
       <button id="again" type="button">PLAY AGAIN</button>
-      <a class="end-help" href="how-to-play.html">How to play</a>
+      <div class="end-links"><button class="linkish" id="end-change" type="button">Change country</button><a class="end-help" href="how-to-play.html">How to play</a></div>
     </div></div>
   </div>
   <footer class="foot">
-    <p id="hint"><span class="only-phone"><b>Pull</b> a Turkey ball back with your finger, <b>let go</b> to shoot.</span><span class="only-computer"><b>Click and drag</b> a Turkey ball back, <b>release</b> to shoot.</span></p>
+    <p id="hint"><span class="only-phone"><b>Pull</b> one of your balls back with your finger, <b>let go</b> to shoot.</span><span class="only-computer"><b>Click and drag</b> one of your balls back, <b>release</b> to shoot.</span></p>
+    <button class="icon-btn" id="change" type="button" aria-label="Change country"><img id="change-flag" alt=""></button>
     <button class="icon-btn" id="new" type="button" aria-label="New match">↻</button>
     <button class="icon-btn" id="mute" type="button" aria-label="Sound on or off" aria-pressed="false">🔊</button>
   </footer>
   <nav class="links"><a href="how-to-play.html">How to play</a><a href="privacy.html">Privacy</a></nav>
 </main>
+
+<section id="picker" hidden aria-label="Pick your country">
+  <h1 class="logo"><span>COUNTRY</span> <span>CLASH</span></h1>
+  <div class="pick-hero">
+    <div id="pick-ring"><img id="pick-big" alt="" hidden><span id="pick-q" aria-hidden="true">?</span></div>
+    <p id="pick-name" aria-live="polite">Pick your country</p>
+  </div>
+  <div id="pick-grid" role="group" aria-label="Countries"></div>
+  <button id="pick-go" type="button" disabled>PLAY</button>
+</section>
 
 <section id="stats" hidden>
   <p class="eyebrow">Country Clash · game metrics</p>
@@ -182,10 +225,12 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
       <div class="panel"><h2>Games per day</h2><p class="sub">Last 14 days</p><div id="c-days"></div></div>
       <div class="panel"><h2>When players leave</h2><p class="sub">Turn reached by games left before the end</p><div id="c-ab"></div></div>
       <div class="panel"><h2>Player wins by arena</h2><p class="sub">Share of finished games won by the player</p><div id="c-arena"></div></div>
+      <div class="panel"><h2>Countries picked</h2><p class="sub">Most played countries (player side)</p><div id="c-country"></div></div>
+      <div class="panel"><h2>Player wins by opponent</h2><p class="sub">USA vs all other opponents</p><div id="c-opp"></div></div>
       <div class="panel"><h2>How games end</h2><p class="sub">Share of finished games</p><div id="c-why"></div></div>
     </div>
     <div class="panel" style="margin-top:12px"><h2>Last games</h2><p class="sub">Newest first · territory is player / CPU</p>
-      <div class="table-wrap"><table><thead><tr><th>Started</th><th>Result</th><th>Territory</th><th>Turn</th><th>Time</th><th>Arena</th><th>Device</th></tr></thead><tbody id="t-last"></tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>Started</th><th>Result</th><th>Territory</th><th>Turn</th><th>Time</th><th>Arena</th><th>Match</th><th>Device</th></tr></thead><tbody id="t-last"></tbody></table></div>
     </div>
   </div>
   <a class="back" href="#">← Back to the game</a>
@@ -680,9 +725,40 @@ function* aiPlan(G, s) {
 
 
 // Country Clash (appli) : écran, commandes, sons, stats.
-// Toi = Turquie (équipe 0), l'ordi = USA (équipe 1). V1 du 29/10/2026.
+// Toi = ton pays (équipe 0, choisi à l'accueil), l'ordi = un pays au hasard, USA ×2 (équipe 1).
 
-const PLAYER = 'Turkey', CPU = 'United States', NAMES = ['TURKEY', 'USA'];
+let PLAYER = 'Turkey', CPU = 'United States', NAMES = ['TURKEY', 'USA'];
+const BANNED = [['India', 'Pakistan'], ['Morocco', 'Algeria'], ['Turkey', 'Greece'], ['Russia', 'Ukraine']];   // comme gen.js
+const short = n => ({'United States': 'USA'}[n] || n).toUpperCase();
+const famOf = hex => {             // famille de couleur d'une couleur de drapeau (comme gen.js)
+  if (hex === '#fff') return 'white';
+  const r = parseInt(hex.slice(1, 3), 16), g = parseInt(hex.slice(3, 5), 16), b = parseInt(hex.slice(5, 7), 16);
+  const mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn || 1;
+  if (mx < 60) return 'black';
+  if (mn > 200) return 'white';
+  let h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  h = (h * 60 + 360) % 360;
+  return h < 18 || h >= 330 ? 'red' : h < 40 ? 'orange' : h < 70 ? 'yellow' : h < 170 ? 'green' : h < 260 ? 'blue' : 'red';
+};
+const close = (a, b) => a === b || [a, b].sort().join() === 'orange,yellow' || [a, b].sort().join() === 'orange,red';
+// adversaire au hasard : USA deux fois plus souvent (Bazil), jamais une paire interdite
+function pickOpponent(me) {
+  const banned = n => BANNED.some(([x, y]) => (x === me && y === n) || (y === me && x === n));
+  const pool = COUNTRIES.filter(c => c.name !== me && !banned(c.name));
+  const w = pool.map(c => c.name === 'United States' ? 2 : 1), tot = w.reduce((a, b) => a + b, 0);
+  let r = Math.random() * tot;
+  for (let i = 0; i < pool.length; i++) if ((r -= w[i]) < 0) return pool[i].name;
+  return pool[0].name;
+}
+// couleurs de terrain : celle du drapeau ; si les deux se ressemblent, l'ordi prend une autre couleur de son drapeau
+function teamColors(a, b) {
+  const ca = COUNTRIES.find(c => c.name === a), cb = COUNTRIES.find(c => c.name === b);
+  let fb = cb.bar;
+  if (close(ca.bar, fb)) fb = cb.colors.map(famOf).find(f => f !== 'black' && f !== 'white' && !close(f, ca.bar))
+    || ['blue', 'green', 'red', 'yellow'].find(f => !close(f, ca.bar));
+  if (ca.bar === 'white' && fb === 'white') fb = 'blue';
+  return [ca.bar, fb];
+}
 const THEMES = {   // les 8 fonds des vidéos (gen.js)
   dark: {BG: '#0B0B0D', FG: '#F4F4F2', MUTED: '#8A8A90', ACCENT: '#FFD60A', EMPTY: '#151518', OBST: '#2C2C32'},
   navy: {BG: '#0F1A3A', FG: '#F4F4F2', MUTED: '#8E9AB8', ACCENT: '#FFD60A', EMPTY: '#1A2852', OBST: '#3A4A78'},
@@ -693,7 +769,7 @@ const THEMES = {   // les 8 fonds des vidéos (gen.js)
   pink: {BG: '#FBE2EA', FG: '#3A1424', MUTED: '#8A6474', ACCENT: '#C2255C', EMPTY: '#F2C8D6', OBST: '#CC94A8', LINE: '#141416'},
   mint: {BG: '#DDF3E8', FG: '#12301F', MUTED: '#5C7E6B', ACCENT: '#C2410C', EMPTY: '#C2E6D2', OBST: '#8CBFA3', LINE: '#141416'},
 };
-const TEAM_COL = [FAM.red, FAM.blue];   // couleur du terrain : rouge Turquie, bleu USA (comme les vidéos)
+let TEAM_COL = [FAM.red, FAM.blue];   // couleur du terrain de chaque équipe
 const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
 const lighten = (hex, f) => `rgb(${rgb(hex).map(v => Math.round(v + (255 - v) * f)).join(',')})`;
 const $ = s => document.querySelector(s);
@@ -715,7 +791,10 @@ function pick(list, not) { const l = list.filter(x => x !== not); return l[Math.
 
 function newMatch() {
   if (play && play.started && state !== 'over') track('abandon');
-  themeName = pick(Object.keys(THEMES), lastTheme); lastTheme = themeName;
+  CPU = pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
+  const fams = teamColors(PLAYER, CPU); TEAM_COL = fams.map(f => FAM[f]);
+  const white = fams.includes('white');            // une équipe blanche : fond foncé obligatoire (comme les vidéos)
+  themeName = pick(Object.keys(THEMES).filter(k => !white || !THEMES[k].LINE), lastTheme); lastTheme = themeName;
   const arena = pick(ARENAS, lastArena); lastArena = arena;
   T = THEMES[themeName];
   const dark = !T.LINE, ring = dark ? 'rgba(244,244,242,.9)' : 'rgba(20,20,22,.95)';
@@ -728,9 +807,15 @@ function newMatch() {
     root.setProperty('--g-' + k, v);
   root.setProperty('--t0', TEAM_COL[0]); root.setProperty('--t1', TEAM_COL[1]);
   $('#f0').src = flags[0].toDataURL(); $('#f1').src = flags[1].toDataURL();
+  $('#change-flag').src = flags[0].toDataURL();
+  $('#f0').alt = PLAYER + ' flag'; $('#f1').alt = CPU + ' flag';
+  for (const [i, tag] of [[0, 'YOU'], [1, 'CPU']]) {
+    const el = $('#n' + i), t = document.createElement('small'); t.textContent = tag;
+    el.replaceChildren(NAMES[i], ' ', t); el.title = (i ? CPU : PLAYER) + ' · ' + tag;
+  }
   $('#end').hidden = true;
   for (const s of [0, 1]) delete $('#balls' + s).dataset.n;
-  play = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), startedAt: Date.now(), arena, theme: themeName};
+  play = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), startedAt: Date.now(), arena, theme: themeName, country: PLAYER, opponent: CPU};
   cpuAim = null;
   hud();
 }
@@ -753,7 +838,7 @@ function hud() {
   const st = $('#status');
   if (state === 'over') st.textContent = '';
   else if (G.side === 0 && !G.moving) { st.textContent = 'YOUR TURN'; st.dataset.side = 0; }
-  else if (G.side === 1 && !G.moving) { st.textContent = 'USA IS THINKING…'; st.dataset.side = 1; }
+  else if (G.side === 1 && !G.moving) { st.textContent = NAMES[1] + ' IS THINKING…'; st.dataset.side = 1; }
   $('#hint').hidden = !(G.side === 0 && !G.moving && state === 'aim');
   document.body.classList.toggle('my-turn', G.side === 0 && !G.moving && state === 'aim');
 }
@@ -908,7 +993,8 @@ function finish(over) {
     $('#end-flag').src = w >= 0 ? flags[w].toDataURL() : '';
     $('#end-flag').hidden = w < 0;
     $('#end-title').textContent = w < 0 ? 'DRAW' : NAMES[w] + ' WINS';
-    $('#end-sub').textContent = w === 0 ? 'You beat the USA!' : w === 1 ? 'The USA beat you. Try again!' : 'Nobody wins this time.';
+    const them = CPU === 'United States' ? 'the USA' : CPU;
+    $('#end-sub').textContent = w === 0 ? `You beat ${them}!` : w === 1 ? `${them[0].toUpperCase() + them.slice(1)} beat you. Try again!` : 'Nobody wins this time.';
     $('#end-why').textContent = {eliminated: 'All balls destroyed', time: `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%`}[over.reason];
     e.hidden = false; $('#again').focus({preventScroll: true});
   }, 1100);
@@ -1070,14 +1156,14 @@ function track(kind, reason) {
     durationS: Math.round((Date.now() - play.startedAt) / 1000), lastAt: Date.now()};
   let body;
   if (kind === 'start') body = {...base, result: 'playing', startedAt: play.startedAt, day: new Date().toISOString().slice(0, 10),
-    device: isPhone ? 'phone' : 'computer', arena: play.arena, theme: play.theme};
+    device: isPhone ? 'phone' : 'computer', arena: play.arena, theme: play.theme, country: play.country, opponent: play.opponent};
   else if (kind === 'turn') body = base;
   else body = {...base, result: kind, reason: reason || 'left', endedAt: Date.now()};
   const id = play.id;
   // Google Analytics (seulement sur le vrai site : sur claude.ai, gtag n'existe pas)
   if (typeof window.gtag === 'function' && kind !== 'turn') {
     const ev = kind === 'start' ? 'game_start' : kind === 'abandon' ? 'game_abandon' : 'game_end';
-    window.gtag('event', ev, {arena: play.arena, theme: play.theme, device_type: isPhone ? 'phone' : 'computer',
+    window.gtag('event', ev, {country: play.country, opponent: play.opponent, arena: play.arena, theme: play.theme, device_type: isPhone ? 'phone' : 'computer',
       result: kind === 'start' ? undefined : kind, end_reason: kind === 'start' ? undefined : (reason || 'left'),
       duration_s: base.durationS, turn: base.turn, territory_pct: base.pct, cpu_territory_pct: base.cpuPct,
       transport_type: kind === 'abandon' ? 'beacon' : undefined});
@@ -1091,8 +1177,53 @@ function track(kind, reason) {
 }
 addEventListener('pagehide', () => { if (play && play.started && state !== 'over') track('abandon'); });
 
+/* ------------------------------ accueil : choix du pays ------------------------------ */
+
+let saved = null; try { saved = localStorage.getItem('cc-country'); } catch (e) {}
+if (saved && COUNTRIES.some(c => c.name === saved)) PLAYER = saved; else saved = null;
+let picked = null;
+function showPicker() {
+  const gridEl = $('#pick-grid');
+  if (!gridEl.children.length) {
+    for (const c of [...COUNTRIES].sort((a, b) => a.name.localeCompare(b.name))) {
+      const bt = document.createElement('button');
+      bt.type = 'button'; bt.className = 'pick'; bt.dataset.name = c.name; bt.setAttribute('aria-pressed', 'false');
+      const im = new Image(); im.src = flagOf(c.name).toDataURL(); im.alt = '';
+      const sp = document.createElement('span'); sp.textContent = c.name === 'United States' ? 'USA' : c.name;
+      bt.append(im, sp); bt.addEventListener('click', () => choose(c.name)); gridEl.append(bt);
+    }
+  }
+  choose(saved || null);
+  $('#picker').hidden = false;
+  document.body.classList.add('picking');
+}
+function choose(name) {
+  picked = name;
+  for (const b of $('#pick-grid').children) b.setAttribute('aria-pressed', String(b.dataset.name === name));
+  const big = $('#pick-big');
+  big.classList.remove('pop'); void big.offsetWidth;
+  if (name) {
+    big.src = flagOf(name).toDataURL(); big.hidden = false; big.classList.add('pop');
+    $('#pick-q').hidden = true;
+    $('#pick-name').textContent = name === 'United States' ? 'USA' : name;
+    $('#pick-ring').style.setProperty('--ring', FAM[COUNTRIES.find(c => c.name === name).bar]);
+    if (AC) tone(392 + Math.random() * 120, 0.08, 0.15);
+  } else { big.hidden = true; $('#pick-q').hidden = false; $('#pick-name').textContent = 'Pick your country'; }
+  $('#pick-go').disabled = !name;
+}
+$('#pick-go').addEventListener('click', () => {
+  if (!picked) return;
+  audio();
+  PLAYER = saved = picked; try { localStorage.setItem('cc-country', picked); } catch (e) {}
+  if (typeof window.gtag === 'function') window.gtag('event', 'country_picked', {country: picked});
+  $('#picker').hidden = true; document.body.classList.remove('picking');
+  newMatch(); resize();
+});
+for (const id of ['#change', '#end-change']) $(id).addEventListener('click', () => { audio(); showPicker(); });
+
 newMatch();
 resize();
+if (!saved && location.hash !== '#stats') showPicker();
 requestAnimationFrame(frame);
 
 // Page des stats (lien #stats), protégée par un mot de passe.
@@ -1168,6 +1299,17 @@ function renderStats(rows) {
   const turns = Array.from({length: 10}, (_, i) => ({label: i === 9 ? '10+' : String(i + 1), v: ab.filter(r => Math.min(10, (r.turn || 0) + 1) === i + 1).length}));
   $('#c-ab').innerHTML = vbars(turns, 'abandons');
 
+  // pays choisis et adversaires
+  const cnt = {};
+  for (const r of rows) if (r.country) cnt[r.country] = (cnt[r.country] || 0) + 1;
+  const topC = Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 8), maxC = topC.length ? topC[0][1] : 1;
+  $('#c-country').innerHTML = topC.length ? hbars(topC.map(([n, v]) => ({label: n === 'United States' ? 'USA' : n, v: v / maxC, txt: `${v} games`})))
+    : '<p class="sub">No games with a picked country yet</p>';
+  $('#c-opp').innerHTML = hbars([['USA', r => r.opponent === 'United States'], ['Other countries', r => r.opponent && r.opponent !== 'United States']].map(([l, f]) => {
+    const g = done.filter(f), w = g.filter(r => r.result === 'win').length;
+    return {label: l, v: g.length ? w / g.length : 0, txt: g.length ? `${Math.round(w / g.length * 100)}% · ${w}/${g.length}` : 'no games'};
+  }));
+
   // fins de partie
   const why = {eliminated: 'All balls destroyed', time: 'Time ran out (most territory)'};
   $('#c-why').innerHTML = hbars(Object.entries(why).map(([k, l]) => {
@@ -1184,7 +1326,8 @@ function renderStats(rows) {
     <td class="num">${(r.turn || 0) + (r.result === 'abandon' || r.result === 'playing' ? 1 : 0)}</td>
     <td class="num">${fmtDur(r.durationS || 0)}</td>
     <td>${esc(ARENA_NAMES[r.arena] || r.arena || '')}</td>
-    <td>${r.device === 'phone' ? 'Phone' : 'Computer'}</td></tr>`).join('') || '<tr><td colspan="7" class="empty">No games yet</td></tr>';
+    <td>${esc((r.country === 'United States' ? 'USA' : r.country) || '–')} vs ${esc((r.opponent === 'United States' ? 'USA' : r.opponent) || '–')}</td>
+    <td>${r.device === 'phone' ? 'Phone' : 'Computer'}</td></tr>`).join('') || '<tr><td colspan="8" class="empty">No games yet</td></tr>';
 }
 
 // barres verticales en SVG, une série
