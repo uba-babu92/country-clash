@@ -140,6 +140,7 @@ body.picking { overflow: hidden; }
 #inapp-x { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(0, 0, 0, .14); font-size: 11px; margin-left: 2px; }
 #inapp-tip { margin: 0; background: #141416; color: #F4F4F2; border: 1px solid #3A3A40; border-radius: 12px; padding: 8px 12px; font: 500 13px/1.35 system-ui, sans-serif; text-align: right; }
 #inapp-tip b { color: #FFD60A; }
+#inapp-copy { margin-left: 6px; border: 1px solid #FFD60A; background: none; color: #FFD60A; border-radius: 10px; padding: 2px 8px; font: 700 12px system-ui, sans-serif; }
 @keyframes nudge { 50% { transform: translate(2px, -2px); } }
 body.inapp #game { padding-top: calc(12px + 34px); }
 @media (prefers-reduced-motion: reduce) { #inapp-btn .arr { animation: none; } }
@@ -278,14 +279,18 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
   document.getElementById('inapp-btn').addEventListener('click', () => {
     const url = location.href;
     if (typeof window.gtag === 'function') window.gtag('event', 'open_in_browser_tap', {app, browser});
-    try {
-      if (ios) window.open('x-safari-' + url, '_blank');
-      else location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
-    } catch (e) {}
-    tip.innerHTML = ios ? 'If nothing happens: tap <b>•••</b> at the top, then <b>Open in Safari</b>.'
-      : 'If nothing happens: tap <b>⋮</b> at the top, then <b>Open in Chrome</b>.';
+    // iPhone : Instagram bloque toute sortie vers Safari (écran blanc) → on montre seulement comment faire.
+    // Android : l'ouverture de Chrome par « intent » marche dans la plupart des applis.
+    if (android) try { location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end'; } catch (e) {}
+    tip.innerHTML = (ios ? 'Tap <b>•••</b> at the top, then <b>Open in Safari</b>.' : 'If nothing happens: tap <b>⋮</b> at the top, then <b>Open in Chrome</b>.')
+      + ' <button type="button" id="inapp-copy">Copy link</button>';
     tip.hidden = false;
-    clearTimeout(tip._t); tip._t = setTimeout(() => { tip.hidden = true; }, 5000);   // ne cache pas le jeu longtemps
+    document.getElementById('inapp-copy').onclick = e => {
+      e.stopPropagation();
+      const done = () => { e.target.textContent = 'Copied ✓'; };
+      try { navigator.clipboard.writeText(url).then(done, () => { prompt('Copy this link', url); }); } catch (err) { done(); }
+    };
+    clearTimeout(tip._t); tip._t = setTimeout(() => { tip.hidden = true; }, 7000);   // ne cache pas le jeu longtemps
   });
 })();
 </script>
