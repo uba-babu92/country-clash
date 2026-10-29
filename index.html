@@ -79,7 +79,7 @@ body.my-turn #arena { cursor: grab; }
 #hint b { color: var(--g-accent); }
 #hint.shake { animation: shake .35s; }
 @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
-.links { display: flex; justify-content: center; gap: 18px; font: 600 13px var(--display); }
+.links { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 16px; font: 600 13px var(--display); }
 .links a { color: var(--g-muted); text-decoration: none; } .links a:hover { color: var(--g-fg); text-decoration: underline; }
 .spacer { flex: 1; }
 .icon-btn { background: transparent; color: var(--g-fg); border: 2px solid color-mix(in srgb, var(--g-fg) 30%, transparent); border-radius: 22px;
@@ -214,7 +214,7 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
     <button class="icon-btn" id="new" type="button" aria-label="New match">↻</button>
     <button class="icon-btn" id="mute" type="button" aria-label="Sound on or off" aria-pressed="false">🔊</button>
   </footer>
-  <nav class="links"><a href="how-to-play.html">How to play</a><a href="privacy.html">Privacy</a></nav>
+  <nav class="links"><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a></nav>
 </main>
 
 <section id="picker" hidden aria-label="Pick your country">

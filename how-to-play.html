@@ -68,13 +68,36 @@ svg .arr { fill: var(--yellow); stroke: var(--fg); stroke-width: 2; }
 svg .ball { stroke: #fff; stroke-width: 2.5; }
 svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
 @media (max-width: 340px) { .steps { grid-template-columns: 1fr; } }
+/* menu : sur téléphone, les liens passent sous le logo */
+.navlinks { align-items: center; }
+/* contact */
+.contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 14px; margin-top: 20px; }
+.contact-cards .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 18px; min-width: 0; }
+.contact-cards .big { font: 800 20px/1.3 var(--display); margin: 6px 0; overflow-wrap: anywhere; }
+.contact-cards p:last-child { margin: 0; color: var(--muted); font-size: 15px; }
+/* liste des pays */
+.flag-grid { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; margin: 10px 0 0; }
+.flag-grid li { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font-size: 14px; font-weight: 600; }
+.flag-grid img { width: 64px; height: 64px; }
+/* paires de drapeaux */
+.pair { display: flex; gap: 22px; margin-top: 36px; }
+.pair figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; }
+.pair img { width: 96px; height: 96px; }
+.pair + h2 { margin-top: 12px; }
+/* liste des articles */
+.articles { list-style: none; padding: 0; display: grid; gap: 12px; margin-top: 24px; }
+.articles li { margin: 0; max-width: none; }
+.articles a { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; color: var(--fg); text-decoration: none; }
+.articles a:hover { border-color: var(--fg); }
+.articles strong { font: 800 20px/1.25 var(--display); }
+.articles span:last-child { color: var(--muted); font-size: 15px; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <nav>
     <a class="brand" href="index.html"><i aria-hidden="true"></i>Country Clash</a>
-    <div class="navlinks"><a href="how-to-play.html" aria-current="page">How to play</a><a href="privacy.html">Privacy</a><a class="play" href="index.html">Play</a></div>
+    <div class="navlinks"><a href="how-to-play.html" aria-current="page">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a class="play" href="index.html">Play</a></div>
   </nav>
 
   <h1>How to play Country Clash</h1>
@@ -113,14 +136,18 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
     <div><strong>On a phone</strong>Put your finger on one of your balls, drag it back, then lift your finger to shoot.</div>
     <div><strong>On a computer</strong>Click one of your balls, drag the mouse back, then release the button to shoot.</div>
   </div>
+  <p>You have <strong>5 seconds</strong> to shoot on each turn. Wait too long and the turn goes to your rival.</p>
   <p>The arrow shows where your ball will go and the number shows the power. Drag back to a very short distance and let go to cancel.</p>
 
   <h2>How a match ends</h2>
   <ul>
-    <li><strong>The clock runs out.</strong> Each match lasts one minute. The clock starts with your first shot. At 0:00, the country holding the most territory wins.</li>
+    <li><strong>The clock runs out.</strong> The match clock starts at 1:00 with your first shot and runs fast. At 0:00, the country holding the most territory wins.</li>
     <li><strong>All balls destroyed.</strong> If a country loses its three balls, the other country wins at once and the loser's territory is wiped.</li>
   </ul>
   <p>The score at the top shows the share of the arena each country holds. The small flags under each name are the balls still in play.</p>
+
+  <h2>Pick your country</h2>
+  <p>The first time you play, choose your country from the 62 flags: swipe or use the arrows, then press Play. Your rival is picked at random. You can change your country at any time with the flag button under the arena.</p>
 
   <h2>Arenas</h2>
   <p>Every match is played in an arena of the same size, picked at random: a square, a circle, or a square with obstacles (a block, a disc or two blocks). Balls bounce off the obstacles, and a trail that bends around an obstacle can still close a zone.</p>
@@ -136,7 +163,7 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
   </div>
 
   <footer>
-    <span>© 2026 Country Clash</span><a href="index.html">Play</a><a href="how-to-play.html">How to play</a><a href="privacy.html">Privacy policy</a>
+    <span>© 2026 Country Clash</span><a href="index.html">Play</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
   </footer>
 </div>
 </body>
