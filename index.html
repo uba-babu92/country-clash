@@ -851,7 +851,7 @@ let G, T, themeName, lastTheme, lastArena, flags, state = 'aim', aim = null, ai 
 let fx = {pops: [], shards: [], confetti: [], rings: []}, clock = 0, play = null, muted = false;
 let timeLeft = GAME_TIME, timerOn = false, lastTick = 99;
 const TIME_SPEED = 60 / 45;
-const TURN_LIMIT = 3.5;       // 3,5 s sans jouer : le tour passe à l'ordi (Bazil, 29/10)
+const TURN_LIMIT = 5;         // 5 s sans jouer : le tour passe à l'ordi (Bazil, 29/10 ; avant 3,5 s, trop court)
 let turnWait = 0, slowMsgUntil = 0;   // le chrono affiche 1:00 mais la partie dure 45 vraies secondes (Bazil, 29/10)
 
 /* ------------------------------ ralentis (comme les vidéos) ------------------------------ */
