@@ -154,7 +154,15 @@ body.inapp #game { padding-top: calc(12px + 34px); }
 #logo { background: none; border: 0; padding: 2px 0; font: 800 17px/1 var(--display); letter-spacing: -.01em; }
 #logo span:first-child { color: #FF3B30; } #logo span:last-child { color: #2F7BFF; }
 #logo:hover { opacity: .8; }
-#mode-tag { font: 500 11px var(--mono); letter-spacing: .1em; color: var(--g-muted); }
+#mode-tag { font: 500 11px var(--mono); letter-spacing: .1em; color: var(--g-muted); white-space: nowrap; }
+.topright { display: flex; align-items: center; gap: 10px; min-width: 0; }
+#menu { flex: none; height: 32px; padding: 0 14px; border-radius: 16px; border: 2px solid var(--g-accent); background: none; color: var(--g-accent);
+  font: 800 13px var(--display); letter-spacing: .06em; }
+#menu:hover { background: var(--g-accent); color: var(--g-bg); }
+@media (max-width: 380px) { #mode-tag { display: none; } }
+#pick-back { align-self: flex-start; background: #18181B; border: 1px solid #2E2E33; border-radius: 18px; height: 36px; padding: 0 14px;
+  color: #F4F4F2; font: 700 14px system-ui, sans-serif; flex: none; }
+#pick-back:hover { color: #FFD60A; }
 /* mode et niveau dans l'accueil */
 .seg { display: flex; background: #18181B; border: 1px solid #2E2E33; border-radius: 22px; padding: 3px; gap: 2px; flex: none; }
 .seg button { border: 0; background: none; color: #A9A8A2; border-radius: 18px; height: 36px; padding: 0 16px; font: 800 14px var(--display); letter-spacing: .04em; }
@@ -229,7 +237,7 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
 </style>
 
 <main id="game">
-  <div class="topbar"><button id="logo" type="button" aria-label="Back to country selection"><span>COUNTRY</span> <span>CLASH</span></button><span id="mode-tag">VS CPU · MEDIUM</span></div>
+  <div class="topbar"><button id="logo" type="button" aria-label="Back to country selection"><span>COUNTRY</span> <span>CLASH</span></button><div class="topright"><span id="mode-tag">VS CPU · MEDIUM</span><button id="menu" type="button" aria-label="Menu: country, mode and level">☰ MENU</button></div></div>
   <header class="top">
     <div class="team"><img id="f0" alt="Turkey flag"><div class="txt"><span class="pct" id="p0">0%</span><span class="name" id="n0">TURKEY · YOU</span><span class="balls" id="balls0"></span></div></div>
     <div class="mid"><div id="turn" aria-label="Time left">1:00</div><div id="status" aria-live="polite">YOUR TURN</div><div id="turnbar" hidden aria-hidden="true"><i></i></div></div>
@@ -258,6 +266,7 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
 </main>
 
 <section id="picker" hidden aria-label="Pick your country">
+  <button id="pick-back" type="button" hidden>← Back to game</button>
   <h1 class="logo"><span>COUNTRY</span> <span>CLASH</span></h1>
   <p class="pick-eyebrow">CHOOSE YOUR COUNTRY</p>
   <div class="pick-row">
@@ -952,7 +961,7 @@ let G, T, themeName, lastTheme, lastArena, flags, state = 'aim', aim = null, ai 
 let fx = {pops: [], shards: [], confetti: [], rings: []}, clock = 0, play = null, muted = false;
 let timeLeft = GAME_TIME, timerOn = false, lastTick = 99;
 const TIME_SPEED = 60 / 45;
-const TURN_LIMIT = 5;         // 5 s sans jouer : le tour passe à l'ordi (Bazil, 29/10 ; avant 3,5 s, trop court)
+const TURN_LIMIT = 8;         // VS CPU : 8 s sans jouer = le tour passe à l'ordi (Bazil, 30/10 ; avant 3,5 puis 5 s, trop court). 2 joueurs : pas de limite
 let turnWait = 0, slowMsgUntil = 0;   // le chrono affiche 1:00 mais la partie dure 45 vraies secondes (Bazil, 29/10)
 
 /* ------------------------------ ralentis (comme les vidéos) ------------------------------ */
@@ -1065,7 +1074,7 @@ function hud() {
   else if (MODE === '2p' && !G.moving) { st.textContent = NAMES[G.side] + "'S TURN"; st.dataset.side = 0; }
   else if (G.side === 0 && !G.moving) { st.textContent = 'YOUR TURN'; st.dataset.side = 0; }
   else if (G.side === 1 && !G.moving) { st.textContent = 'THINKING…'; st.dataset.side = 1; }
-  const myTurn = timerOn && human(G.side) && !G.moving && state === 'aim' && !G.over;
+  const myTurn = timerOn && MODE !== '2p' && human(G.side) && !G.moving && state === 'aim' && !G.over;
   $('#turnbar').hidden = !myTurn;
   if (myTurn) $('#turnbar i').style.transform = `scaleX(${Math.max(0, 1 - turnWait / TURN_LIMIT)})`;
   $('#hint').classList.toggle('rules', tutoDone);   // après le 1er tir : la règle du jeu au lieu des commandes
@@ -1241,7 +1250,9 @@ function winSound(w) { if (w >= 0) cheer(); const f = NOTES[Math.max(0, w)]; [1,
 let acc = 0, prev = null;
 function frame(now) {
   requestAnimationFrame(frame);
-  const dt = prev ? Math.min(0.05, (now - prev) / 1000) : 0; prev = now; clock += dt;
+  const dt = prev ? Math.min(0.05, (now - prev) / 1000) : 0; prev = now;
+  if (!$('#picker').hidden || !$('#onboard').hidden) return;   // menu ouvert : la partie est en pause
+  clock += dt;
   if (nextLeft !== null && $('#picker').hidden && $('#onboard').hidden) {   // compte à rebours de fin (rAF s'arrête tout seul si l'onglet est caché)
     nextLeft -= dt;
     $('#again').style.setProperty('--p', Math.min(1, 1 - nextLeft / NEXT_IN));
@@ -1259,7 +1270,7 @@ function frame(now) {
     }
     hud();
   }
-  if (timerOn && human(G.side) && !G.moving && state === 'aim' && !G.over && !G.timeUp) {
+  if (timerOn && MODE !== '2p' && human(G.side) && !G.moving && state === 'aim' && !G.over && !G.timeUp) {
     turnWait += dt;
     if (turnWait >= TURN_LIMIT) passTurn();
   }
@@ -1531,7 +1542,10 @@ function placeSlots(shift, anim) {
     im.style.opacity = op; im.style.zIndex = 10 - Math.abs(Math.round(o));
   });
 }
-function showPicker() {
+let backState = null;   // réglages au moment d'ouvrir le menu (pour « Back to game »)
+function showPicker(fromGame) {
+  backState = fromGame ? {MODE, LEVEL, PLAYER, PLAYER2} : null;
+  $('#pick-back').hidden = !fromGame;
   if (!slots) {
     const st = $('#pick-stage');
     slots = Array.from({length: 7}, (_, i) => {
@@ -1629,7 +1643,12 @@ $('#ob-skip').addEventListener('click', closeOnboard);
 let obSwipe = null;
 $('#ob-track').addEventListener('pointerdown', e => { obSwipe = e.clientX; });
 $('#ob-track').addEventListener('pointerup', e => { if (obSwipe === null) return; const dx = e.clientX - obSwipe; obSwipe = null; if (Math.abs(dx) > 35) obShow(obIdx + (dx < 0 ? 1 : -1)); });
-for (const id of ['#change', '#end-change', '#logo']) $(id).addEventListener('click', () => { audio(); nextLeft = null; $('#next-in').textContent = ''; showPicker(); });
+for (const id of ['#change', '#end-change', '#logo', '#menu']) $(id).addEventListener('click', () => { audio(); if (state === 'over') { nextLeft = null; $('#next-in').textContent = ''; } aim = null; showPicker(true); });
+$('#pick-back').addEventListener('click', () => {   // reprendre la partie là où elle était, avec les réglages d'avant
+  audio();
+  if (backState) ({MODE, LEVEL, PLAYER, PLAYER2} = backState);
+  $('#picker').hidden = true; document.body.classList.remove('picking'); resize();
+});
 $('.end-help').addEventListener('click', () => { nextLeft = null; });
 
 newMatch();
