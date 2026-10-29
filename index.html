@@ -95,6 +95,10 @@ body.my-turn #arena { cursor: grab; }
 #end-flag { width: 110px; height: 110px; }
 #end-title { font-size: clamp(32px, 8vw, 52px); font-weight: 800; margin: 0; line-height: 1; text-wrap: balance; }
 #end-sub { font-weight: 600; font-size: 17px; margin: 0; }
+#again { position: relative; overflow: hidden; --p: 0; }
+#again .fill { position: absolute; inset: 0; background: rgba(0, 0, 0, .18); transform-origin: left; transform: scaleX(var(--p)); }
+#again .lbl { position: relative; }
+#next-in { margin: 0; font: 500 13px var(--mono); color: var(--g-muted); min-height: 1.2em; font-variant-numeric: tabular-nums; }
 #end .end-help { color: var(--g-muted); font-weight: 600; font-size: 14px; margin-top: 4px; }
 #end-why { font: 500 13px var(--mono); color: var(--g-muted); margin: 0; }
 #again { margin-top: 10px; background: var(--g-accent); color: #141416; border: 0; border-radius: 28px; height: 56px; padding: 0 34px;
@@ -199,7 +203,8 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
       <h2 id="end-title">TURKEY WINS</h2>
       <p id="end-sub"></p>
       <p id="end-why"></p>
-      <button id="again" type="button">PLAY AGAIN</button>
+      <button id="again" type="button"><span class="fill" aria-hidden="true"></span><span class="lbl">PLAY AGAIN</span></button>
+      <p id="next-in" aria-live="polite"></p>
       <div class="end-links"><button class="linkish" id="end-change" type="button">Change country</button><a class="end-help" href="how-to-play.html">How to play</a></div>
     </div></div>
   </div>
@@ -921,7 +926,8 @@ function newMatch() {
   flags = [flagOf(PLAYER, ring), flagOf(CPU, ring)];
   G = newGame([PLAYER, CPU], arena);
   fx = {pops: [], shards: [], confetti: [], rings: []};
-  gridDirty = true; flashUntil = 0; turnWait = 0;
+  gridDirty = true; flashUntil = 0; turnWait = 0; nextLeft = null;
+  $('#again').style.setProperty('--p', 0); $('#next-in').textContent = '';
   state = 'aim'; aim = null; ai = null; slow = null; timeLeft = GAME_TIME; timerOn = false; lastTick = 99;
   const root = document.documentElement.style;
   for (const [k, v] of Object.entries({bg: T.BG, fg: T.FG, muted: T.MUTED, accent: T.ACCENT, empty: T.EMPTY, line: T.LINE || T.FG}))
@@ -1003,6 +1009,9 @@ cv.addEventListener('pointercancel', () => { aim = null; });
 function nudge() { const h = $('#hint'); h.classList.remove('shake'); void h.offsetWidth; h.classList.add('shake'); }
 
 $('#again').addEventListener('click', () => { audio(); newMatch(); });
+// fin de partie : comme Netflix, la partie suivante se lance toute seule après 5 s
+const NEXT_IN = 5;
+let nextLeft = null;
 $('#new').addEventListener('click', () => { audio(); newMatch(); });
 $('#mute').addEventListener('click', () => { muted = !muted; $('#mute').textContent = muted ? '🔇' : '🔊'; $('#mute').setAttribute('aria-pressed', muted); });
 
@@ -1134,6 +1143,12 @@ let acc = 0, prev = null;
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = prev ? Math.min(0.05, (now - prev) / 1000) : 0; prev = now; clock += dt;
+  if (nextLeft !== null && $('#picker').hidden) {   // compte à rebours de fin (rAF s'arrête tout seul si l'onglet est caché)
+    nextLeft -= dt;
+    $('#again').style.setProperty('--p', Math.min(1, 1 - nextLeft / NEXT_IN));
+    $('#next-in').textContent = 'Next match in ' + Math.max(1, Math.ceil(nextLeft)) + '…';
+    if (nextLeft <= 0) { nextLeft = null; newMatch(); }
+  }
   const cam = camNow();
   if (timerOn && state !== 'over' && !G.timeUp) {
     if (cam.speed > 0.95) timeLeft = Math.max(0, timeLeft - dt * TIME_SPEED);   // pause pendant les ralentis
@@ -1198,7 +1213,9 @@ function finish(over) {
     fx.confetti.push({x: WORLD / 2, y: WORLD / 2, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 400, t: clock,
       col: [TEAM_COL[w], '#FFFFFF', T.ACCENT][i % 3], r: Math.random() * 6, s: 6 + Math.random() * 8});
   }
+  const Gend = G;
   setTimeout(() => {
+    if (G !== Gend) return;                         // une nouvelle partie a déjà été lancée
     const e = $('#end');
     $('#end-flag').src = w >= 0 ? flags[w].toDataURL() : '';
     $('#end-flag').hidden = w < 0;
@@ -1207,6 +1224,7 @@ function finish(over) {
     $('#end-sub').textContent = w === 0 ? `You beat ${them}!` : w === 1 ? `${them[0].toUpperCase() + them.slice(1)} beat you. Try again!` : 'Nobody wins this time.';
     $('#end-why').textContent = {eliminated: 'All balls destroyed', time: `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%`}[over.reason];
     e.hidden = false; $('#again').focus({preventScroll: true});
+    nextLeft = NEXT_IN;
   }, 1100);
   hud();
 }
@@ -1461,7 +1479,8 @@ $('#pick-go').addEventListener('click', () => {
   $('#picker').hidden = true; document.body.classList.remove('picking');
   newMatch(); resize();
 });
-for (const id of ['#change', '#end-change']) $(id).addEventListener('click', () => { audio(); showPicker(); });
+for (const id of ['#change', '#end-change']) $(id).addEventListener('click', () => { audio(); nextLeft = null; $('#next-in').textContent = ''; showPicker(); });
+$('.end-help').addEventListener('click', () => { nextLeft = null; });
 
 newMatch();
 resize();
