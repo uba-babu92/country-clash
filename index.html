@@ -117,17 +117,19 @@ body.my-turn #arena { cursor: grab; }
 #end .card.ranked #end-title { font-size: clamp(26px, 6.5vw, 40px); }
 #end .card.ranked #end-why { display: none; }
 #end .card.ranked #again { margin-top: 6px; height: 50px; }
-#name-form { display: flex; flex-direction: column; gap: 6px; width: min(300px, 100%); margin-top: 4px; }
-#name-form label { font-weight: 800; font-size: 17px; color: var(--g-accent); }
-.name-row { display: flex; gap: 6px; }
-#name-in { flex: 1; min-width: 0; height: 46px; border-radius: 12px; border: 2px solid color-mix(in srgb, var(--g-fg) 30%, transparent); background: var(--g-bg); color: var(--g-fg);
-  font: 700 16px var(--mono); padding: 0 12px; }
-#name-in:focus { border-color: var(--g-accent); outline: none; }
-.name-row button { height: 46px; border: 0; border-radius: 12px; padding: 0 16px; background: var(--g-fg); color: var(--g-bg); font-weight: 800; font-size: 16px; }
-#name-err { margin: 0; min-height: 1.2em; color: #FF6B60; font: 600 14px system-ui, sans-serif; }
-#name-err:empty { min-height: 0; }
-.name-note { margin: 0; font: 500 12px system-ui, sans-serif; color: var(--g-muted); }
-.name-note .linkish { font-size: 12px; }
+/* écran du pseudo (après le choix du pays) */
+#name-screen { position: fixed; inset: 0; z-index: 25; background: #0B0B0D; color: #F4F4F2; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+  box-sizing: border-box; padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); text-align: center; }
+#ns-flag { width: 120px; height: 120px; }
+#ns-form { display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(100%, 360px); }
+#ns-form label { font: 800 clamp(24px, 6.5vw, 32px)/1.1 var(--display); text-wrap: balance; }
+#ns-in { width: 100%; box-sizing: border-box; height: 56px; border-radius: 14px; border: 2px solid #3A3A40; background: #18181B; color: #F4F4F2; font: 700 20px var(--mono); text-align: center; }
+#ns-in:focus { border-color: #FFD60A; outline: none; }
+#ns-err { margin: 0; min-height: 1.2em; color: #FF6B60; font: 600 15px system-ui, sans-serif; }
+#ns-go { width: 100%; height: 60px; border: 0; border-radius: 30px; background: #FFD60A; color: #141416; font: 800 24px var(--display); letter-spacing: .05em; box-shadow: 0 6px 0 #B89400; }
+.ns-note { margin: 0; color: #A9A8A2; font: 500 14px/1.5 system-ui, sans-serif; }
+#name-screen .linkish, #pick-player { color: #A9A8A2; font-size: 15px; }
+#pick-player b { color: #FFD60A; }
 #rank-box { width: min(280px, 100%); display: flex; flex-direction: column; gap: 4px; }
 #rank-gain { margin: 0; font-weight: 800; font-size: 22px; }
 #rank-gain.gain { color: var(--g-accent); animation: pop .5s cubic-bezier(.2, 1.4, .4, 1); }
@@ -295,12 +297,6 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
       <h2 id="end-title">TURKEY WINS</h2>
       <p id="end-sub"></p>
       <p id="end-why"></p>
-      <form id="name-form" hidden autocomplete="off">
-        <label for="name-in">Enter your name for the ranking</label>
-        <div class="name-row"><input id="name-in" maxlength="16" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Your name"><button type="submit">OK</button></div>
-        <p id="name-err" aria-live="polite"></p>
-        <p class="name-note">2–16 letters or numbers · no email, no account · <button type="button" class="linkish" id="name-skip">Not now</button></p>
-      </form>
       <div id="rank-box" hidden>
         <p id="rank-gain"></p>
         <ol id="rank-top" aria-label="Top countries"></ol>
@@ -339,6 +335,19 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
     <button type="button" data-level="easy">EASY</button><button type="button" data-level="medium">MEDIUM</button><button type="button" data-level="hard">HARD</button>
   </div>
   <button id="pick-go" type="button">PLAY</button>
+  <button id="pick-player" class="linkish" type="button" hidden></button>
+</section>
+
+<section id="name-screen" hidden aria-label="Your name for the ranking">
+  <img id="ns-flag" alt="">
+  <form id="ns-form" autocomplete="off">
+    <label for="ns-in">Enter your name for the ranking</label>
+    <input id="ns-in" maxlength="16" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Your name">
+    <p id="ns-err" aria-live="polite"></p>
+    <button id="ns-go" type="submit">PLAY</button>
+  </form>
+  <p class="ns-note">2–16 letters or numbers · no email, no account.<br>Each win scores points for your country.</p>
+  <button id="ns-skip" class="linkish" type="button">Play without ranking</button>
 </section>
 
 <section id="onboard" hidden aria-label="How to play">
@@ -1388,7 +1397,7 @@ let acc = 0, prev = null;
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = prev ? Math.min(0.05, (now - prev) / 1000) : 0; prev = now;
-  if (!$('#picker').hidden || !$('#onboard').hidden) return;   // menu ouvert : la partie est en pause
+  if (!$('#picker').hidden || !$('#onboard').hidden || !$('#name-screen').hidden) return;   // menu ouvert : la partie est en pause
   clock += dt;
   if (nextLeft !== null && $('#picker').hidden && $('#onboard').hidden) {   // compte à rebours de fin (rAF s'arrête tout seul si l'onglet est caché)
     nextLeft -= dt;
@@ -1495,26 +1504,9 @@ function finish(over) {
 const label = n => n === 'United States' ? 'USA' : n;
 function rankEnd(w, p) {
   const card = $('#end .card'), G0 = G;
-  $('#rank-box').hidden = true; $('#name-form').hidden = true; card.classList.remove('ranked'); $('#end').classList.remove('ranked');
+  $('#rank-box').hidden = true; card.classList.remove('ranked'); $('#end').classList.remove('ranked');
   const counts = p.mode === 'cpu' && w === 0;
-  if (counts && !RANK.name()) { askName(p, G0); return; }
-  if (counts) submitWin(p, G0); else showRanking(p, G0, null, null);
-}
-function askName(p, G0) {
-  nextLeft = null; $('#next-in').textContent = '';            // pas de partie suivante tant qu'il écrit
-  $('#end .card').classList.add('ranked'); $('#end').classList.add('ranked');
-  $('#name-form').hidden = false; $('#name-err').textContent = ''; $('#name-in').value = '';
-  if (!isPhone) $('#name-in').focus({preventScroll: true});
-  $('#name-form').onsubmit = e => {
-    e.preventDefault();
-    const v = $('#name-in').value.trim(), bad = RANK.nameProblem(v);
-    if (bad) { $('#name-err').textContent = bad; tone(196, 0.1, 0.15, 'square'); return; }
-    RANK.setName(v); $('#name-form').hidden = true; $('#name-in').blur();
-    nextLeft = nextTotal = NEXT_IN;                            // la partie suivante repart
-    if (typeof window.gtag === 'function') window.gtag('event', 'ranking_name_set');
-    submitWin(p, G0);
-  };
-  $('#name-skip').onclick = () => { $('#name-form').hidden = true; nextLeft = nextTotal = NEXT_IN; showRanking(p, G0, null, 'skip'); };
+  if (counts && RANK.name()) submitWin(p, G0); else showRanking(p, G0, null, counts ? 'noname' : null);
 }
 function submitWin(p, G0) {
   RANK.addWin(p.country, p.level)
@@ -1527,7 +1519,7 @@ function showRanking(p, G0, res, why) {
     const box = $('#rank-box'), top = $('#rank-top');
     if (!data && !res) { box.hidden = true; return; }           // serveur injoignable : on n'affiche rien
     $('#rank-gain').textContent = res ? `+${res.points} for ${label(p.country)}!`
-      : {limit: 'Max 30 points per hour. Take a break!', too_fast: 'Too fast! Wait a few seconds.', skip: 'Add your name next time to score points.'}[why] || '';
+      : {limit: 'Max 30 points per hour. Take a break!', too_fast: 'Too fast! Wait a few seconds.', noname: 'Add your name in ☰ MENU to score points.'}[why] || '';
     $('#rank-gain').className = res ? 'gain' : 'warn';
     top.replaceChildren();
     const list = (data && data.countries) || [], mine = list.findIndex(c => c.country === p.country);
@@ -1796,6 +1788,8 @@ function pickerUI() {
   $('#pick-note').hidden = !bad;
   $('#pick-go').disabled = bad;
   $('#pick-go').textContent = MODE === '2p' && pickStep === 1 ? 'NEXT' : 'PLAY';
+  if (typeof nameLine === 'function') nameLine();
+  $('#pick-player').hidden = $('#pick-player').hidden || pickStep === 2;
 }
 for (const b of document.querySelectorAll('#mode-seg button')) b.addEventListener('click', () => { audio(); MODE = b.dataset.mode; try { localStorage.setItem('cc-mode', MODE); } catch (e) {} pickerUI(); });
 for (const b of document.querySelectorAll('#level-seg button')) b.addEventListener('click', () => { audio(); LEVEL = b.dataset.level; try { localStorage.setItem('cc-level', LEVEL); } catch (e) {} pickerUI(); });
@@ -1829,8 +1823,43 @@ $('#pick-go').addEventListener('click', () => {
   if (typeof window.gtag === 'function') window.gtag('event', 'country_picked', {country: picked, mode: MODE, level: MODE === '2p' ? '' : LEVEL});
   $('#picker').hidden = true; document.body.classList.remove('picking');
   newMatch(); resize();
-  if (!obDone) showOnboard();
+  if (needName()) showNameScreen(); else if (!obDone) showOnboard();
 });
+
+/* ------------------------------ pseudo pour le classement : juste après le choix du pays (Bazil, 30/10) ------------------------------ */
+// VS CPU seulement, une fois. « Play without ranking » : les victoires ne comptent pas, on redemande à la prochaine visite.
+let nameSkipped = false;
+const needName = () => MODE === 'cpu' && !RANK.name() && !nameSkipped;
+function showNameScreen(edit) {
+  $('#ns-flag').src = flagOf(PLAYER, undefined, 256).toDataURL();
+  $('#ns-in').value = RANK.name() || ''; $('#ns-err').textContent = '';
+  $('#ns-skip').textContent = edit ? '← Back' : 'Play without ranking';
+  $('#ns-skip').dataset.edit = edit ? '1' : '';
+  $('#name-screen').hidden = false; document.body.classList.add('picking');
+  if (!isPhone) $('#ns-in').focus({preventScroll: true});
+}
+function closeNameScreen() {
+  $('#name-screen').hidden = true; $('#ns-in').blur();
+  if ($('#picker').hidden) document.body.classList.remove('picking');
+  else nameLine();
+  if ($('#picker').hidden && !obDone) showOnboard();
+}
+$('#ns-form').addEventListener('submit', e => {
+  e.preventDefault(); audio();
+  const v = $('#ns-in').value.trim(), bad = RANK.nameProblem(v);
+  if (bad) { $('#ns-err').textContent = bad; tone(196, 0.1, 0.15, 'square'); return; }
+  RANK.setName(v);
+  if (typeof window.gtag === 'function') window.gtag('event', 'ranking_name_set');
+  closeNameScreen();
+});
+$('#ns-skip').addEventListener('click', () => { if (!$('#ns-skip').dataset.edit) nameSkipped = true; closeNameScreen(); });
+// dans l'accueil : « Name: Bazil ✎ » pour changer (ou ajouter) son pseudo
+function nameLine() {
+  const n = RANK.name(), b = $('#pick-player');
+  b.hidden = MODE !== 'cpu';
+  b.replaceChildren(n ? 'Name: ' : 'Add your name for the ranking ', Object.assign(document.createElement('b'), {textContent: n || ''}), ' ✎');
+}
+$('#pick-player').addEventListener('click', () => { audio(); showNameScreen(true); });
 
 /* ------------------------------ onboarding : 5 cartes avec les pictos (1re fois seulement) ------------------------------ */
 let obDone = false; try { obDone = localStorage.getItem('cc-onboard') === '1'; } catch (e) {}
@@ -1865,6 +1894,7 @@ $('.end-help').addEventListener('click', () => { nextLeft = null; });
 newMatch();
 resize();
 if (!saved && location.hash !== '#stats') showPicker();
+else if (location.hash !== '#stats' && needName()) showNameScreen();
 requestAnimationFrame(frame);
 
 // Page des stats (lien #stats), protégée par un mot de passe.
