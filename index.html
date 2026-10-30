@@ -146,6 +146,10 @@ body.my-turn #arena { cursor: grab; }
 #rank-top li.me { background: var(--g-accent); color: #141416; }
 #rank-top li.me::before { color: #141416; }
 #rank-top li:nth-child(6) { margin-top: 6px; }
+#end-hook { margin: 0; font-weight: 800; font-size: 17px; color: #FF6B60; text-wrap: balance; }
+#end-hook.hot { color: var(--g-accent); font-size: 19px; animation: pop .5s cubic-bezier(.2, 1.4, .4, 1); }
+#end-hook:empty, #rank-chase:empty { display: none; }
+#rank-chase { margin: 0 0 4px; font-weight: 700; font-size: 15px; line-height: 1.3; color: var(--g-fg); text-wrap: balance; }
 #rank-me { margin: 2px 0 0; font: 700 14px var(--mono); color: var(--g-fg); }
 #rank-me:empty { display: none; }
 /* 2 joueurs : on se passe le téléphone */
@@ -298,9 +302,11 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
       <img id="end-flag" alt="">
       <h2 id="end-title">TURKEY WINS</h2>
       <p id="end-sub"></p>
+      <p id="end-hook"></p>
       <p id="end-why"></p>
       <div id="rank-box" hidden>
         <p id="rank-gain"></p>
+        <p id="rank-chase"></p>
         <ol id="rank-top" aria-label="Top countries"></ol>
         <p id="rank-me"></p>
       </div>
@@ -349,7 +355,7 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
     <button id="ns-go" type="submit">PLAY</button>
   </form>
   <p class="ns-note">2–16 letters or numbers · no email, no account.<br>Each win scores points for your country.</p>
-  <button id="ns-skip" class="linkish" type="button">Play without ranking</button>
+  <button id="ns-skip" class="linkish" type="button" hidden>← Back</button>
 </section>
 
 <section id="onboard" hidden aria-label="How to play">
@@ -1170,10 +1176,18 @@ let gridDirty = true, flashUntil = 0;
 
 function pick(list, not) { const l = list.filter(x => x !== not); return l[Math.floor(Math.random() * l.length)]; }
 
-function newMatch() {
-  if (play && play.started && state !== 'over') track('abandon');
-  CPU = MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
-  $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : 'VS CPU · ' + LEVEL.toUpperCase();
+/* ------------------------------ série de victoires + revanche (Bazil, 30/10 : rendre le jeu addictif) ------------------------------ */
+// VS CPU : chaque victoire ajoute 1 à la série ; défaite, nul ou partie quittée = la série retombe à 0.
+let streak = 0; try { streak = Math.max(0, parseInt(localStorage.getItem('cc-streak'), 10) || 0); } catch (e) {}
+const setStreak = n => { streak = n; try { localStorage.setItem('cc-streak', String(n)); } catch (e) {} };
+let revengeOpp = null, play0Mode = 'cpu';   // après une défaite : PLAY AGAIN devient REVENGE, contre le même pays
+
+function newMatch(opp) {
+  if (play && play.started && state !== 'over') { track('abandon'); if (play0Mode === 'cpu') setStreak(0); }
+  revengeOpp = null;
+  CPU = MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : opp && opp !== PLAYER ? opp : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
+  play0Mode = MODE;
+  $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : (streak >= 2 ? LEVEL.toUpperCase() + ' · 🔥' + streak : 'VS CPU · ' + LEVEL.toUpperCase());   // série en cours : on garde la place pour le logo
   const fams = teamColors(PLAYER, CPU); TEAM_COL = fams.map(f => FAM[f]);
   const white = fams.includes('white');            // une équipe blanche : fond foncé obligatoire (comme les vidéos)
   themeName = pick(Object.keys(THEMES).filter(k => !white || !THEMES[k].LINE), lastTheme); lastTheme = themeName;
@@ -1267,7 +1281,7 @@ cv.addEventListener('pointerup', release);
 cv.addEventListener('pointercancel', () => { aim = null; });
 function nudge() { const h = $('#hint'); h.classList.remove('shake'); void h.offsetWidth; h.classList.add('shake'); }
 
-$('#again').addEventListener('click', () => { audio(); newMatch(); });
+$('#again').addEventListener('click', () => { audio(); newMatch(revengeOpp); });
 // fin de partie : comme Netflix, la partie suivante se lance toute seule après 5 s
 const NEXT_IN = 5, NEXT_IN_RANK = 9;   // avec le classement : un peu plus de temps pour lire
 let nextLeft = null, nextTotal = NEXT_IN;
@@ -1408,7 +1422,7 @@ function frame(now) {
     nextLeft -= dt;
     $('#again').style.setProperty('--p', Math.min(1, 1 - nextLeft / nextTotal));
     $('#next-in').textContent = 'Next match in ' + Math.max(1, Math.ceil(nextLeft)) + '…';
-    if (nextLeft <= 0) { nextLeft = null; newMatch(); }
+    if (nextLeft <= 0) { nextLeft = null; newMatch(revengeOpp); }
   }
   const cam = camNow();
   if (timerOn && state !== 'over' && !G.timeUp && !handoff) {
@@ -1479,6 +1493,22 @@ function finish(over) {
   state = 'over'; G.over = over; cpuAim = null;
   const w = over.winner, play0 = {mode: MODE, level: LEVEL, country: PLAYER};   // réglages de la partie (le menu peut les changer après)
   track(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw', over.reason);
+  // série + message « si près ! » + revanche
+  let hook = '', lost = 0;
+  if (play0.mode === 'cpu') {
+    if (w === 0) { setStreak(streak + 1); if (streak >= 2) hook = `🔥 ${streak} wins in a row!`; }
+    else {
+      lost = streak; setStreak(0);
+      const gap = Math.round((pct(G, 1) - pct(G, 0)) * 100);
+      if (w === 1) {
+        hook = over.reason === 'time' && gap <= 10 ? `So close! Only ${Math.max(1, gap)}% away.`
+          : over.reason === 'eliminated' && alive(G, 1).length === 1 ? 'So close! They had 1 ball left.' : 'Take your revenge!';
+        revengeOpp = CPU;
+      }
+      if (lost >= 2) hook += (hook ? ' ' : '') + `Your 🔥${lost} streak is over.`;
+    }
+  }
+  const revenge = revengeOpp;
   winSound(w);
   if (w >= 0) for (let i = 0; i < 160; i++) {
     const a = Math.random() * Math.PI * 2, sp = 200 + Math.random() * 700;
@@ -1496,6 +1526,8 @@ function finish(over) {
     $('#end-sub').textContent = MODE === '2p' ? (w < 0 ? 'Nobody wins this time.' : `Player ${w + 1} wins!`)
       : w === 0 ? `You beat ${them}!` : w === 1 ? `${them[0].toUpperCase() + them.slice(1)} beat you. Try again!` : 'Nobody wins this time.';
     $('#end-why').textContent = {eliminated: 'All balls destroyed', time: `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%`}[over.reason];
+    $('#end-hook').textContent = hook; $('#end-hook').className = w === 0 ? 'hot' : '';
+    $('#again .lbl').textContent = revenge ? 'REVENGE' : 'PLAY AGAIN';
     e.hidden = false; $('#again').focus({preventScroll: true});
     nextLeft = NEXT_IN; nextTotal = NEXT_IN;
     rankEnd(w, play0);
@@ -1535,6 +1567,17 @@ function showRanking(p, G0, res, why) {
       nm.textContent = label(c.country); pt.textContent = c.points.toLocaleString('en-US');
       li.append(im, nm, pt); top.append(li);
     };
+    // « Turkey is 14 pts behind Morocco for #2! » : la place juste au-dessus, à portée de main (VS CPU)
+    let chase = '';
+    if (p.mode === 'cpu') {
+      const me2 = list[mine], up = list[mine - 1], down = list[mine + 1], c = label(p.country), hard = n => Math.max(1, Math.ceil(n / 3));
+      if (mine < 0) chase = `${c} has no points yet. Win to put it on the map!`;
+      else if (mine === 0) chase = down ? `${c} is #1! Only ${me2.points - down.points} pts ahead of ${label(down.country)}.` : `${c} is #1!`;
+      else { const gap = up.points - me2.points + 1;
+        chase = hard(gap) <= 10 ? `${c} is ${gap} pts away from #${mine} ${label(up.country)}: just ${hard(gap)} hard win${hard(gap) > 1 ? 's' : ''}!`
+          : `${c} needs ${gap} pts to pass ${label(up.country)}. Every win counts!`; }
+    }
+    $('#rank-chase').textContent = chase;
     for (let i = 0; i < Math.min(5, list.length); i++) row(i);
     if (mine >= 5) row(mine);                                   // ton pays, même s'il n'est pas dans le top 5
     let me = res ? res.week_rank : null;
@@ -1832,13 +1875,13 @@ $('#pick-go').addEventListener('click', () => {
 });
 
 /* ------------------------------ pseudo pour le classement : juste après le choix du pays (Bazil, 30/10) ------------------------------ */
-// VS CPU seulement, une fois. « Play without ranking » : les victoires ne comptent pas, on redemande à la prochaine visite.
+// VS CPU seulement, une fois. Obligatoire (Bazil, 30/10 : plus de « Play without ranking »).
 let nameSkipped = false;
 const needName = () => MODE === 'cpu' && !RANK.name() && !nameSkipped;
 function showNameScreen(edit) {
   $('#ns-flag').src = flagOf(PLAYER, undefined, 256).toDataURL();
   $('#ns-in').value = RANK.name() || ''; $('#ns-err').textContent = '';
-  $('#ns-skip').textContent = edit ? '← Back' : 'Play without ranking';
+  $('#ns-skip').textContent = '← Back'; $('#ns-skip').hidden = !edit;   // pseudo obligatoire contre l'ordi (Bazil, 30/10) : retour seulement depuis le menu
   $('#ns-skip').dataset.edit = edit ? '1' : '';
   $('#name-screen').hidden = false; document.body.classList.add('picking');
   if (!isPhone) $('#ns-in').focus({preventScroll: true});
