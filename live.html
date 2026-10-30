@@ -1,0 +1,1096 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-02S2YB073X"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'granted'});
+gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Country Clash LIVE</title>
+<meta name="description" content="Developer mode.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+:root { --bg: #0F1A3A; --fg: #F4F4F2; --muted: #8E9AB8; --accent: #FFD60A; }
+html, body { height: 100%; margin: 0; }
+body { background: var(--bg); color: var(--fg); font-family: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  display: flex; align-items: center; justify-content: center; overflow: hidden; }
+canvas { display: block; }
+#gate { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 16px; background: var(--bg); }
+#gate h1 { margin: 0; font-size: 32px; font-weight: 800; }
+#gate p { margin: 0; color: var(--muted); font-size: 16px; text-align: center; }
+#gate form { display: flex; gap: 8px; }
+#gate input { font: 700 22px "JetBrains Mono", ui-monospace, monospace; width: 9ch; padding: 10px 14px; border-radius: 12px; border: 2px solid var(--muted);
+  background: transparent; color: var(--fg); text-align: center; letter-spacing: .2em; }
+#gate button { font: 800 20px inherit; font-family: inherit; padding: 10px 20px; border-radius: 12px; border: 0; background: var(--accent); color: #111114; cursor: pointer; }
+#gate .err { color: #FF6B60; min-height: 1.2em; }
+#gate a { color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<div id="gate">
+  <h1>Developer mode</h1>
+  <p>Enter the code to open the live mode.</p>
+  <form id="gate-form" autocomplete="off">
+    <input id="code" type="password" inputmode="numeric" aria-label="Code" autofocus>
+    <button type="submit">Open</button>
+  </form>
+  <p class="err" id="err" aria-live="polite"></p>
+  <a href="index.html">← Back to the game</a>
+</div>
+<canvas id="cv" width="1080" height="1920" hidden></canvas>
+<script>
+// Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, Bazil) :
+// taille au choix (drapeaux nets en grand), étoile du Pakistan plus bas, emblème au centre du Mexique.
+const FAM = {red: '#FF3B30', blue: '#2F7BFF', green: '#22C55E', yellow: '#FFD60A', orange: '#FF8A00', white: '#F4F4F2'};
+const COUNTRIES = [
+  ['France', 'v', ['#002395', '#fff', '#ED2939'], 'blue'],
+  ['Italy', 'v', ['#009246', '#fff', '#CE2B37'], 'green'],
+  ['Ireland', 'v', ['#169B62', '#fff', '#FF883E'], 'green'],
+  ['Belgium', 'v', ['#111', '#FDDA24', '#EF3340'], 'yellow'],
+  ['Mexico', 'mexico', ['#006847', '#fff', '#CE1126'], 'green'],
+  ['Nigeria', 'v', ['#008751', '#fff', '#008751'], 'green'],
+  ['Peru', 'v', ['#D91023', '#fff', '#D91023'], 'red'],
+  ['Romania', 'v', ['#002B7F', '#FCD116', '#CE1126'], 'blue'],
+  ['Senegal', 'v', ['#00853F', '#FDEF42', '#E31B23'], 'green'],
+  ['Ivory Coast', 'v', ['#F77F00', '#fff', '#009E60'], 'orange'],
+  ['Germany', 'h', ['#111', '#DD0000', '#FFCE00'], 'red'],
+  ['Russia', 'h', ['#fff', '#0039A6', '#D52B1E'], 'blue'],
+  ['Netherlands', 'h', ['#AE1C28', '#fff', '#21468B'], 'orange'],
+  ['Austria', 'h', ['#ED2939', '#fff', '#ED2939'], 'red'],
+  ['Hungary', 'h', ['#CE2939', '#fff', '#477050'], 'green'],
+  ['Colombia', 'h', ['#FCD116', '#FCD116', '#003893', '#CE1126'], 'yellow'],
+  ['Indonesia', 'h', ['#FF0000', '#fff'], 'red'],
+  ['Poland', 'h', ['#fff', '#DC143C'], 'red'],
+  ['Ukraine', 'h', ['#0057B7', '#FFD700'], 'blue'],
+  ['Argentina', 'h', ['#74ACDF', '#fff', '#74ACDF'], 'blue'],
+  ['Spain', 'h', ['#AA151B', '#F1BF00', '#F1BF00', '#AA151B'], 'yellow'],
+  ['Egypt', 'h', ['#CE1126', '#fff', '#111'], 'red'],
+  ['India', 'india', ['#FF9933', '#fff', '#138808'], 'orange'],
+  ['Japan', 'disc', ['#fff', '#BC002D'], 'white'],
+  ['Bangladesh', 'disc', ['#006A4E', '#F42A41'], 'green'],
+  ['Brazil', 'brazil', ['#009C3B', '#FFDF00', '#002776'], 'yellow'],
+  ['Switzerland', 'swiss', ['#FF0000', '#fff'], 'red'],
+  ['Sweden', 'nordic', ['#006AA7', '#FECC00'], 'blue'],
+  ['Denmark', 'nordic', ['#C8102E', '#fff'], 'red'],
+  ['Finland', 'nordic', ['#fff', '#002F6C'], 'white'],
+  ['China', 'china', ['#EE1C25', '#FFDE00'], 'red'],
+  ['Vietnam', 'star', ['#DA251D', '#FFDE00'], 'red'],
+  ['Turkey', 'turkey', ['#E30A17', '#fff'], 'red'],
+  ['Portugal', 'portugal', ['#046A38', '#DA291C', '#FFE900'], 'green'],
+  ['United States', 'usa', ['#B22234', '#fff', '#3C3B6E'], 'blue'],
+  ['Morocco', 'morocco', ['#C1272D', '#006233'], 'red'],
+  ['Algeria', 'algeria', ['#006233', '#fff', '#D21034'], 'green'],
+  ['Tunisia', 'tunisia', ['#E70013', '#fff'], 'red'],
+  ['Philippines', 'philippines', ['#0038A8', '#CE1126', '#fff', '#FCD116'], 'blue'],
+  ['Pakistan', 'pakistan', ['#01411C', '#fff'], 'green'],
+  ['Greece', 'greece', ['#0D5EAF', '#fff'], 'blue'],
+  ['Ghana', 'ghana', ['#CE1126', '#FCD116', '#006B3F', '#111'], 'yellow'],
+  ['Cameroon', 'cameroon', ['#007A5E', '#CE1126', '#FCD116'], 'green'],
+  ['Chile', 'chile', ['#0039A6', '#fff', '#D52B1E'], 'red'],
+  ['England', 'england', ['#fff', '#CE1124'], 'white'],
+  ['Guinea', 'v', ['#CE1126', '#FCD116', '#009460'], 'red'],
+  ['Mali', 'v', ['#14B53A', '#FCD116', '#CE1126'], 'green'],
+  ['Lithuania', 'h', ['#FDB913', '#006A44', '#C1272D'], 'yellow'],
+  ['Estonia', 'h', ['#0072CE', '#111', '#fff'], 'blue'],
+  ['Bulgaria', 'h', ['#fff', '#00966E', '#D62612'], 'green'],
+  ['Bolivia', 'h', ['#D52B1E', '#F9E300', '#007934'], 'red'],
+  ['Armenia', 'h', ['#D90012', '#0033A0', '#F2A800'], 'red'],
+  ['Gabon', 'h', ['#009E60', '#FCD116', '#3A75C4'], 'green'],
+  ['Sierra Leone', 'h', ['#1EB53A', '#fff', '#0072C6'], 'green'],
+  ['Latvia', 'h', ['#9E3039', '#9E3039', '#fff', '#9E3039', '#9E3039'], 'red'],
+  ['Thailand', 'h', ['#A51931', '#F4F5F8', '#2D2A4A', '#2D2A4A', '#F4F5F8', '#A51931'], 'blue'],
+  ['Somalia', 'star', ['#4189DD', '#fff'], 'blue'],
+  ['Norway', 'nordic2', ['#BA0C2F', '#fff', '#00205B'], 'red'],
+  ['Iceland', 'nordic2', ['#02529C', '#fff', '#DC1E35'], 'blue'],
+  ['Uruguay', 'uruguay', ['#fff', '#0038A8', '#FCD116'], 'white'],
+  ['UAE', 'uae', ['#00732F', '#fff', '#111', '#FF0000'], 'green'],
+  ['Ethiopia', 'ethiopia', ['#078930', '#FCDD09', '#DA121A', '#0F47AF'], 'yellow'],
+].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}))
+  // pays en guerre retirés du site (Bazil, 30/10 : règles AdSense sur la guerre) ; les dessins restent au-dessus
+  .filter(c => !['Russia', 'Ukraine', 'Somalia', 'Ethiopia'].includes(c.name));
+function star(g, x, y, r, color) {
+  g.fillStyle = color; g.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.4 : r;
+    g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+  }
+  g.closePath(); g.fill();
+}
+function disc(g, x, y, r, color) { g.fillStyle = color; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+function crescent(g, x, y, r, color, bg, dx) { disc(g, x, y, r, color); disc(g, x + dx, y, r * 0.8, bg); }
+
+function makeFlag({name, motif, colors: c}, ring = 'rgba(244,244,242,.9)', S = 160) {
+  const u = S / 160, canvas = Object.assign(document.createElement("canvas"), {width: S, height: S}), g = canvas.getContext('2d');
+  const box = (x, y, w, h, color) => { g.fillStyle = color; g.fillRect(x * S, y * S, w * S + 1, h * S + 1); };
+  const stripes = (cols, vertical) => cols.forEach((col, i) =>
+    vertical ? box(i / cols.length, 0, 1 / cols.length, 1, col) : box(0, i / cols.length, 1, 1 / cols.length, col));
+  g.save(); g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 3 * u, 0, Math.PI * 2); g.clip();
+  switch (motif) {
+    case 'v': stripes(c, true); break;
+    case 'mexico': {                                // bandes + emblème (aigle sur un cactus, couronne de feuilles)
+      stripes(c, true);
+      const cx = S / 2, cy = S * 0.5;
+      g.strokeStyle = '#3F7D2C'; g.lineWidth = S * 0.028; g.lineCap = 'round';
+      g.beginPath(); g.arc(cx, cy, S * 0.135, Math.PI * 0.15, Math.PI * 0.85); g.stroke();
+      g.fillStyle = '#4F8A35'; g.beginPath(); g.ellipse(cx, cy + S * 0.06, S * 0.05, S * 0.025, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#7A4A1E';
+      g.beginPath(); g.ellipse(cx + S * 0.005, cy - S * 0.01, S * 0.045, S * 0.065, -0.25, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.ellipse(cx - S * 0.045, cy - S * 0.04, S * 0.055, S * 0.03, -0.9, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.arc(cx + S * 0.035, cy - S * 0.07, S * 0.022, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#C8A12B'; g.beginPath(); g.moveTo(cx + S * 0.05, cy - S * 0.075); g.lineTo(cx + S * 0.075, cy - S * 0.065); g.lineTo(cx + S * 0.05, cy - S * 0.06); g.fill();
+      break;
+    }
+    case 'h': stripes(c, false); break;
+    case 'india': stripes(c, false); g.strokeStyle = '#06038D'; g.lineWidth = 5 * u; g.beginPath(); g.arc(S / 2, S / 2, S * 0.1, 0, Math.PI * 2); g.stroke(); break;
+    case 'disc': box(0, 0, 1, 1, c[0]); disc(g, S * (name === 'Bangladesh' ? 0.46 : 0.5), S / 2, S * 0.24, c[1]); break;
+    case 'brazil':
+      box(0, 0, 1, 1, c[0]); g.fillStyle = c[1]; g.beginPath();
+      g.moveTo(S * 0.5, S * 0.14); g.lineTo(S * 0.9, S * 0.5); g.lineTo(S * 0.5, S * 0.86); g.lineTo(S * 0.1, S * 0.5); g.fill();
+      disc(g, S / 2, S / 2, S * 0.2, c[2]); break;
+    case 'swiss': box(0, 0, 1, 1, c[0]); box(0.4, 0.2, 0.2, 0.6, c[1]); box(0.2, 0.4, 0.6, 0.2, c[1]); break;
+    case 'nordic': box(0, 0, 1, 1, c[0]); box(0.3, 0, 0.16, 1, c[1]); box(0, 0.42, 1, 0.16, c[1]); break;
+    case 'nordic2': box(0, 0, 1, 1, c[0]); box(0.26, 0, 0.24, 1, c[1]); box(0, 0.38, 1, 0.24, c[1]); box(0.31, 0, 0.14, 1, c[2]); box(0, 0.43, 1, 0.14, c[2]); break;
+    case 'uruguay':
+      for (let i = 0; i < 9; i++) box(0, i / 9, 1, 1 / 9, i % 2 ? c[1] : c[0]);
+      box(0, 0, 0.45, 5 / 9, c[0]); disc(g, S * 0.22, S * 0.28, S * 0.13, c[2]); break;
+    case 'uae': stripes(c.slice(0, 3), false); box(0, 0, 0.28, 1, c[3]); break;
+    case 'ethiopia': stripes(c.slice(0, 3), false); disc(g, S / 2, S / 2, S * 0.24, c[3]); star(g, S / 2, S * 0.52, S * 0.17, c[1]); break;
+    case 'england': box(0, 0, 1, 1, c[0]); box(0.42, 0, 0.16, 1, c[1]); box(0, 0.42, 1, 0.16, c[1]); break;
+    case 'china':
+      box(0, 0, 1, 1, c[0]); star(g, S * 0.34, S * 0.36, S * 0.15, c[1]);
+      [[0.55, 0.2], [0.62, 0.32], [0.62, 0.47], [0.55, 0.58]].forEach(([x, y]) => star(g, S * x, S * y, S * 0.05, c[1])); break;
+    case 'star': box(0, 0, 1, 1, c[0]); star(g, S / 2, S * 0.52, S * 0.28, c[1]); break;
+    case 'turkey': box(0, 0, 1, 1, c[0]); crescent(g, S * 0.42, S / 2, S * 0.25, c[1], c[0], S * 0.06); star(g, S * 0.68, S / 2, S * 0.11, c[1]); break;
+    case 'portugal':
+      box(0, 0, 0.4, 1, c[0]); box(0.4, 0, 0.6, 1, c[1]); disc(g, S * 0.4, S / 2, S * 0.17, c[2]);
+      g.fillStyle = c[1]; g.fillRect(S * 0.33, S * 0.42, S * 0.14, S * 0.17); break;
+    case 'usa':
+      for (let i = 0; i < 13; i++) box(0, i / 13, 1, 1 / 13, i % 2 ? c[1] : c[0]);
+      box(0, 0, 0.46, 7 / 13, c[2]);
+      for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) disc(g, S * (0.07 + x * 0.11), S * (0.07 + y * 0.12), S * 0.02, c[1]);
+      break;
+    case 'morocco':
+      box(0, 0, 1, 1, c[0]); g.strokeStyle = c[1]; g.lineWidth = 6 * u; g.beginPath();
+      for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * 4 * Math.PI / 5; g.lineTo(S / 2 + Math.cos(a) * S * 0.24, S * 0.52 + Math.sin(a) * S * 0.24); }
+      g.closePath(); g.stroke(); break;
+    case 'algeria': box(0, 0, 0.5, 1, c[0]); box(0.5, 0, 0.5, 1, c[1]); crescent(g, S * 0.48, S / 2, S * 0.22, c[2], c[1], S * 0.07); star(g, S * 0.6, S / 2, S * 0.1, c[2]); break;
+    case 'tunisia': box(0, 0, 1, 1, c[0]); disc(g, S / 2, S / 2, S * 0.27, c[1]); crescent(g, S * 0.48, S / 2, S * 0.19, c[0], c[1], S * 0.05); star(g, S * 0.56, S / 2, S * 0.09, c[0]); break;
+    case 'philippines':
+      box(0, 0, 1, 0.5, c[0]); box(0, 0.5, 1, 0.5, c[1]); g.fillStyle = c[2]; g.beginPath();
+      g.moveTo(0, 0); g.lineTo(S * 0.6, S / 2); g.lineTo(0, S); g.fill(); disc(g, S * 0.2, S / 2, S * 0.09, c[3]); break;
+    case 'pakistan': box(0, 0, 0.28, 1, c[1]); box(0.28, 0, 0.72, 1, c[0]); crescent(g, S * 0.62, S * 0.52, S * 0.22, c[1], c[0], S * 0.06); star(g, S * 0.71, S * 0.45, S * 0.08, c[1]); break;   // étoile descendue (Bazil, 29/10)
+    case 'greece':
+      for (let i = 0; i < 9; i++) box(0, i / 9, 1, 1 / 9, i % 2 ? c[1] : c[0]);
+      box(0, 0, 5 / 9, 5 / 9, c[0]); box(2 / 9, 0, 1 / 9, 5 / 9, c[1]); box(0, 2 / 9, 5 / 9, 1 / 9, c[1]); break;
+    case 'ghana': stripes(c.slice(0, 3), false); star(g, S / 2, S * 0.52, S * 0.15, c[3]); break;
+    case 'cameroon': stripes(c, true); star(g, S / 2, S * 0.52, S * 0.13, c[2]); break;
+    case 'chile': box(0, 0, 1, 0.5, c[1]); box(0, 0.5, 1, 0.5, c[2]); box(0, 0, 0.42, 0.5, c[0]); star(g, S * 0.21, S * 0.26, S * 0.1, c[1]); break;
+  }
+  g.restore();
+  g.strokeStyle = ring; g.lineWidth = 4 * u;
+  g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 3 * u, 0, Math.PI * 2); g.stroke();
+  return canvas;
+}
+
+/* =========================== choix des 3 pays =========================== */
+
+const FLAG_CACHE = {};
+// 256 px : net pour les balles et les scores ; le carrousel de l'accueil dessine les siens en 512 px
+function flagOf(name, ring, size = 256) { const k = name + (ring || '') + size; return FLAG_CACHE[k] || (FLAG_CACHE[k] = makeFlag(COUNTRIES.find(c => c.name === name), ring, size)); }
+
+// Country Clash (appli) : le moteur du jeu, au tour par tour.
+// Repris du mode cut de gen.js : une balle laisse un trait à partir d'un mur ;
+// au mur suivant, le trait coupe l'arène et la balle prend la plus petite partie.
+// Une balle adverse qui traverse le trait = la balle qui l'a tracé meurt.
+// Pas de DOM ici : le même code sert au jeu et à l'ordi (qui simule ses tirs).
+
+const WORLD = 1000;                       // taille du monde (carré)
+const BOX = {x0: 50, y0: 50, size: 900};  // l'arène tient toujours dans ce carré (même taille à chaque partie)
+const N = 600, CELL = BOX.size / N, NC = N * N;   // 600 × 600 cases (29/10 : bords nets, avant 300)
+const R = 24;                             // rayon d'une balle
+const BALLS = 3;
+const GAME_TIME = 60;                     // chrono de la partie (s) : à 0, le plus de terrain gagne (Bazil, 29/10)
+const MAX_PULL = 170;                     // tirer plus loin ne donne pas plus de force
+const MAX_SPEED = 1600;                   // px/s au maximum
+const FR_A = 220, FR_B = 0.7;             // freinage : constant + proportionnel à la vitesse
+const STOP = 9;                           // en dessous : la balle s'arrête
+const DT = 1 / 240;
+const MIN_ZONE = 240;                      // cases : les poches plus petites ne comptent pas
+const ARENAS = ['rect', 'round', 'box', 'disc', 'blocks2'];
+
+function newGame(teams, arena) {
+  const G = {teams, arena, t: 0, turn: 0, side: 0, moving: false, over: null, timeUp: false,
+    area: [0, 0], balls: [], events: [], kills: [0, 0], shots: [0, 0]};
+  const Z = G.Z = {x0: BOX.x0, y0: BOX.y0, x1: BOX.x0 + BOX.size, y1: BOX.y0 + BOX.size, cx: WORLD / 2, cy: WORLD / 2, r: BOX.size / 2};
+  G.round = arena === 'round';
+  const box = (cx, cy, hw, hh) => ({type: 'rect', x0: cx - hw, y0: cy - hh, x1: cx + hw, y1: cy + hh});
+  const m = BOX.size, at = (fx, fy) => [Z.x0 + fx * m, Z.y0 + fy * m];
+  G.obs = {
+    box: [box(Z.cx, Z.cy, m * 0.17, m * 0.12)],
+    disc: [{type: 'disc', x: Z.cx, y: Z.cy, r: m * 0.17}],
+    blocks2: [box(...at(0.72, 0.28), m * 0.1, m * 0.1), box(...at(0.28, 0.72), m * 0.1, m * 0.1)],
+  }[arena] || [];
+  G.block = new Uint8Array(NC); G.cells = 0;
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+    const x = BOX.x0 + (i + 0.5) * CELL, y = BOX.y0 + (j + 0.5) * CELL, k = j * N + i;
+    if (G.round && Math.hypot(x - Z.cx, y - Z.cy) > Z.r) G.block[k] = 1;
+    else if (G.obs.some(o => o.type === 'rect' ? x >= o.x0 && x <= o.x1 && y >= o.y0 && y <= o.y1 : Math.hypot(x - o.x, y - o.y) <= o.r)) G.block[k] = 2;
+    else G.cells++;
+  }
+  G.owner = new Int8Array(NC).fill(-1);
+  G.flashAt = new Float32Array(NC).fill(-9);
+  const q = G.round ? 0.78 : 1;
+  const homes = [[[0.2, 0.2], [0.45, 0.13], [0.13, 0.45]], [[0.8, 0.8], [0.55, 0.87], [0.87, 0.55]]];
+  for (let s = 0; s < 2; s++) for (const [hx, hy] of homes[s]) {
+    G.balls.push({team: s, x: Z.cx + (hx - 0.5) * m * q, y: Z.cy + (hy - 0.5) * m * q, vx: 0, vy: 0, path: null, dead: false});
+  }
+  return G;
+}
+
+const trailPts = b => [...b.path, [b.x, b.y]];
+const alive = (G, s) => G.balls.filter(b => !b.dead && b.team === s);
+
+// tir : la balle part dans la direction (dx, dy), force entre 0 et 1
+function shoot(G, ball, dx, dy, power) {
+  const l = Math.hypot(dx, dy) || 1, sp = MAX_SPEED * Math.max(0.08, Math.min(1, power));
+  ball.vx = dx / l * sp; ball.vy = dy / l * sp;
+  if (ball.path) ball.path.push([ball.x, ball.y]);   // le trait ouvert repart d'ici (coin)
+  G.moving = true; G.shots[ball.team]++;
+  G.events.push({t: G.t, kind: 'shoot', team: ball.team});
+}
+
+const ZONE = new Int32Array(NC), STACK = new Int32Array(NC);   // réutilisés (plus rapide)
+// le trait (de mur à mur) coupe l'arène : la balle prend la plus petite partie
+function cut(G, b, end) {
+  const pts = [...b.path, end];
+  let len = 0;
+  for (let i = 1; i < pts.length; i++) len += Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+  if (len < 4 * R) return 0;
+  if (G.fast) return cutFast(G, b, pts);
+  const wall = Uint8Array.from(G.block, v => v ? 1 : 0);
+  const mark = (i, j) => { if (i >= 0 && j >= 0 && i < N && j < N) wall[j * N + i] = 1; };
+  for (let s = 1; s < pts.length; s++) {
+    const [x0, y0] = pts[s - 1], [x1, y1] = pts[s], n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / (CELL / 3)) || 1;
+    for (let k = 0; k <= n; k++) {
+      const i = Math.floor((x0 + (x1 - x0) * k / n - BOX.x0) / CELL), j = Math.floor((y0 + (y1 - y0) * k / n - BOX.y0) / CELL);
+      mark(i, j); mark(i + 1, j); mark(i, j + 1); mark(i + 1, j + 1);
+    }
+  }
+  const zone = ZONE.fill(-1), sizes = [], stack = STACK;
+  let sp = 0;
+  const push = (m, id) => { if (!wall[m] && zone[m] < 0) { zone[m] = id; stack[sp++] = m; } };
+  for (let k0 = 0; k0 < NC; k0++) {
+    if (wall[k0] || zone[k0] >= 0) continue;
+    const id = sizes.length; let n = 0;
+    zone[k0] = id; stack[sp++] = k0;
+    while (sp) {
+      const k = stack[--sp], x = k % N; n++;
+      if (x > 0) push(k - 1, id);
+      if (x < N - 1) push(k + 1, id);
+      if (k >= N) push(k - N, id);
+      if (k < NC - N) push(k + N, id);
+    }
+    sizes.push(n);
+  }
+  const big = sizes.map((n, i) => [n, i]).filter(([n]) => n >= MIN_ZONE);
+  if (big.length < 2) return 0;
+  const small = big.reduce((m, z) => z[0] < m[0] ? z : m)[1];
+  let gained = 0;
+  for (let k = 0; k < NC; k++) {
+    if (G.block[k]) continue;
+    let take = zone[k] === small;
+    if (!take && wall[k]) {
+      const x = k % N;
+      take = (x > 0 && zone[k - 1] === small) || (x < N - 1 && zone[k + 1] === small)
+        || (k >= N && zone[k - N] === small) || (k < NC - N && zone[k + N] === small);
+    }
+    if (take && G.owner[k] !== b.team) {
+      if (G.owner[k] >= 0) G.area[G.owner[k]]--;
+      G.owner[k] = b.team; G.area[b.team]++; G.flashAt[k] = G.t; gained++;
+    }
+  }
+  if (gained) G.events.push({t: G.t, kind: 'cut', team: b.team, gained, x: end[0], y: end[1]});
+  return gained;
+}
+
+// version rapide pour l'ordi : même calcul sur une grille 3 fois plus grosse (estimation du terrain gagné)
+const CF = 6, CN = N / CF, CNC = CN * CN, CC = CELL * CF,   // grille de l'ordi : 100 × 100
+  CZONE = new Int32Array(CNC), CSTACK = new Int32Array(CNC);
+function coarseBlock(G) {
+  if (G.cblock) return G.cblock;
+  G.cblock = new Uint8Array(CNC);
+  for (let j = 0; j < CN; j++) for (let i = 0; i < CN; i++) G.cblock[j * CN + i] = G.block[(j * CF + (CF >> 1)) * N + i * CF + (CF >> 1)] ? 1 : 0;
+  return G.cblock;
+}
+function cutFast(G, b, pts) {
+  const wall = coarseBlock(G).slice();
+  const mark = (i, j) => { if (i >= 0 && j >= 0 && i < CN && j < CN) wall[j * CN + i] = 1; };
+  for (let s = 1; s < pts.length; s++) {
+    const [x0, y0] = pts[s - 1], [x1, y1] = pts[s], n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / (CC / 3)) || 1;
+    for (let k = 0; k <= n; k++) mark(Math.floor((x0 + (x1 - x0) * k / n - BOX.x0) / CC), Math.floor((y0 + (y1 - y0) * k / n - BOX.y0) / CC));
+  }
+  const zone = CZONE.fill(-1), stack = CSTACK, sizes = [];
+  let sp = 0;
+  const push = (m, id) => { if (!wall[m] && zone[m] < 0) { zone[m] = id; stack[sp++] = m; } };
+  for (let k0 = 0; k0 < CNC; k0++) {
+    if (wall[k0] || zone[k0] >= 0) continue;
+    const id = sizes.length; let n = 0;
+    zone[k0] = id; stack[sp++] = k0;
+    while (sp) {
+      const k = stack[--sp], x = k % CN; n++;
+      if (x > 0) push(k - 1, id);
+      if (x < CN - 1) push(k + 1, id);
+      if (k >= CN) push(k - CN, id);
+      if (k < CNC - CN) push(k + CN, id);
+    }
+    sizes.push(n);
+  }
+  const big = sizes.map((n, i) => [n, i]).filter(([n]) => n >= MIN_ZONE / (CF * CF));
+  if (big.length < 2) return 0;
+  const small = big.reduce((m, z) => z[0] < m[0] ? z : m)[1];
+  let gained = 0;
+  for (let k = 0; k < CNC; k++) if (zone[k] === small) {
+    const k0 = (k / CN | 0) * CF * N + (k % CN) * CF, fk = k0 + (CF >> 1) * N + (CF >> 1), o = G.owner[fk];
+    if (o === b.team) continue;
+    if (o >= 0) G.area[o] -= CF * CF;
+    G.area[b.team] += CF * CF; gained += CF * CF;
+    for (let dj = 0; dj < CF; dj++) for (let di = 0; di < CF; di++) G.owner[k0 + dj * N + di] = b.team;
+  }
+  return gained;
+}
+
+function hitObstacle(G, b) {
+  for (const o of G.obs) {
+    let px, py, nx, ny, d;
+    if (o.type === 'rect') {
+      px = Math.max(o.x0, Math.min(o.x1, b.x)); py = Math.max(o.y0, Math.min(o.y1, b.y));
+      nx = b.x - px; ny = b.y - py; d = Math.hypot(nx, ny);
+      if (d >= R) continue;
+      if (d === 0) {
+        const m = [b.x - o.x0, o.x1 - b.x, b.y - o.y0, o.y1 - b.y], i = m.indexOf(Math.min(...m));
+        [nx, ny] = [[-1, 0], [1, 0], [0, -1], [0, 1]][i]; px = i === 0 ? o.x0 : i === 1 ? o.x1 : b.x; py = i === 2 ? o.y0 : i === 3 ? o.y1 : b.y;
+      } else { nx /= d; ny /= d; }
+      b.x = px + nx * R; b.y = py + ny * R;
+    } else {
+      nx = b.x - o.x; ny = b.y - o.y; d = Math.hypot(nx, ny) || 1;
+      if (d >= o.r + R) continue;
+      nx /= d; ny /= d; px = o.x + nx * o.r; py = o.y + ny * o.r;
+      b.x = o.x + nx * (o.r + R); b.y = o.y + ny * (o.r + R);
+    }
+    const vn = b.vx * nx + b.vy * ny;
+    if (vn < 0) { b.vx -= 2 * vn * nx; b.vy -= 2 * vn * ny; }
+    return [px, py];
+  }
+  return null;
+}
+
+function segDist(px, py, ax, ay, bx, by) {
+  const dx = bx - ax, dy = by - ay, l = dx * dx + dy * dy || 1;
+  const t = Math.max(0, Math.min(1, ((px - ax) * dx + (py - ay) * dy) / l));
+  return Math.hypot(px - ax - t * dx, py - ay - t * dy);
+}
+// distance d'un point au trait d'une balle (sans le bout caché sous la balle)
+function trailDist(px, py, b) {
+  const pts = trailPts(b);
+  for (let c = R; pts.length > 1 && c > 0;) {
+    const [hx, hy] = pts[pts.length - 1], [qx, qy] = pts[pts.length - 2], l = Math.hypot(hx - qx, hy - qy);
+    if (l <= c) { pts.pop(); c -= l; continue; }
+    pts[pts.length - 1] = [hx + (qx - hx) * c / l, hy + (qy - hy) * c / l]; c = 0;
+  }
+  let d = Infinity;
+  for (let i = 1; i < pts.length; i++) d = Math.min(d, segDist(px, py, pts[i - 1][0], pts[i - 1][1], pts[i][0], pts[i][1]));
+  return d;
+}
+
+function kill(G, b, by) {   // by = la balle qui a coupé le trait
+  G.events.push({t: G.t, kind: 'dead', team: b.team, x: b.x, y: b.y, by: by ? G.balls.indexOf(by) : -1, trail: b.path ? trailPts(b) : null});
+  b.dead = true; b.path = null; b.vx = b.vy = 0;
+  G.kills[1 - b.team]++;
+  if (!alive(G, b.team).length) {          // équipe éliminée : son terrain redevient vide
+    for (let k = 0; k < NC; k++) if (G.owner[k] === b.team) { G.owner[k] = -1; G.flashAt[k] = G.t; }
+    G.area[b.team] = 0;
+  }
+}
+
+// un pas de physique ; renvoie true tant que quelque chose bouge
+function step(G) {
+  G.t += DT;
+  const Z = G.Z, live = G.balls.filter(b => !b.dead);
+  let any = false;
+  for (const b of live) {
+    let sp = Math.hypot(b.vx, b.vy);
+    if (sp === 0) continue;
+    const ns = sp - (FR_A + FR_B * sp) * DT;
+    if (ns < STOP) { b.vx = b.vy = 0; continue; }
+    b.vx *= ns / sp; b.vy *= ns / sp; any = true;
+    b.x += b.vx * DT; b.y += b.vy * DT;
+    let touch = null;
+    if (G.round) {
+      const dx = b.x - Z.cx, dy = b.y - Z.cy, d = Math.hypot(dx, dy);
+      if (d > Z.r - R) {
+        const nx = dx / d, ny = dy / d, vn = b.vx * nx + b.vy * ny;
+        b.x = Z.cx + nx * (Z.r - R); b.y = Z.cy + ny * (Z.r - R);
+        if (vn > 0) { b.vx -= 2 * vn * nx; b.vy -= 2 * vn * ny; }
+        touch = [Z.cx + nx * Z.r, Z.cy + ny * Z.r];
+      }
+    } else {
+      const lo = Z.x0 + R, hi = Z.x1 - R, top = Z.y0 + R, bot = Z.y1 - R;
+      let w = false;
+      if (b.x < lo) { b.x = lo; b.vx = Math.abs(b.vx); w = true; }
+      if (b.x > hi) { b.x = hi; b.vx = -Math.abs(b.vx); w = true; }
+      if (b.y < top) { b.y = top; b.vy = Math.abs(b.vy); w = true; }
+      if (b.y > bot) { b.y = bot; b.vy = -Math.abs(b.vy); w = true; }
+      if (w) touch = [b.x === lo ? Z.x0 : b.x === hi ? Z.x1 : b.x, b.y === top ? Z.y0 : b.y === bot ? Z.y1 : b.y];
+    }
+    if (!touch) {
+      const hit = hitObstacle(G, b);
+      if (hit) { if (b.path) b.path.push(hit); G.events.push({t: G.t, kind: 'bounce', team: b.team}); }
+      continue;
+    }
+    if (!(b.path && cut(G, b, touch) > 0)) G.events.push({t: G.t, kind: 'bounce', team: b.team});
+    b.path = [touch];
+  }
+  // chocs entre balles (même masse)
+  for (let i = 0; i < live.length; i++) for (let j = i + 1; j < live.length; j++) {
+    const a = live[i], b = live[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy);
+    if (d >= 2 * R || d === 0) continue;
+    const nx = dx / d, ny = dy / d, ov = (2 * R - d) / 2, rel = (a.vx - b.vx) * nx + (a.vy - b.vy) * ny;
+    a.x -= nx * ov; a.y -= ny * ov; b.x += nx * ov; b.y += ny * ov;
+    if (rel <= 0) continue;
+    const k = rel * 0.95;
+    a.vx -= k * nx; a.vy -= k * ny; b.vx += k * nx; b.vy += k * ny;
+    for (const u of [a, b]) if (u.path) u.path.push([u.x, u.y]);
+    G.events.push({t: G.t, kind: 'clack'});
+    any = true;
+  }
+  // une balle adverse sur un trait : la balle qui l'a tracé meurt
+  for (const a of live) for (const b of live) {
+    if (a.team === b.team || a.dead || b.dead || !a.path) continue;
+    if (!a.vx && !a.vy && !b.vx && !b.vy) continue;   // rien ne bouge : rien de nouveau
+    if (trailDist(b.x, b.y, a) < R) kill(G, a, b);
+  }
+  return any;
+}
+
+// fin du tour : qui gagne ? (null = on continue)
+function judge(G) {
+  const n0 = alive(G, 0).length, n1 = alive(G, 1).length;
+  if (!n0 || !n1) return {winner: n0 ? 0 : n1 ? 1 : -1, reason: 'eliminated'};
+  if (G.timeUp) {          // chrono fini : le plus de terrain gagne (à égalité : le plus de balles)
+    const w = G.area[0] === G.area[1] ? (n0 === n1 ? -1 : n0 > n1 ? 0 : 1) : G.area[0] > G.area[1] ? 0 : 1;
+    return {winner: w, reason: 'time'};
+  }
+  return null;
+}
+function endShot(G) {
+  G.moving = false;
+  if (G.side === 1) G.turn++;
+  G.side = 1 - G.side;
+  G.over = judge(G);
+  if (!G.over && !alive(G, G.side).length) G.over = judge(G);
+  return G.over;
+}
+
+const pct = (G, s) => G.cells ? G.area[s] / G.cells : 0;
+
+/* ------------------------------ l'ordi ------------------------------ */
+
+function cloneGame(G) {
+  return {...G, events: [], kills: [...G.kills], shots: [...G.shots], area: [...G.area],
+    owner: G.owner.slice(), flashAt: G.flashAt,   // flashAt n'est que pour le dessin : partagé
+    balls: G.balls.map(b => ({...b, path: b.path ? b.path.map(p => [...p]) : null}))};
+}
+function simulate(G, bi, ang, power) {
+  const S = cloneGame(G), b = S.balls[bi];
+  S.fast = true;
+  shoot(S, b, Math.cos(ang), Math.sin(ang), power);
+  for (let i = 0; i < 240 * 8 && step(S); i++);
+  return S;
+}
+function trailLen(b) {
+  if (!b.path) return 0;
+  const p = trailPts(b); let l = 0;
+  for (let i = 1; i < p.length; i++) l += Math.hypot(p[i][0] - p[i - 1][0], p[i][1] - p[i - 1][1]);
+  return l;
+}
+// note d'une position pour l'équipe s (plus c'est haut, mieux c'est)
+function evaluate(S, s, before, trailW = 30) {
+  const o = 1 - s;
+  let v = (S.area[s] - before.area[s]) - 0.8 * (S.area[o] - before.area[o]);
+  v += 7000 * (S.kills[s] - before.kills[s]) - 9000 * (S.kills[o] - before.kills[o]);
+  if (!alive(S, o).length) v += 1e6;
+  if (!alive(S, s).length) v -= 1e6;
+  for (const b of alive(S, s)) { const l = trailLen(b); v -= trailW * l + (l > 4 * R ? trailW * 100 : 0); }   // trait ouvert = risque : finir avec un tout petit trait
+  for (const b of alive(S, o)) v += 1.5 * trailLen(b);   // trait adverse ouvert = cible
+  return v;
+}
+// 3 niveaux (Bazil, 30/10) : combien de tirs l'ordi essaie, s'il protège ses traits, s'il prend le meilleur, s'il vise juste
+const LEVELS = {
+  easy: {angles: 12, powers: [0.45, 0.8], trailW: 2, top: 14, noise: 0.22},
+  medium: {angles: 20, powers: [0.3, 0.55, 0.8, 1], trailW: 12, top: 4, noise: 0.06},
+  hard: {angles: 30, powers: [0.25, 0.4, 0.55, 0.7, 0.85, 1], trailW: 30, top: 1, noise: 0},
+};
+// choisit un tir pour l'équipe s ; découpé en morceaux pour ne pas bloquer l'écran
+function* aiPlan(G, s, level = 'medium') {
+  const L = LEVELS[level] || LEVELS.medium, last = L.powers[L.powers.length - 1];
+  const cands = [], mine = G.balls.map((b, i) => [b, i]).filter(([b]) => !b.dead && b.team === s);
+  for (const [, bi] of mine) {
+    for (let a = 0; a < L.angles; a++) for (const p of L.powers) {
+      const ang = (a + Math.random() * 0.6) / L.angles * Math.PI * 2, S = simulate(G, bi, ang, p);
+      cands.push({bi, ang, p, v: evaluate(S, s, G, L.trailW)});
+      if (p === last && a % 5 === 4) yield;   // petits morceaux : l'écran reste fluide
+    }
+  }
+  cands.sort((x, y) => y.v - x.v);
+  // pas toujours le meilleur : parmi les N meilleurs, au hasard (facile = beaucoup de hasard)
+  const top = cands.slice(0, L.top).filter(c => L.top > 4 || c.v > cands[0].v - Math.abs(cands[0].v) * 0.5 - 500);
+  const c = top[Math.floor(Math.random() * top.length)] || cands[0];
+  return {...c, ang: c.ang + (Math.random() - 0.5) * 2 * L.noise};   // facile : vise un peu à côté
+}
+
+
+// Country Clash LIVE (mode développeur, 30/10) : ordi contre ordi, en boucle, pour un live TikTok.
+// - Les spectateurs écrivent un pays = un vote. Les 2 pays les plus votés jouent le match suivant.
+//   Un pays qui vient de jouer attend 2 matchs avant de rejouer.
+// - Likes = jauge de son équipe (l'équipe = le dernier pays qu'on a écrit). Jauge pleine = ⚡ balles plus rapides.
+// - Abonnement = gros pseudo à l'écran.
+// Les événements TikTok arrivent par le petit programme live-relay (sur le Mac), en WebSocket sur le port 8787.
+// Tout est dessiné dans un seul canvas 1080 × 1920 (format vertical du live).
+
+const W = 1080, H = 1920;
+const LIVE_TIME = 90;            // durée d'un match (vraies secondes) ; à 0, le plus de terrain gagne
+const COOLDOWN = 2;              // un pays qui a joué attend 2 matchs
+const LIKE_GOAL = 60;            // likes pour remplir une jauge
+const LIKE_SHARE = 0.2;          // une personne remplit au plus 20 % de la jauge
+const BOOST_TIME = 12, BOOST_SPEED = 1.3;
+const LEVEL = 'medium';
+const HOST_TURN = 15;            // mode « je joue » : 15 s pour tirer, sinon le tour passe          // niveau des deux ordis (des erreurs = plus de suspense)
+const HOT = ['Turkey', 'Brazil', 'Morocco', 'Mexico', 'Indonesia', 'Poland', 'Argentina', 'Egypt', 'Philippines', 'Pakistan', 'Bangladesh', 'Algeria', 'Portugal', 'France', 'Spain', 'United States'];
+const BANNED = [['India', 'Pakistan'], ['Morocco', 'Algeria'], ['Turkey', 'Greece'], ['Russia', 'Ukraine']];
+const short = n => ({'United States': 'USA', 'Ivory Coast': 'IVORY COAST'}[n] || n).toUpperCase();
+
+/* ---------------- reconnaître un pays dans un commentaire ---------------- */
+const ISO = {France: 'FR', Italy: 'IT', Ireland: 'IE', Belgium: 'BE', Mexico: 'MX', Nigeria: 'NG', Peru: 'PE', Romania: 'RO', Senegal: 'SN',
+  'Ivory Coast': 'CI', Germany: 'DE', Russia: 'RU', Netherlands: 'NL', Austria: 'AT', Hungary: 'HU', Colombia: 'CO', Indonesia: 'ID', Poland: 'PL',
+  Ukraine: 'UA', Argentina: 'AR', Spain: 'ES', Egypt: 'EG', India: 'IN', Japan: 'JP', Bangladesh: 'BD', Brazil: 'BR', Switzerland: 'CH', Sweden: 'SE',
+  Denmark: 'DK', Finland: 'FI', China: 'CN', Vietnam: 'VN', Turkey: 'TR', Portugal: 'PT', 'United States': 'US', Morocco: 'MA', Algeria: 'DZ',
+  Tunisia: 'TN', Philippines: 'PH', Pakistan: 'PK', Greece: 'GR', Ghana: 'GH', Cameroon: 'CM', Chile: 'CL', England: 'GB', Guinea: 'GN', Mali: 'ML',
+  Lithuania: 'LT', Estonia: 'EE', Bulgaria: 'BG', Bolivia: 'BO', Armenia: 'AM', Gabon: 'GA', 'Sierra Leone': 'SL', Latvia: 'LV', Thailand: 'TH',
+  Somalia: 'SO', Norway: 'NO', Iceland: 'IS', Uruguay: 'UY', UAE: 'AE', Ethiopia: 'ET'};
+const ALIAS = {   // autres façons d'écrire (langue du pays, abréviations)
+  Turkey: ['turkiye', 'türkiye', 'turquie', 'turkei', 'türkei', 'turk', 'türk'], 'United States': ['usa', 'us', 'america', 'united states of america', 'etats unis', 'eeuu', 'estados unidos'],
+  Brazil: ['brasil', 'bresil'], Morocco: ['maroc', 'marruecos', 'maghreb', 'magreb', 'المغرب'], Algeria: ['algerie', 'dz', 'الجزائر'], Egypt: ['egypte', 'misr', 'مصر'],
+  Mexico: ['méxico', 'mexique', 'mx'], Indonesia: ['indonesie', 'indo'], Poland: ['polska', 'pologne', 'polen'], Spain: ['españa', 'espana', 'espagne'],
+  Germany: ['deutschland', 'allemagne', 'alemania'], Italy: ['italia', 'italie'], Portugal: ['pt'], Philippines: ['pilipinas', 'pinas', 'ph'],
+  Pakistan: ['pak'], Bangladesh: ['bd', 'bangla'], Argentina: ['argentine'], England: ['uk', 'britain', 'angleterre', 'inglaterra'],
+  Netherlands: ['holland', 'nederland', 'pays bas'], Greece: ['hellas', 'grece', 'ellada'], Japan: ['japon', 'nippon'], China: ['chine'],
+  Sweden: ['sverige', 'suede'], Norway: ['norge', 'norvege'], Denmark: ['danmark'], Finland: ['suomi'], Switzerland: ['suisse', 'schweiz', 'svizzera'],
+  Austria: ['österreich', 'osterreich', 'autriche'], Belgium: ['belgique', 'belgie'], 'Ivory Coast': ["cote d'ivoire", 'cote divoire', 'civ'],
+  Senegal: ['sénégal'], Tunisia: ['tunisie', 'تونس'], Colombia: ['colombie'], Romania: ['romania', 'roumanie'], Russia: ['rossiya', 'russie'],
+  Ukraine: ['ukraina'], Hungary: ['magyarorszag', 'hongrie'], UAE: ['emirates', 'emirats', 'uae'], Vietnam: ['viet nam'], Thailand: ['thailande', 'thai'],
+  Peru: ['perú', 'perou'], Chile: ['chili'], Iceland: ['island', 'islande'], Ethiopia: ['ethiopie'], Somalia: ['somalie'], Lithuania: ['lietuva'],
+  Latvia: ['latvija'], Estonia: ['eesti'], Bulgaria: ['bulgarie'], Armenia: ['hayastan', 'armenie'], Cameroon: ['cameroun'], Guinea: ['guinee']};
+const norm = s => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9؀-ۿ' ]+/g, ' ').trim();
+const WORDS = [];
+for (const c of COUNTRIES) for (const w of [c.name, ...(ALIAS[c.name] || [])]) WORDS.push([norm(w), c.name]);
+WORDS.sort((a, b) => b[0].length - a[0].length);   // les noms longs d'abord (« united states » avant « us »)
+const FLAG_EMOJI = {};
+for (const [n, code] of Object.entries(ISO)) if (COUNTRIES.some(c => c.name === n)) FLAG_EMOJI[String.fromCodePoint(...[...code].map(ch => 0x1F1A5 + ch.charCodeAt(0)))] = n;
+FLAG_EMOJI['🏴\u{E0067}\u{E0062}\u{E0065}\u{E006E}\u{E0067}\u{E007F}'] = 'England';
+function findCountry(text) {
+  for (const [e, n] of Object.entries(FLAG_EMOJI)) if (text.includes(e)) return n;
+  const t = ' ' + norm(text) + ' ';
+  for (const [w, n] of WORDS) if (w && t.includes(' ' + w + ' ')) return n;
+  return null;
+}
+
+/* ------------------------------ état ------------------------------ */
+const THEMES = {   // les fonds des vidéos (sans le noir)
+  navy: {BG: '#0F1A3A', FG: '#F4F4F2', MUTED: '#8E9AB8', ACCENT: '#FFD60A', EMPTY: '#1A2852', OBST: '#3A4A78', PANEL: '#16234A'},
+  purple: {BG: '#22113D', FG: '#F4F4F2', MUTED: '#A595C2', ACCENT: '#FFD60A', EMPTY: '#341E58', OBST: '#5A4382', PANEL: '#2C1850'},
+  forest: {BG: '#0D2A1D', FG: '#F4F4F2', MUTED: '#8FB3A0', ACCENT: '#FFD60A', EMPTY: '#163E2C', OBST: '#3D6B55', PANEL: '#123625'},
+};
+const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+const lighten = (hex, f) => `rgb(${rgb(hex).map(v => Math.round(v + (255 - v) * f)).join(',')})`;
+const famOf = hex => {
+  if (hex === '#fff') return 'white';
+  const [r, g, b] = rgb(hex), mx = Math.max(r, g, b), mn = Math.min(r, g, b), d = mx - mn || 1;
+  if (mx < 60) return 'black';
+  if (mn > 200) return 'white';
+  let h = mx === r ? ((g - b) / d) % 6 : mx === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  h = (h * 60 + 360) % 360;
+  return h < 18 || h >= 330 ? 'red' : h < 40 ? 'orange' : h < 70 ? 'yellow' : h < 170 ? 'green' : h < 260 ? 'blue' : 'red';
+};
+const closeFam = (a, b) => a === b || ['orange,yellow', 'orange,red'].includes([a, b].sort().join());
+function teamColors(a, b) {
+  const ca = COUNTRIES.find(c => c.name === a), cb = COUNTRIES.find(c => c.name === b);
+  let fb = cb.bar;
+  if (closeFam(ca.bar, fb)) fb = cb.colors.map(famOf).find(f => f !== 'black' && f !== 'white' && !closeFam(f, ca.bar))
+    || ['blue', 'green', 'red', 'yellow'].find(f => !closeFam(f, ca.bar));
+  if (ca.bar === 'white' && fb === 'white') fb = 'blue';
+  return [FAM[ca.bar], FAM[fb]];
+}
+const banned = (a, b) => BANNED.some(([x, y]) => (x === a && y === b) || (x === b && y === a));
+
+const votes = {};                 // pays → votes pour le prochain match
+const voteAt = {};                // pays → moment du dernier vote (départage)
+const fan = {};                   // pseudo → son pays (dernier pays écrit)
+const recent = [];                // derniers votes affichés {user, country, t}
+let lastPlayed = [];              // pays des derniers matchs (le plus récent d'abord)
+let matchNo = 0, G = null, T = THEMES.navy, teams = ['Turkey', 'Brazil'], TEAM_COL = ['#FF3B30', '#2F7BFF'];
+let hostPlays = true;            // touche P : toi (souris) pour le pays n°1 des votes, contre l'ordi ; sinon ordi contre ordi
+let aim = null, hostWait = 0, slowUntil = 0;
+const human = s => hostPlays && s === 0;
+let phase = 'intro', phaseT = 0, timeLeft = LIVE_TIME, clock = 0, acc = 0, ai = null, cpuAim = null, winner = -1, lastTheme = null;
+let gauge = [null, null];         // {likes, by: {user: n}, boostUntil}
+const fx = {pops: [], shards: [], rings: [], confetti: []};
+const shows = [];                 // annonces en attente (abonnés, cadeaux)
+let show = null;
+const rowY = {};                  // position animée de chaque pays dans le top des votes
+
+const cv = document.getElementById('cv'), ctx = cv.getContext('2d');
+const grid = document.createElement('canvas'); grid.width = grid.height = N;
+const gctx = grid.getContext('2d'), gimg = gctx.createImageData(N, N);
+let gridDirty = true, flashUntil = 0;
+const flagCache = {};
+const flag = (name, size = 160) => flagCache[name + size] || (flagCache[name + size] = makeFlag(COUNTRIES.find(c => c.name === name), 'rgba(244,244,242,.9)', size));
+
+/* ------------------------------ matchs ------------------------------ */
+function choose() {
+  const resting = new Set(lastPlayed.slice(0, COOLDOWN * 2));
+  const ranked = Object.keys(votes).filter(n => votes[n] > 0 && !resting.has(n)).sort((a, b) => votes[b] - votes[a] || voteAt[a] - voteAt[b]);
+  const pool = [...ranked];
+  for (const n of [...HOT].sort(() => Math.random() - 0.5)) if (!resting.has(n) && !pool.includes(n)) pool.push(n);   // pas assez de votes : pays chauds au hasard
+  const a = pool[0], b = pool.find(n => n !== a && !banned(a, n));
+  return [a, b];
+}
+function startMatch() {
+  teams = choose(); matchNo++;
+  for (const n of teams) { votes[n] = 0; }
+  lastPlayed = [...teams, ...lastPlayed].slice(0, 10);
+  TEAM_COL = teamColors(teams[0], teams[1]);
+  const keys = Object.keys(THEMES).filter(k => k !== lastTheme); lastTheme = keys[Math.floor(Math.random() * keys.length)]; T = THEMES[lastTheme];
+  G = newGame(teams, ARENAS[Math.floor(Math.random() * ARENAS.length)]);
+  G.side = Math.random() < 0.5 ? 0 : 1;
+  gauge = [0, 1].map(() => ({likes: 0, by: {}, boostUntil: 0}));
+  fx.pops = []; fx.shards = []; fx.rings = []; fx.confetti = [];
+  gridDirty = true; flashUntil = 0; ai = null; cpuAim = null; aim = null; hostWait = 0; winner = -1; acc = 0;
+  timeLeft = LIVE_TIME; phase = 'intro'; phaseT = 0;
+  document.body.style.background = T.BG;
+}
+function finish(over) {
+  phase = 'end'; phaseT = 0; winner = over.winner;
+  winSound(winner);
+  if (winner >= 0) for (let i = 0; i < 180; i++) {
+    const a = Math.random() * Math.PI * 2, sp = 200 + Math.random() * 700;
+    fx.confetti.push({x: WORLD / 2, y: WORLD / 2, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 400, t: clock,
+      col: [TEAM_COL[winner], '#FFFFFF', T.ACCENT][i % 3], r: Math.random() * 6, s: 8 + Math.random() * 8});
+  }
+}
+const boosted = s => gauge[s] && gauge[s].boostUntil > clock;
+function cpuTurn(dt) {
+  if (!ai) ai = {it: aiPlan(G, G.side, LEVEL), res: null, wait: 0};
+  ai.wait += dt;
+  for (let k = 0; k < 3 && !ai.res; k++) { const r = ai.it.next(); if (r.done) ai.res = r.value; }
+  if (!ai.res || ai.wait < 0.6) return;
+  const c = ai.res; ai = null;
+  cpuAim = {ball: G.balls[c.bi], ang: c.ang, p: c.p, t: clock};
+}
+function fire() {
+  const {ball: b, ang, p} = cpuAim; cpuAim = null;
+  shoot(G, b, Math.cos(ang), Math.sin(ang), p);
+  if (boosted(b.team)) { b.vx *= BOOST_SPEED; b.vy *= BOOST_SPEED; }
+}
+
+/* ------------------------------ événements TikTok ------------------------------ */
+function onComment(user, nick, text) {
+  const n = findCountry(text || '');
+  if (!n) return;
+  fan[user] = n;
+  votes[n] = (votes[n] || 0) + 1; voteAt[n] = clock;
+  recent.unshift({user: nick || user, country: n, t: clock}); recent.length = Math.min(recent.length, 5);
+}
+function onLike(user, count) {
+  const n = fan[user]; if (!n || phase !== 'play') return;
+  const s = teams.indexOf(n); if (s < 0) return;
+  const g = gauge[s]; if (g.boostUntil > clock) return;   // pendant le boost, la jauge ne se remplit pas
+  const room = Math.max(0, LIKE_GOAL * LIKE_SHARE - (g.by[user] || 0)), add = Math.min(count, room);
+  if (!add) return;
+  g.by[user] = (g.by[user] || 0) + add; g.likes += add;
+  if (g.likes >= LIKE_GOAL) { g.likes = 0; g.by = {}; g.boostUntil = clock + BOOST_TIME; boostSound(); }
+}
+function onFollow(user, nick) { shows.push({kind: 'follow', name: nick || user, country: fan[user] || null}); }
+function onShare(user, nick) { shows.push({kind: 'share', name: nick || user, country: fan[user] || null}); }
+function onGift(user, nick, gift, n) { shows.push({kind: 'gift', name: nick || user, gift, n, country: fan[user] || null}); }
+function handle(m) {
+  if (m.type === 'comment') onComment(m.user, m.nick, m.text);
+  else if (m.type === 'like') onLike(m.user, Math.max(1, m.count | 0));
+  else if (m.type === 'follow') onFollow(m.user, m.nick);
+  else if (m.type === 'share') onShare(m.user, m.nick);
+  else if (m.type === 'gift') onGift(m.user, m.nick, m.gift, m.count);
+}
+let relay = 'off';
+function connect() {
+  let ws;
+  try { ws = new WebSocket('ws://localhost:8787'); } catch (e) { relay = 'off'; setTimeout(connect, 3000); return; }
+  ws.onopen = () => { relay = 'on'; };
+  ws.onmessage = e => { try { const m = JSON.parse(e.data); if (m.type === 'status') relay = m.live ? 'live' : 'on'; else handle(m); } catch (err) {} };
+  ws.onclose = () => { relay = 'off'; setTimeout(connect, 3000); };
+}
+// touches de test (sans live) : V vote, L likes, F abonné, S partage, G cadeau, M son, D infos
+const TEST = ['ali_34', 'mehmet.tr', 'joao_br', 'yassine212', 'kasia_pl', 'budi.id', 'maria_mx', 'omar_eg'];
+let showDebug = true, muted = false;
+addEventListener('keydown', e => {
+  const u = TEST[Math.floor(Math.random() * TEST.length)], k = e.key.toLowerCase();
+  if (k === 'v') { const pool = [...HOT, 'Germany', 'England', 'Italy']; onComment(u, u, pool[Math.floor(Math.random() * pool.length)]); }
+  if (k === 'l') { const s = Math.random() < 0.5 ? 0 : 1; for (let i = 0; i < 3; i++) { const x = 'fan' + Math.floor(Math.random() * 1e4); fan[x] = teams[s]; onLike(x, 8); } }   // 3 fans d'une équipe likent
+  if (k === 'f') { fan[u] = fan[u] || teams[0]; onFollow(u, u); }
+  if (k === 's') onShare(u, u);
+  if (k === 'g') onGift(u, u, 'Rose', 1);
+  if (k === 'm') muted = !muted;
+  if (k === 'p') { hostPlays = !hostPlays; aim = null; ai = null; cpuAim = null; hostWait = 0; }
+  if (k === 'd') showDebug = !showDebug;
+  audio();
+});
+
+/* ------------------------------ sons ------------------------------ */
+let AC = null;
+function audio() { if (!AC) try { AC = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} if (AC && AC.state === 'suspended') AC.resume(); }
+function tone(f, v, d, type = 'triangle', delay = 0) {
+  if (!AC || muted) return;
+  const t = AC.currentTime + delay, o = AC.createOscillator(), g = AC.createGain();
+  o.type = type; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.01);
+  g.gain.exponentialRampToValueAtTime(0.001, t + d); o.connect(g).connect(AC.destination); o.start(t); o.stop(t + d + 0.05);
+}
+const NOTES = [261.63, 329.63];
+let lastBounce = 0;
+function sounds(events) {
+  for (const ev of events) {
+    if (ev.kind === 'bounce' && clock - lastBounce > 0.05) { lastBounce = clock; tone(NOTES[ev.team], 0.1, 0.22); }
+    if (ev.kind === 'clack') tone(900, 0.07, 0.06, 'square');
+    if (ev.kind === 'cut' || ev.kind === 'dead') { gridDirty = true; flashUntil = G.t + 0.4; }
+    if (ev.kind === 'cut') {
+      const m = Math.min(2, 1 + ev.gained / 30000);
+      [1, 1.25, 1.5].forEach((x, i) => tone(NOTES[ev.team] * x * m, 0.15, 0.4, 'triangle', i * 0.05));
+      fx.rings.push({x: ev.x, y: ev.y, t: clock, team: ev.team});
+    }
+    if (ev.kind === 'dead') {
+      tone(1800, 0.12, 0.15, 'square'); tone(2600, 0.08, 0.2, 'triangle', 0.03);
+      if (!alive(G, ev.team).length) [220, 165, 110].forEach((f, i) => tone(f, 0.14, 0.18, 'square', i * 0.12));
+      fx.pops.push({x: ev.x, y: ev.y, t: clock});
+      if (ev.trail) for (let i = 1; i < ev.trail.length; i++) {
+        const [x0, y0] = ev.trail[i - 1], [x1, y1] = ev.trail[i], n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / 40));
+        for (let k = 0; k < n; k++) fx.shards.push({x: x0 + (x1 - x0) * (k + 0.5) / n, y: y0 + (y1 - y0) * (k + 0.5) / n, vx: (Math.random() - 0.5) * 300,
+          vy: -Math.random() * 300, ang: Math.atan2(y1 - y0, x1 - x0), spin: (Math.random() - 0.5) * 12, len: 30, col: lighten(TEAM_COL[ev.team], 0.4), t: clock});
+      }
+    }
+  }
+}
+function winSound(w) { const f = NOTES[Math.max(0, w)]; [1, 1.25, 1.5, 2].forEach((m, k) => tone(f * m, 0.16, 1.4, 'triangle', k * 0.11)); }
+function boostSound() { [1, 1.5, 2, 3].forEach((m, k) => tone(440 * m, 0.12, 0.3, 'sawtooth', k * 0.06)); }
+
+/* ------------------------------ boucle ------------------------------ */
+let prev = null;
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = prev ? Math.min(0.05, (now - prev) / 1000) : 0; prev = now;
+  clock += dt; phaseT += dt;
+  if (phase === 'intro' && phaseT > 4) { phase = 'play'; phaseT = 0; }
+  else if (phase === 'end' && phaseT > 6) startMatch();
+  else if (phase === 'play') {
+    timeLeft = Math.max(0, timeLeft - dt);
+    if (timeLeft === 0 && !G.timeUp) G.timeUp = true;
+    if (G.moving) {
+      acc += dt;
+      let still = false;
+      while (acc >= DT) { acc -= DT; if (!step(G)) { still = true; break; } }
+      sounds(G.events); G.events = [];
+      if (still) { acc = 0; G.t += 0.4; gridDirty = true; const over = endShot(G); if (over) finish(over); }
+    } else if (G.timeUp) { const over = judge(G); if (over) finish(over); }
+    else if (human(G.side)) {                     // à toi de jouer : 15 s, sinon le tour passe
+      if (!aim) hostWait += dt;
+      if (hostWait >= HOST_TURN) { hostWait = 0; aim = null; if (G.side === 1) G.turn++; G.side = 1 - G.side; slowUntil = clock + 1.2; tone(196, 0.12, 0.18, 'square'); }
+    }
+    else if (cpuAim) { if (clock - cpuAim.t > 0.55) fire(); }
+    else cpuTurn(dt);
+  }
+  if (!show && shows.length) { show = shows.shift(); show.t = clock; tone(660, 0.12, 0.2); tone(990, 0.12, 0.3, 'triangle', 0.1); }
+  if (show && clock - show.t > 3) show = null;
+  draw();
+}
+
+/* ------------------------------ dessin ------------------------------ */
+const FONT = '"Bricolage Grotesque", "Arial Black", system-ui, sans-serif', MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const AX = 40, AY = 590, AS = 700, KS = AS / BOX.size;    // arène à l'écran : 700 × 700
+const PX = 770, PW = 270;                                 // panneau des votes, à droite
+function text(t, x, y, size, col, align = 'left', weight = 800, font = FONT) {
+  ctx.font = `${weight} ${size}px ${font}`; ctx.fillStyle = col; ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillText(t, x, y);
+}
+function fitText(t, x, y, size, maxW, col, align = 'left', weight = 800) {
+  ctx.font = `${weight} ${size}px ${FONT}`;
+  const w = ctx.measureText(t).width; if (w > maxW) size = Math.max(10, Math.floor(size * maxW / w));
+  text(t, x, y, size, col, align, weight);
+}
+function rrect(x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function draw() {
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.fillStyle = T.BG; ctx.fillRect(0, 0, W, H);
+  drawBanner(); drawTeams(); drawArena(); drawVotes();
+  text('PLAY FREE · LINK IN BIO', AX + AS / 2, AY + AS + 42, 36, T.ACCENT, 'center');
+  drawOverlay(); drawShow();
+  if (showDebug) {
+    const c = {off: '#FF3B30', on: '#FF8A00', live: '#22C55E'}[relay];
+    ctx.fillStyle = c; ctx.beginPath(); ctx.arc(30, 30, 9, 0, Math.PI * 2); ctx.fill();
+    text({off: 'relay OFF (test: V L F S G)', on: 'relay ON, waiting for live', live: 'LIVE connected'}[relay] + (hostPlays ? ' · P: you play' : ' · P: CPU vs CPU') + ' · D hides', 48, 31, 20, T.MUTED, 'left', 600, MONO);
+  }
+}
+function drawBanner() {
+  text('💬 Comment a country = vote', W / 2, 258, 44, T.FG, 'center');
+  text('❤️ Like = ⚡ speed for your team', W / 2, 316, 40, T.ACCENT, 'center');
+}
+function drawTeams() {
+  const p = [pct(G, 0), pct(G, 1)];
+  for (const s of [0, 1]) {
+    const x = s ? AX + AS : AX, al = s ? 'right' : 'left', dir = s ? -1 : 1, y = 400;
+    ctx.drawImage(flag(teams[s], 192), s ? x - 96 : x, y - 48, 96, 96);
+    const tx = x + dir * 112;
+    fitText(short(teams[s]), tx, y - 20, 34, 150, T.FG, al);
+    if (hostPlays) {                                      // qui joue quoi
+      const tag = s === 0 ? 'HOST' : 'CPU'; ctx.font = `800 18px ${FONT}`; const tw = ctx.measureText(tag).width + 16, bx = s ? x - 3 * 36 - 8 - tw : x + 3 * 36 + 8;   // à côté des mini-balles
+      rrect(bx, y + 59, tw, 28, 8); ctx.fillStyle = s === 0 ? T.ACCENT : T.EMPTY; ctx.fill();
+      text(tag, bx + tw / 2, y + 74, 18, s === 0 ? '#111114' : T.FG, 'center');
+    }
+    text(Math.round(p[s] * 100) + '%', tx, y + 22, 44, TEAM_COL[s], al, 800, MONO);
+    const n = alive(G, s).length;                         // balles restantes
+    for (let i = 0; i < BALLS; i++) {
+      ctx.globalAlpha = i < n ? 1 : 0.2; ctx.drawImage(flag(teams[s], 64), s ? x - 30 - i * 36 : x + i * 36, y + 58, 30, 30);
+    }
+    ctx.globalAlpha = 1;
+    // jauge des likes
+    const g = gauge[s], gy = 512, gw = 300, gx = s ? x - gw : x, on = g && g.boostUntil > clock;
+    rrect(gx, gy, gw, 26, 13); ctx.fillStyle = T.EMPTY; ctx.fill();
+    const f = on ? (g.boostUntil - clock) / BOOST_TIME : (g ? g.likes / LIKE_GOAL : 0);
+    if (f > 0) { rrect(s ? gx + gw * (1 - f) : gx, gy, gw * f, 26, 13); ctx.fillStyle = on && Math.sin(clock * 12) > 0 ? '#FFFFFF' : T.ACCENT; ctx.fill(); }
+    text(on ? `⚡ BOOST ${Math.ceil(g.boostUntil - clock)}s` : '⚡ likes', s ? gx + gw - 12 : gx + 12, gy + 13, 18, on ? '#111114' : T.MUTED, al, 800);
+  }
+  // chrono + numéro du match
+  const sec = Math.ceil(timeLeft);
+  text(`${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`, AX + AS / 2, 392, 44, sec <= 10 && phase === 'play' ? T.ACCENT : T.FG, 'center', 700, MONO);
+  if (phase === 'play' && clock < slowUntil) text('TOO SLOW!', AX + AS / 2, 440, 22, T.ACCENT, 'center');
+  else if (phase === 'play' && human(G.side) && !G.moving) {
+    text('YOUR TURN', AX + AS / 2, 440, 22, T.ACCENT, 'center');
+    const f = 1 - hostWait / HOST_TURN; rrect(AX + AS / 2 - 70, 460, 140 * f, 8, 4); ctx.fillStyle = T.ACCENT; ctx.fill();
+  } else text('MATCH ' + matchNo, AX + AS / 2, 440, 20, T.MUTED, 'center', 700, MONO);
+  // barre du terrain
+  const by = 556, bw = AS;
+  rrect(AX, by, bw, 14, 7); ctx.fillStyle = T.EMPTY; ctx.fill();
+  ctx.fillStyle = TEAM_COL[0]; ctx.fillRect(AX + 7, by, Math.max(0, bw * p[0] - 7), 14);
+  ctx.fillStyle = TEAM_COL[1]; ctx.fillRect(AX + bw * (1 - p[1]), by, Math.max(0, bw * p[1] - 7), 14);
+}
+function arenaPath(pad = 0) {
+  const Z = G.Z; ctx.beginPath();
+  if (G.round) ctx.arc(Z.cx, Z.cy, Z.r + pad, 0, Math.PI * 2); else ctx.rect(Z.x0 - pad, Z.y0 - pad, BOX.size + 2 * pad, BOX.size + 2 * pad);
+}
+function drawArena() {
+  if (gridDirty || G.t <= flashUntil) {
+    gridDirty = false;
+    const cols = TEAM_COL.map(rgb), empty = rgb(T.EMPTY), bg = rgb(T.BG), ob = rgb(T.OBST), d = gimg.data, t = G.t;
+    for (let i = 0, j = 0; i < NC; i++, j += 4) {
+      const bl = G.block[i];
+      let c, f = 0;
+      if (bl) c = bl === 1 ? bg : ob;
+      else { const o = G.owner[i]; c = o >= 0 ? cols[o] : empty; f = 1 - (t - G.flashAt[i]) / 0.35; }
+      if (f > 0) { d[j] = c[0] + (255 - c[0]) * f; d[j + 1] = c[1] + (255 - c[1]) * f; d[j + 2] = c[2] + (255 - c[2]) * f; }
+      else { d[j] = c[0]; d[j + 1] = c[1]; d[j + 2] = c[2]; }
+      d[j + 3] = 255;
+    }
+    gctx.putImageData(gimg, 0, 0);
+  }
+  ctx.save();
+  ctx.setTransform(KS, 0, 0, KS, AX - BOX.x0 * KS, AY - BOX.y0 * KS);   // monde → écran
+  ctx.save(); arenaPath(); ctx.clip(); ctx.drawImage(grid, BOX.x0, BOX.y0, BOX.size, BOX.size); ctx.restore();
+  ctx.lineWidth = 6; ctx.strokeStyle = T.FG; arenaPath(3); ctx.stroke();
+  for (const o of G.obs) {
+    ctx.fillStyle = T.OBST; ctx.beginPath();
+    if (o.type === 'rect') ctx.rect(o.x0, o.y0, o.x1 - o.x0, o.y1 - o.y0); else ctx.arc(o.x, o.y, o.r, 0, Math.PI * 2);
+    ctx.fill(); ctx.stroke();
+  }
+  ctx.lineCap = ctx.lineJoin = 'round';
+  for (const b of G.balls) if (!b.dead && b.path) {
+    const pts = trailPts(b), path = () => { ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); };
+    ctx.strokeStyle = T.BG; ctx.lineWidth = 12; path(); ctx.stroke();
+    ctx.strokeStyle = lighten(TEAM_COL[b.team], 0.4); ctx.lineWidth = 6; path(); ctx.stroke();
+  }
+  for (const r of fx.rings) { const a = clock - r.t; if (a > 0.6) continue; ctx.globalAlpha = 1 - a / 0.6; ctx.strokeStyle = TEAM_COL[r.team]; ctx.lineWidth = 8; ctx.beginPath(); ctx.arc(r.x, r.y, 20 + a * 260, 0, Math.PI * 2); ctx.stroke(); }
+  for (const p of fx.pops) { const a = clock - p.t; if (a > 0.6) continue; ctx.globalAlpha = 1 - a / 0.6; ctx.strokeStyle = T.FG; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(p.x, p.y, R + a * 160, 0, Math.PI * 2); ctx.stroke(); }
+  for (const sh of fx.shards) {
+    const a = clock - sh.t; if (a > 1.4) continue;
+    const x = sh.x + sh.vx * a, y = sh.y + sh.vy * a + 700 * a * a, r = sh.ang + sh.spin * a, h = sh.len / 2;
+    ctx.globalAlpha = Math.max(0, 1 - a / 1.4); ctx.strokeStyle = sh.col; ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.moveTo(x - Math.cos(r) * h, y - Math.sin(r) * h); ctx.lineTo(x + Math.cos(r) * h, y + Math.sin(r) * h); ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  for (const b of G.balls) if (!b.dead) {
+    if (boosted(b.team)) {                                  // ⚡ halo jaune qui clignote
+      ctx.globalAlpha = 0.5 + 0.4 * Math.sin(clock * 14); ctx.fillStyle = T.ACCENT;
+      ctx.beginPath(); ctx.arc(b.x, b.y, R + 12, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1;
+    }
+    if (phase === 'play' && human(G.side) && b.team === G.side && !G.moving && !aim) {   // tes balles : halo qui respire
+      ctx.globalAlpha = 0.35 + 0.25 * Math.sin(clock * 5); ctx.strokeStyle = T.ACCENT; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.arc(b.x, b.y, R + 9, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
+    }
+    ctx.drawImage(flag(teams[b.team], 128), b.x - R, b.y - R, R * 2, R * 2);
+  }
+  if (aim) {                                                // ta visée : élastique + flèche
+    const b = aim.ball, dx = b.x - aim.x, dy = b.y - aim.y, d = Math.hypot(dx, dy) || 1, p = Math.min(1, d / MAX_PULL);
+    ctx.strokeStyle = T.MUTED; ctx.lineWidth = 3; ctx.setLineDash([2, 10]);
+    ctx.beginPath(); ctx.moveTo(aim.x, aim.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.setLineDash([]);
+    if (d >= R * 0.9) {
+      const L = 70 + p * 260, ux = dx / d, uy = dy / d;
+      ctx.strokeStyle = T.ACCENT; ctx.lineWidth = 10;
+      ctx.beginPath(); ctx.moveTo(b.x + ux * R, b.y + uy * R); ctx.lineTo(b.x + ux * (R + L), b.y + uy * (R + L)); ctx.stroke();
+    }
+  }
+  if (cpuAim) {                                             // l'ordi vise : flèche pointillée
+    const b = cpuAim.ball, k = Math.min(1, (clock - cpuAim.t) / 0.45), L = 90 + 230 * cpuAim.p * k;
+    ctx.setLineDash([14, 12]); ctx.strokeStyle = T.FG; ctx.lineWidth = 6; ctx.globalAlpha = 0.85;
+    ctx.beginPath(); ctx.moveTo(b.x, b.y); ctx.lineTo(b.x + Math.cos(cpuAim.ang) * L, b.y + Math.sin(cpuAim.ang) * L); ctx.stroke();
+    ctx.setLineDash([]); ctx.globalAlpha = 1;
+  }
+  for (const c of fx.confetti) {
+    const a = clock - c.t; if (a > 3) continue;
+    const x = c.x + c.vx * a, y = c.y + c.vy * a + 600 * a * a;
+    ctx.globalAlpha = Math.max(0, 1 - a / 3); ctx.fillStyle = c.col;
+    ctx.save(); ctx.translate(x, y); ctx.rotate(c.r + a * 6); ctx.fillRect(-c.s / 2, -c.s / 4, c.s, c.s / 2); ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+  ctx.restore();
+}
+function drawVotes() {
+  rrect(PX, 380, PW, 880, 24); ctx.fillStyle = T.PANEL; ctx.fill();
+  text('NEXT MATCH', PX + PW / 2, 418, 30, T.ACCENT, 'center');
+  text('top votes', PX + PW / 2, 452, 20, T.MUTED, 'center', 700, MONO);
+  const resting = new Set(lastPlayed.slice(0, COOLDOWN * 2));
+  const list = Object.keys(votes).filter(n => votes[n] > 0).sort((a, b) => votes[b] - votes[a] || voteAt[a] - voteAt[b]).slice(0, 8);
+  if (!list.length) {
+    text('Comment', PX + PW / 2, 560, 30, T.FG, 'center'); text('a country', PX + PW / 2, 598, 30, T.FG, 'center'); text('to vote!', PX + PW / 2, 636, 30, T.FG, 'center');
+    ['Turkey', 'Brazil', 'Morocco', 'Mexico'].forEach((n, i) => ctx.drawImage(flag(n, 128), PX + 33 + i * 54, 690, 48, 48));
+  }
+  for (const n of Object.keys(rowY)) if (!list.includes(n)) delete rowY[n];
+  list.forEach((n, i) => {
+    const target = 500 + i * 70;
+    rowY[n] = rowY[n] === undefined ? target : rowY[n] + (target - rowY[n]) * 0.15;   // les pays montent et descendent en douceur
+    const y = rowY[n], rest = resting.has(n);
+    ctx.globalAlpha = rest ? 0.45 : 1;
+    text(String(i + 1), PX + 22, y, 26, i < 2 && !rest ? T.ACCENT : T.MUTED, 'center', 800, MONO);
+    ctx.drawImage(flag(n, 128), PX + 44, y - 25, 50, 50);
+    fitText(short(n), PX + 104, y - 9, 24, 120, T.FG);
+    text(rest ? 'rest' : votes[n] + (votes[n] > 1 ? ' votes' : ' vote'), PX + 104, y + 16, 18, rest ? T.MUTED : T.ACCENT, 'left', 700, MONO);
+    ctx.globalAlpha = 1;
+  });
+  // derniers votes
+  text('LAST VOTES', PX + PW / 2, 1080, 20, T.MUTED, 'center', 700, MONO);
+  recent.slice(0, 4).forEach((r, i) => {
+    const y = 1116 + i * 38; ctx.globalAlpha = Math.max(0.3, 1 - (clock - r.t) / 30);
+    ctx.drawImage(flag(r.country, 64), PX + 18, y - 14, 28, 28);
+    fitText('@' + r.user, PX + 54, y, 20, PW - 70, T.FG, 'left', 600);
+    ctx.globalAlpha = 1;
+  });
+}
+function drawOverlay() {
+  if (phase === 'play') return;
+  const cx = AX + AS / 2, cy = AY + AS / 2;
+  ctx.fillStyle = T.BG; ctx.globalAlpha = 0.82; ctx.fillRect(AX - 10, AY - 10, AS + 20, AS + 20); ctx.globalAlpha = 1;
+  if (phase === 'intro') {
+    const k = Math.min(1, phaseT / 0.4);
+    text('NEXT MATCH', cx, cy - 210, 40, T.ACCENT, 'center');
+    ctx.drawImage(flag(teams[0], 256), cx - 250 - (1 - k) * 200, cy - 130, 180, 180);
+    ctx.drawImage(flag(teams[1], 256), cx + 70 + (1 - k) * 200, cy - 130, 180, 180);
+    text('VS', cx, cy - 40, 56, T.FG, 'center');
+    fitText(`${short(teams[0])}  vs  ${short(teams[1])}`, cx, cy + 110, 48, AS - 60, T.FG, 'center');
+    fitText(hostPlays ? `The host plays ${short(teams[0])} · Like to boost your team!` : 'Comment your team · Like to boost!', cx, cy + 175, 28, AS - 60, T.MUTED, 'center', 700);
+    text(String(Math.max(1, Math.ceil(4 - phaseT))), cx, cy + 250, 52, T.ACCENT, 'center', 800, MONO);
+  } else {
+    if (winner >= 0) {
+      ctx.drawImage(flag(teams[winner], 256), cx - 110, cy - 250, 220, 220);
+      fitText(short(teams[winner]) + ' WINS', cx, cy + 30, 72, AS - 60, T.FG, 'center');
+    } else text('DRAW', cx, cy - 20, 80, T.FG, 'center');
+    text(G.over && G.over.reason === 'time' ? `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%` : 'All balls destroyed', cx, cy + 100, 28, T.MUTED, 'center', 700);
+    text('Vote the next match →', cx, cy + 190, 40, T.ACCENT, 'center');
+    text('Comment a country!', cx, cy + 240, 32, T.FG, 'center', 700);
+  }
+}
+function drawShow() {
+  if (!show) return;
+  const a = clock - show.t, k = Math.min(1, a / 0.25), out = Math.max(0, (a - 2.6) / 0.4), y = AY + 150;
+  ctx.globalAlpha = 1 - out;
+  ctx.save(); ctx.translate(W / 2, y); ctx.scale(0.6 + 0.4 * k, 0.6 + 0.4 * k);
+  rrect(-480, -90, 960, 180, 36); ctx.fillStyle = T.ACCENT; ctx.fill();
+  if (show.country) ctx.drawImage(flag(show.country, 192), -450, -60, 120, 120);
+  const tx = show.country ? -310 : -440;
+  fitText('@' + show.name, tx, -28, 56, 760 + (show.country ? 0 : 130), '#111114');
+  const line = show.kind === 'follow' ? (show.country ? `joined the ${short(show.country)} army! ⭐` : 'just followed! ⭐')
+    : show.kind === 'share' ? 'shared the live! 🔗' : `sent ${show.n > 1 ? show.n + ' × ' : ''}${show.gift || 'a gift'} 🎁`;
+  fitText(line, tx, 40, 40, 760 + (show.country ? 0 : 130), '#111114', 'left', 700);
+  ctx.restore(); ctx.globalAlpha = 1;
+}
+
+/* ------------------------------ départ ------------------------------ */
+function fit() {   // le canvas 1080 × 1920 tient dans la fenêtre, sans déformer
+  const s = Math.min(innerWidth / W, innerHeight / H);
+  cv.style.width = W * s + 'px'; cv.style.height = H * s + 'px';
+}
+addEventListener('resize', fit);
+// ta souris : tirer en arrière une de tes balles, viser, lâcher (comme dans le jeu)
+function toWorld(e) {
+  const r = cv.getBoundingClientRect(), sx = (e.clientX - r.left) / r.width * W, sy = (e.clientY - r.top) / r.height * H;
+  return [BOX.x0 + (sx - AX) / KS, BOX.y0 + (sy - AY) / KS];
+}
+cv.addEventListener('pointerdown', e => {
+  audio();
+  if (phase !== 'play' || !human(G.side) || G.moving || G.timeUp) return;
+  const [x, y] = toWorld(e);
+  let best = null, bd = R * 2.4;
+  for (const b of alive(G, G.side)) { const d = Math.hypot(b.x - x, b.y - y); if (d < bd) { bd = d; best = b; } }
+  if (!best) return;
+  aim = {ball: best, x, y}; cv.setPointerCapture(e.pointerId); e.preventDefault();
+});
+cv.addEventListener('pointermove', e => { if (aim) [aim.x, aim.y] = toWorld(e); });
+cv.addEventListener('pointerup', () => {
+  if (!aim) return;
+  const {ball: b, x, y} = aim, dx = b.x - x, dy = b.y - y, d = Math.hypot(dx, dy);
+  aim = null;
+  if (d < R * 0.9 || phase !== 'play' || G.moving) return;   // trop court : on annule
+  hostWait = 0;
+  shoot(G, b, dx, dy, d / MAX_PULL);
+  if (boosted(b.team)) { b.vx *= BOOST_SPEED; b.vy *= BOOST_SPEED; }
+});
+cv.addEventListener('pointercancel', () => { aim = null; });
+cv.style.touchAction = 'none';
+function boot() {
+  fit(); startMatch(); connect(); requestAnimationFrame(frame);
+}
+
+// porte d'entrée : code du mode développeur (seule l'empreinte SHA-256 est dans la page)
+const CODE_HASH = '54008b6212bb130ceb674696c809004e1503e596cc4007e96f32143846369754';
+async function sha(s) { const b = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join(''); }
+function open_() {
+  document.getElementById('gate').remove(); cv.hidden = false;
+  try { sessionStorage.setItem('cc-dev', '1'); } catch (e) {}
+  document.fonts.load('800 40px "Bricolage Grotesque"').catch(() => {}).finally(boot);
+}
+document.getElementById('gate-form').addEventListener('submit', async e => {
+  e.preventDefault(); audio();
+  if (await sha(document.getElementById('code').value.trim()) === CODE_HASH) open_();
+  else { document.getElementById('err').textContent = 'Wrong code.'; document.getElementById('code').value = ''; }
+});
+let ok = false; try { ok = sessionStorage.getItem('cc-dev') === '1'; } catch (e) {}
+if (ok) open_();
+</script>
+
+</body>
+</html>

@@ -6,6 +6,8 @@
 <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);}
 gtag('consent', 'default', {ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'granted'});
 gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
+<meta name="google-adsense-account" content="ca-pub-3184513018818503">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3184513018818503" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ranking · Country Clash</title>
 <meta name="description" content="The Country Clash ranking: which country has won the most matches of all time, and the top 50 players of the week. Win against the CPU to score points for your country.">
@@ -173,7 +175,7 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
   <p>We may remove names or points that break these rules or that are offensive. To report a name, write to us from the <a href="contact.html">contact page</a>.</p>
 
   <footer>
-    <span>© 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
+    <span><a href="live.html" style="color:inherit;text-decoration:none">©</a> 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
   </footer>
 </div>
 <script>// Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, Bazil) :
@@ -242,7 +244,9 @@ const COUNTRIES = [
   ['Uruguay', 'uruguay', ['#fff', '#0038A8', '#FCD116'], 'white'],
   ['UAE', 'uae', ['#00732F', '#fff', '#111', '#FF0000'], 'green'],
   ['Ethiopia', 'ethiopia', ['#078930', '#FCDD09', '#DA121A', '#0F47AF'], 'yellow'],
-].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}));
+].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}))
+  // pays en guerre retirés du site (Bazil, 30/10 : règles AdSense sur la guerre) ; les dessins restent au-dessus
+  .filter(c => !['Russia', 'Ukraine', 'Somalia', 'Ethiopia'].includes(c.name));
 function star(g, x, y, r, color) {
   g.fillStyle = color; g.beginPath();
   for (let i = 0; i < 10; i++) {

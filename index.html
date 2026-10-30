@@ -6,6 +6,8 @@
 <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);}
 gtag('consent', 'default', {ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'granted'});
 gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
+<meta name="google-adsense-account" content="ca-pub-3184513018818503">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3184513018818503" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Country Clash</title>
 <meta name="description" content="Country Clash: a turn-based flag ball game. Pull, aim and release to cut the arena and take territory for your country. Free to play on phone and computer.">
@@ -524,7 +526,9 @@ const COUNTRIES = [
   ['Uruguay', 'uruguay', ['#fff', '#0038A8', '#FCD116'], 'white'],
   ['UAE', 'uae', ['#00732F', '#fff', '#111', '#FF0000'], 'green'],
   ['Ethiopia', 'ethiopia', ['#078930', '#FCDD09', '#DA121A', '#0F47AF'], 'yellow'],
-].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}));
+].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}))
+  // pays en guerre retirés du site (Bazil, 30/10 : règles AdSense sur la guerre) ; les dessins restent au-dessus
+  .filter(c => !['Russia', 'Ukraine', 'Somalia', 'Ethiopia'].includes(c.name));
 function star(g, x, y, r, color) {
   g.fillStyle = color; g.beginPath();
   for (let i = 0; i < 10; i++) {
@@ -1053,6 +1057,7 @@ let PLAYER = 'Turkey', CPU = 'United States', NAMES = ['TURKEY', 'USA'];
 // mode : 'cpu' (contre l'ordi) ou '2p' (2 joueurs sur le même écran) ; niveau de l'ordi : easy / medium / hard (Bazil, 30/10)
 let MODE = 'cpu', LEVEL = 'medium', PLAYER2 = null;
 try { MODE = localStorage.getItem('cc-mode') === '2p' ? '2p' : 'cpu'; LEVEL = ['easy', 'medium', 'hard'].includes(localStorage.getItem('cc-level')) ? localStorage.getItem('cc-level') : 'medium'; PLAYER2 = localStorage.getItem('cc-p2'); } catch (e) {}
+if (PLAYER2 && !COUNTRIES.some(c => c.name === PLAYER2)) PLAYER2 = null;   // pays retiré depuis
 const human = s => MODE === '2p' || s === 0;   // qui joue avec le doigt ?
 const BANNED = [['India', 'Pakistan'], ['Morocco', 'Algeria'], ['Turkey', 'Greece'], ['Russia', 'Ukraine']];   // comme gen.js
 const short = n => ({'United States': 'USA'}[n] || n).toUpperCase();

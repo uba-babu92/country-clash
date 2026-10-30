@@ -6,9 +6,11 @@
 <script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);}
 gtag('consent', 'default', {ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'granted'});
 gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
+<meta name="google-adsense-account" content="ca-pub-3184513018818503">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3184513018818503" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>All 62 Countries and Flags in Country Clash · Country Clash</title>
-<meta name="description" content="See every country you can play in Country Clash: 62 flags from Europe, Africa, Asia and the Americas, drawn as round flag balls.">
+<title>All 58 Countries and Flags in Country Clash · Country Clash</title>
+<meta name="description" content="See every country you can play in Country Clash: 58 flags from Europe, Africa, Asia and the Americas, drawn as round flag balls.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
@@ -125,7 +127,7 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
   </nav>
 
   <p class="meta">COUNTRIES · 3 MIN READ</p>
-  <h1>All 62 countries in Country Clash</h1>
+  <h1>All 58 countries in Country Clash</h1>
   <p class="lead">Every country in Country Clash is a round flag ball. Here is the full list, by continent. Which one is yours?</p>
 
   <h2>How the flags are made</h2>
@@ -138,7 +140,7 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
   <p><a href="index.html">Pick your country and play →</a></p>
 
   <footer>
-    <span>© 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
+    <span><a href="live.html" style="color:inherit;text-decoration:none">©</a> 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
   </footer>
 </div>
 <script>// Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, Bazil) :
@@ -207,7 +209,9 @@ const COUNTRIES = [
   ['Uruguay', 'uruguay', ['#fff', '#0038A8', '#FCD116'], 'white'],
   ['UAE', 'uae', ['#00732F', '#fff', '#111', '#FF0000'], 'green'],
   ['Ethiopia', 'ethiopia', ['#078930', '#FCDD09', '#DA121A', '#0F47AF'], 'yellow'],
-].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}));
+].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}))
+  // pays en guerre retirés du site (Bazil, 30/10 : règles AdSense sur la guerre) ; les dessins restent au-dessus
+  .filter(c => !['Russia', 'Ukraine', 'Somalia', 'Ethiopia'].includes(c.name));
 function star(g, x, y, r, color) {
   g.fillStyle = color; g.beginPath();
   for (let i = 0; i < 10; i++) {
@@ -301,8 +305,8 @@ function flagOf(name, ring, size = 256) { const k = name + (ring || '') + size; 
 <script>
 // La liste des pays par continent, avec les drapeaux dessinés par le jeu (flags.js)
 const REGIONS = {
-  'Europe': ['England', 'France', 'Germany', 'Italy', 'Spain', 'Portugal', 'Netherlands', 'Belgium', 'Switzerland', 'Austria', 'Ireland', 'Poland', 'Romania', 'Hungary', 'Bulgaria', 'Greece', 'Turkey', 'Russia', 'Ukraine', 'Lithuania', 'Latvia', 'Estonia', 'Sweden', 'Norway', 'Denmark', 'Finland', 'Iceland'],
-  'Africa': ['Morocco', 'Algeria', 'Tunisia', 'Egypt', 'Senegal', 'Mali', 'Guinea', 'Sierra Leone', 'Ivory Coast', 'Ghana', 'Nigeria', 'Cameroon', 'Gabon', 'Ethiopia', 'Somalia'],
+  'Europe': ['England', 'France', 'Germany', 'Italy', 'Spain', 'Portugal', 'Netherlands', 'Belgium', 'Switzerland', 'Austria', 'Ireland', 'Poland', 'Romania', 'Hungary', 'Bulgaria', 'Greece', 'Turkey', 'Lithuania', 'Latvia', 'Estonia', 'Sweden', 'Norway', 'Denmark', 'Finland', 'Iceland'],
+  'Africa': ['Morocco', 'Algeria', 'Tunisia', 'Egypt', 'Senegal', 'Mali', 'Guinea', 'Sierra Leone', 'Ivory Coast', 'Ghana', 'Nigeria', 'Cameroon', 'Gabon'],
   'Asia': ['Armenia', 'UAE', 'Pakistan', 'India', 'Bangladesh', 'Thailand', 'Vietnam', 'China', 'Japan', 'Philippines', 'Indonesia'],
   'The Americas': ['United States', 'Mexico', 'Colombia', 'Peru', 'Bolivia', 'Brazil', 'Chile', 'Argentina', 'Uruguay'],
 };
