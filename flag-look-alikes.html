@@ -91,13 +91,37 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
 .articles a:hover { border-color: var(--fg); }
 .articles strong { font: 800 20px/1.25 var(--display); }
 .articles span:last-child { color: var(--muted); font-size: 15px; }
+/* page Ranking */
+.tabs { display: flex; gap: 4px; margin-top: 28px; background: var(--empty); padding: 4px; border-radius: 14px; }
+.tabs button { flex: 1; border: 0; background: none; border-radius: 10px; padding: 10px 8px; font: 800 15px/1.2 var(--display); color: var(--muted); cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--panel); color: var(--fg); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.rk-note { font-size: 14px; color: var(--muted); margin: 12px 0 6px; }
+.rk { list-style: none; padding: 0; margin: 0; background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; overflow: hidden; }
+.rk li { display: grid; grid-template-columns: 2.6em 32px 1fr auto; align-items: center; gap: 10px; padding: 8px 14px; margin: 0; max-width: none; border-top: 1px solid var(--rule); }
+.rk li:first-child { border-top: 0; }
+.rk .r { font: 700 13px var(--mono); color: var(--muted); }
+.rk li:nth-child(-n+3) .r { color: var(--fg); font-size: 15px; }
+.rk .t { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.rk .t strong { font: 800 17px var(--display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rk .t small { font-size: 13px; color: var(--muted); }
+.rk b { font: 700 15px var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rk li.me { background: var(--yellow); color: #141416; } .rk li.me .r, .rk li.me small { color: #141416; }
+.rk-empty { display: block !important; text-align: center; color: var(--muted); padding: 24px 14px !important; }
+.champ { display: flex; align-items: center; gap: 12px; margin-top: 24px; padding: 14px 16px; border-radius: 14px; background: var(--panel); border: 2px solid var(--yellow); }
+.champ .crown { font-size: 30px; line-height: 1; }
+.champ img { width: 40px; height: 40px; }
+.champ div { display: flex; flex-direction: column; min-width: 0; }
+.champ small { font: 700 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.champ strong { font: 800 22px/1.2 var(--display); overflow-wrap: anywhere; }
+.champ span { font-size: 14px; color: var(--muted); }
+.cta { display: inline-block; margin-top: 18px; font-weight: 700; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <nav>
     <a class="brand" href="index.html"><i aria-hidden="true"></i>Country Clash</a>
-    <div class="navlinks"><a href="how-to-play.html">How to play</a><a href="articles.html" aria-current="page">Articles</a><a href="about.html">About</a><a class="play" href="index.html">Play</a></div>
+    <div class="navlinks"><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html" aria-current="page">Articles</a><a href="about.html">About</a><a class="play" href="index.html">Play</a></div>
   </nav>
 
   <p class="meta">FLAGS · 4 MIN READ</p>
@@ -133,7 +157,7 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
   <p>Think you can spot every flag? <a href="countries.html">See all 62 countries</a> or <a href="index.html">play a match now</a>.</p>
 
   <footer>
-    <span>© 2026 Country Clash</span><a href="index.html">Play</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
+    <span>© 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
   </footer>
 </div>
 <script>// Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, Bazil) :

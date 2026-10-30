@@ -107,6 +107,50 @@ body.my-turn #arena { cursor: grab; }
 
 #end .end-links { display: flex; gap: 18px; align-items: center; margin-top: 4px; }
 .linkish { background: none; border: 0; padding: 0; color: var(--g-muted); font-weight: 600; font-size: 14px; text-decoration: underline; }
+/* classement en fin de partie */
+/* avec le classement, la carte est trop haute pour l'arène : elle passe en plein écran */
+#end.ranked { position: fixed; inset: 0; z-index: 15; overflow-y: auto; box-sizing: border-box; padding: calc(12px + env(safe-area-inset-top, 0px)) 16px calc(12px + env(safe-area-inset-bottom, 0px));
+  background: color-mix(in srgb, var(--g-bg) 70%, transparent); backdrop-filter: blur(3px); }
+#end.ranked .card { max-width: 420px; width: 100%; box-sizing: border-box; margin: auto; }
+#end .card.ranked { gap: 5px; padding: 16px 20px; }
+#end .card.ranked #end-flag { width: 58px; height: 58px; }
+#end .card.ranked #end-title { font-size: clamp(26px, 6.5vw, 40px); }
+#end .card.ranked #end-why { display: none; }
+#end .card.ranked #again { margin-top: 6px; height: 50px; }
+#name-form { display: flex; flex-direction: column; gap: 6px; width: min(300px, 100%); margin-top: 4px; }
+#name-form label { font-weight: 800; font-size: 17px; color: var(--g-accent); }
+.name-row { display: flex; gap: 6px; }
+#name-in { flex: 1; min-width: 0; height: 46px; border-radius: 12px; border: 2px solid color-mix(in srgb, var(--g-fg) 30%, transparent); background: var(--g-bg); color: var(--g-fg);
+  font: 700 16px var(--mono); padding: 0 12px; }
+#name-in:focus { border-color: var(--g-accent); outline: none; }
+.name-row button { height: 46px; border: 0; border-radius: 12px; padding: 0 16px; background: var(--g-fg); color: var(--g-bg); font-weight: 800; font-size: 16px; }
+#name-err { margin: 0; min-height: 1.2em; color: #FF6B60; font: 600 14px system-ui, sans-serif; }
+#name-err:empty { min-height: 0; }
+.name-note { margin: 0; font: 500 12px system-ui, sans-serif; color: var(--g-muted); }
+.name-note .linkish { font-size: 12px; }
+#rank-box { width: min(280px, 100%); display: flex; flex-direction: column; gap: 4px; }
+#rank-gain { margin: 0; font-weight: 800; font-size: 22px; }
+#rank-gain.gain { color: var(--g-accent); animation: pop .5s cubic-bezier(.2, 1.4, .4, 1); }
+#rank-gain.warn { font-size: 14px; color: var(--g-muted); font-family: system-ui, sans-serif; font-weight: 600; }
+#rank-gain:empty { display: none; }
+#rank-top { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+#rank-top li { display: grid; grid-template-columns: 2.4em 22px 1fr auto; align-items: center; gap: 8px; padding: 3px 8px; border-radius: 8px; font-size: 15px; font-weight: 600; text-align: left; }
+#rank-top li::before { content: attr(data-rank); font: 500 12px var(--mono); color: var(--g-muted); }
+#rank-top li img { width: 22px; height: 22px; }
+#rank-top li span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#rank-top li b { font: 700 14px var(--mono); font-variant-numeric: tabular-nums; }
+#rank-top li.me { background: var(--g-accent); color: #141416; }
+#rank-top li.me::before { color: #141416; }
+#rank-top li:nth-child(6) { margin-top: 6px; }
+#rank-me { margin: 2px 0 0; font: 700 14px var(--mono); color: var(--g-fg); }
+#rank-me:empty { display: none; }
+/* 2 joueurs : on se passe le téléphone */
+#pass { position: absolute; inset: 0; border: 0; border-radius: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  background: color-mix(in srgb, var(--g-bg) 90%, transparent); backdrop-filter: blur(6px); color: var(--g-fg); font-family: var(--display); }
+#pass .pass-k { font: 700 14px var(--mono); letter-spacing: .14em; color: var(--g-muted); }
+#pass-flag { width: 96px; height: 96px; }
+#pass-title { font-weight: 800; font-size: clamp(30px, 8vw, 46px); line-height: 1; }
+#pass .pass-tap { margin-top: 8px; background: var(--g-accent); color: #141416; border-radius: 28px; padding: 14px 30px; font-weight: 800; font-size: 19px; letter-spacing: .04em; }
 #change { padding: 0 9px; display: grid; place-items: center; } #change img { width: 26px; height: 26px; display: block; }
 
 /* ---------- accueil : choix du pays ---------- */
@@ -251,10 +295,22 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
       <h2 id="end-title">TURKEY WINS</h2>
       <p id="end-sub"></p>
       <p id="end-why"></p>
+      <form id="name-form" hidden autocomplete="off">
+        <label for="name-in">Enter your name for the ranking</label>
+        <div class="name-row"><input id="name-in" maxlength="16" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="done" placeholder="Your name"><button type="submit">OK</button></div>
+        <p id="name-err" aria-live="polite"></p>
+        <p class="name-note">2–16 letters or numbers · no email, no account · <button type="button" class="linkish" id="name-skip">Not now</button></p>
+      </form>
+      <div id="rank-box" hidden>
+        <p id="rank-gain"></p>
+        <ol id="rank-top" aria-label="Top countries"></ol>
+        <p id="rank-me"></p>
+      </div>
       <button id="again" type="button"><span class="fill" aria-hidden="true"></span><span class="lbl">PLAY AGAIN</span></button>
       <p id="next-in" aria-live="polite"></p>
-      <div class="end-links"><button class="linkish" id="end-change" type="button">Change country</button><a class="end-help" href="how-to-play.html">How to play</a></div>
+      <div class="end-links"><button class="linkish" id="end-change" type="button">Change country</button><a class="end-help" href="ranking.html">Ranking</a><a class="end-help" href="how-to-play.html">How to play</a></div>
     </div></div>
+    <button id="pass" type="button" hidden><span class="pass-k">PASS THE PHONE</span><img id="pass-flag" alt=""><span id="pass-title">USA'S TURN</span><span class="pass-tap">Tap when ready</span></button>
   </div>
   <footer class="foot">
     <p id="hint"><span class="only-phone"><b>Pull</b> one of your balls back with your finger, <b>let go</b> to shoot.</span><span class="only-computer"><b>Click and drag</b> one of your balls back, <b>release</b> to shoot.</span><span class="rules-txt">Beat your rival: <b>break their trail</b>, or hold <b>the most space</b> when time runs out.</span></p>
@@ -262,7 +318,7 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
     <button class="icon-btn" id="new" type="button" aria-label="New match">↻</button>
     <button class="icon-btn" id="mute" type="button" aria-label="Sound on or off" aria-pressed="false">🔊</button>
   </footer>
-  <nav class="links"><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a></nav>
+  <nav class="links"><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy</a></nav>
 </main>
 
 <section id="picker" hidden aria-label="Pick your country">
@@ -901,6 +957,86 @@ function* aiPlan(G, s, level = 'medium') {
 }
 
 
+// Classement (Supabase) : utilisé par le jeu (ui.js) et la page ranking.html.
+// Le site appelle seulement 2 fonctions du serveur : add_win et get_ranking (voir appli/supabase.sql).
+// La clé est la clé PUBLIQUE (faite pour être dans le site). Anti-triche : côté serveur.
+const RANK = (() => {
+  const URL = 'https://uutmgbdgcajlyplcwejg.supabase.co/rest/v1/rpc/';
+  const KEY = 'sb_publishable_w5P04vwWukaP5Gautl6EuA_SchUOzPg';
+  const POINTS = {easy: 1, medium: 2, hard: 3};
+  async function rpc(fn, body) {
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 8000);
+    try {
+      const r = await fetch(URL + fn, {method: 'POST', signal: ctl.signal,
+        headers: {apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json'}, body: JSON.stringify(body || {})});
+      if (!r.ok) throw new Error('http ' + r.status);
+      return await r.json();
+    } finally { clearTimeout(t); }
+  }
+  const store = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
+  // id du joueur : un numéro au hasard gardé dans le navigateur (pas de compte, pas d'e-mail)
+  function playerId() {
+    let id = store('cc-pid');
+    if (!id || !/^[0-9a-f-]{36}$/.test(id)) {
+      id = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3) | 8).toString(16); });
+      store('cc-pid', id);
+    }
+    return id;
+  }
+
+  /* ---------- filtre à gros mots (public jeune) ---------- */
+  // on enlève le « leet » (0 → o, 1 → i…) et les lettres répétées, puis on cherche les mots interdits
+  const norm = s => s.toLowerCase().replace(/[013457@$8]/g, c => ({0: 'o', 1: 'i', 3: 'e', 4: 'a', 5: 's', 7: 't', '@': 'a', $: 's', 8: 'b'}[c])).replace(/(.)\1+/g, '$1');
+  // mots cherchés PARTOUT dans le pseudo (assez longs pour ne pas bloquer de vrais prénoms)
+  const BAD_IN = ['fuck', 'fuk', 'fck', 'fack', 'shit', 'bitch', 'bich', 'cunt', 'nigg', 'niga', 'nigr', 'faggot', 'whore', 'slut', 'porn', 'pussy', 'dick', 'cock', 'penis', 'vagina',
+    'boob', 'tits', 'rape', 'rapist', 'nazi', 'hitler', 'isis', 'jihad', 'terror', 'pedo', 'molest', 'incest', 'sexy', 'horny', 'milf', 'hentai', 'nude', 'naked',
+    'bastard', 'wank', 'jerkof', 'blowjob', 'handjob', 'dildo', 'retard', 'asshole', 'arsehole', 'motherf', 'killyou', 'suicide',
+    'pute', 'putain', 'salope', 'conard', 'connard', 'conasse', 'encule', 'batard', 'niktamer', 'tamere', 'bite', 'couille', 'chatte', 'branle', 'merde', 'tapette', 'bouffon',
+    'puta', 'puto', 'mierda', 'pendejo', 'verga', 'cabron', 'chinga', 'culero', 'joto', 'marica', 'malparido', 'gilipolla', 'cojone',
+    'caralho', 'buceta', 'viado', 'foder', 'fodase', 'cuzao', 'arombado',
+    'fotze', 'hurensohn', 'wichser', 'schlampe', 'arschloch', 'scheis', 'fick',
+    'cazzo', 'stronzo', 'vaffancul', 'puttana', 'minchia',
+    'orospu', 'siktir', 'yarak', 'yarrak', 'pezevenk', 'kahpe', 'gavat', 'ibne', 'sikis', 'sikerim', 'amcik',
+    'sharmout', 'charmout', 'zebi', 'zeby', 'kahba', 'qahba', 'khara', 'manyak', 'kosomak', 'kosom', 'nikomak',
+    'kontol', 'memek', 'ngentot', 'bangsat', 'jancok', 'jancuk', 'pantek', 'puki', 'putangina', 'tangina', 'gago', 'kupal', 'bhenchod', 'madarchod', 'chutiya', 'bhosdi', 'gandu',
+    'kurwa', 'chuj', 'pierdol', 'jebac', 'cyka', 'blyat', 'pizda'];
+  // mots interdits seulement s'ils sont TOUT le pseudo (sinon « Hassan » serait bloqué à cause de « ass »)
+  const BAD_EQ = ['ass', 'arse', 'sex', 'cum', 'tit', 'fag', 'gay', 'pd', 'con', 'cul', 'nik', 'sik', 'got', 'pic', 'amk', 'aq', 'oc', 'kus', 'kuss', 'cono', 'porra', 'wtf', 'stfu', 'kys',
+    'admin', 'moderator', 'countryclash', 'anjing', 'babi', 'hoe', 'ho', 'pig', 'xxx', 'sperm', 'semen', 'hate', 'kill', 'die', 'dead', 'gun'];
+  function nameProblem(raw) {
+    const s = (raw || '').trim();
+    if (s.length < 2) return 'At least 2 letters or numbers.';
+    if (s.length > 16) return '16 letters or numbers max.';
+    if (!/^[A-Za-z0-9]+$/.test(s)) return 'Only letters (A–Z) and numbers, no spaces.';
+    if (/^\d+$/.test(s)) return 'Add at least one letter.';
+    const n = norm(s), plain = s.toLowerCase();
+    if ([n, plain, plain.replace(/\d+/g, ''), n.replace(/\d+/g, '')].some(x => BAD_EQ.includes(x)) || BAD_IN.some(w => n.includes(norm(w)) || plain.includes(w)))
+      return 'Please choose another name.';
+    return null;
+  }
+
+  return {
+    POINTS, nameProblem, playerId,
+    name: () => store('cc-name'),
+    setName: n => store('cc-name', n.trim()),
+    // victoire contre l'ordi → {ok, points, country_total, country_rank, week_points, week_rank} ou {ok:false, reason}
+    addWin: (country, level) => rpc('add_win', {p_player: playerId(), p_name: store('cc-name'), p_country: country, p_level: level}),
+    // {countries:[{country, points, wins}], week:[{name, country, points}], champion, week_start}
+    get: () => rpc('get_ranking'),
+    // prochaine remise à zéro : lundi 0 h, heure de Paris
+    nextReset() {
+      const f = new Intl.DateTimeFormat('en-GB', {timeZone: 'Europe/Paris', weekday: 'short', hour: 'numeric', hourCycle: 'h23'});
+      const h0 = Math.ceil(Date.now() / 3600000) * 3600000;
+      for (let i = 0; i < 24 * 8; i++) {
+        const t = h0 + i * 3600000, p = Object.fromEntries(f.formatToParts(t).map(x => [x.type, x.value]));
+        if (p.weekday === 'Mon' && +p.hour === 0) return new Date(t);
+      }
+      return null;
+    },
+  };
+})();
+
 // Country Clash (appli) : écran, commandes, sons, stats.
 // Toi = ton pays (équipe 0, choisi à l'accueil), l'ordi = un pays au hasard, USA ×2 (équipe 1).
 
@@ -961,8 +1097,9 @@ let G, T, themeName, lastTheme, lastArena, flags, state = 'aim', aim = null, ai 
 let fx = {pops: [], shards: [], confetti: [], rings: []}, clock = 0, play = null, muted = false;
 let timeLeft = GAME_TIME, timerOn = false, lastTick = 99;
 const TIME_SPEED = 60 / 45;
-const TURN_LIMIT = 8;         // VS CPU : 8 s sans jouer = le tour passe à l'ordi (Bazil, 30/10 ; avant 3,5 puis 5 s, trop court). 2 joueurs : pas de limite
-let turnWait = 0, slowMsgUntil = 0;   // le chrono affiche 1:00 mais la partie dure 45 vraies secondes (Bazil, 29/10)
+const TURN_LIMIT = 10;        // 10 s sans jouer = le tour passe à l'autre, dans les 2 modes (Bazil, 30/10 ; avant 3,5 puis 5 puis 8 s)
+let turnWait = 0, slowMsgUntil = 0, handoff = false;   // handoff : 2 joueurs, on se passe le téléphone (chronos en pause)
+   // le chrono affiche 1:00 mais la partie dure 45 vraies secondes (Bazil, 29/10)
 
 /* ------------------------------ ralentis (comme les vidéos) ------------------------------ */
 // À chaque tir, on rejoue le tir à l'avance (le moteur est exact) pour savoir s'il va casser un trait ou le frôler.
@@ -1032,7 +1169,7 @@ function newMatch() {
   flags = [flagOf(PLAYER, ring), flagOf(CPU, ring)];
   G = newGame([PLAYER, CPU], arena);
   fx = {pops: [], shards: [], confetti: [], rings: []};
-  gridDirty = true; flashUntil = 0; turnWait = 0; nextLeft = null;
+  gridDirty = true; flashUntil = 0; turnWait = 0; nextLeft = null; handoff = false; $('#pass').hidden = true;
   $('#again').style.setProperty('--p', 0); $('#next-in').textContent = '';
   state = 'aim'; aim = null; ai = null; slow = null; timeLeft = GAME_TIME; timerOn = false; lastTick = 99;
   const root = document.documentElement.style;
@@ -1074,7 +1211,7 @@ function hud() {
   else if (MODE === '2p' && !G.moving) { st.textContent = NAMES[G.side] + "'S TURN"; st.dataset.side = 0; }
   else if (G.side === 0 && !G.moving) { st.textContent = 'YOUR TURN'; st.dataset.side = 0; }
   else if (G.side === 1 && !G.moving) { st.textContent = 'THINKING…'; st.dataset.side = 1; }
-  const myTurn = timerOn && MODE !== '2p' && human(G.side) && !G.moving && state === 'aim' && !G.over;
+  const myTurn = timerOn && human(G.side) && !G.moving && state === 'aim' && !G.over && !handoff;
   $('#turnbar').hidden = !myTurn;
   if (myTurn) $('#turnbar i').style.transform = `scaleX(${Math.max(0, 1 - turnWait / TURN_LIMIT)})`;
   $('#hint').classList.toggle('rules', tutoDone);   // après le 1er tir : la règle du jeu au lieu des commandes
@@ -1090,7 +1227,7 @@ function toWorld(e) {
 }
 cv.addEventListener('pointerdown', e => {
   audio();
-  if (state !== 'aim' || !human(G.side) || G.moving) return;
+  if (state !== 'aim' || !human(G.side) || G.moving || handoff) return;
   const [x, y] = toWorld(e);
   let best = null, bd = R * (isPhone ? 3.2 : 2.2);
   for (const b of alive(G, G.side)) { const d = Math.hypot(b.x - x, b.y - y); if (d < bd) { bd = d; best = b; } }
@@ -1118,8 +1255,8 @@ function nudge() { const h = $('#hint'); h.classList.remove('shake'); void h.off
 
 $('#again').addEventListener('click', () => { audio(); newMatch(); });
 // fin de partie : comme Netflix, la partie suivante se lance toute seule après 5 s
-const NEXT_IN = 5;
-let nextLeft = null;
+const NEXT_IN = 5, NEXT_IN_RANK = 9;   // avec le classement : un peu plus de temps pour lire
+let nextLeft = null, nextTotal = NEXT_IN;
 $('#new').addEventListener('click', () => { audio(); newMatch(); });
 $('#mute').addEventListener('click', () => { muted = !muted; $('#mute').textContent = muted ? '🔇' : '🔊'; $('#mute').setAttribute('aria-pressed', muted); });
 
@@ -1255,12 +1392,12 @@ function frame(now) {
   clock += dt;
   if (nextLeft !== null && $('#picker').hidden && $('#onboard').hidden) {   // compte à rebours de fin (rAF s'arrête tout seul si l'onglet est caché)
     nextLeft -= dt;
-    $('#again').style.setProperty('--p', Math.min(1, 1 - nextLeft / NEXT_IN));
+    $('#again').style.setProperty('--p', Math.min(1, 1 - nextLeft / nextTotal));
     $('#next-in').textContent = 'Next match in ' + Math.max(1, Math.ceil(nextLeft)) + '…';
     if (nextLeft <= 0) { nextLeft = null; newMatch(); }
   }
   const cam = camNow();
-  if (timerOn && state !== 'over' && !G.timeUp) {
+  if (timerOn && state !== 'over' && !G.timeUp && !handoff) {
     if (cam.speed > 0.95) timeLeft = Math.max(0, timeLeft - dt * TIME_SPEED);   // pause pendant les ralentis
     const sec = Math.ceil(timeLeft);
     if (sec <= 5 && sec < lastTick && sec > 0) { lastTick = sec; tone(880, 0.1, 0.08, 'square'); }
@@ -1270,7 +1407,7 @@ function frame(now) {
     }
     hud();
   }
-  if (timerOn && MODE !== '2p' && human(G.side) && !G.moving && state === 'aim' && !G.over && !G.timeUp) {
+  if (timerOn && human(G.side) && !G.moving && state === 'aim' && !G.over && !G.timeUp && !handoff) {
     turnWait += dt;
     if (turnWait >= TURN_LIMIT) passTurn();
   }
@@ -1288,14 +1425,25 @@ function passTurn() {
   aim = null; turnWait = 0; if (G.side === 1) G.turn++; G.side = 1 - G.side;
   tone(196, 0.12, 0.18, 'square'); tone(147, 0.12, 0.25, 'square', 0.12);
   const st = $('#status'); st.textContent = 'TOO SLOW!'; st.dataset.side = 'slow'; slowMsgUntil = clock + 1.2;
+  if (MODE === '2p') startHandoff();
   hud();
 }
+// 2 joueurs : écran « passe le téléphone » entre 2 tours ; le chrono de la partie et celui du tour sont en pause
+function startHandoff() {
+  handoff = true; aim = null;
+  $('#pass-flag').src = flags[G.side].toDataURL();
+  $('#pass-title').textContent = NAMES[G.side] + "'S TURN";
+  $('#pass .pass-k').textContent = isPhone ? 'PASS THE PHONE' : 'NEXT PLAYER';
+  $('#pass').hidden = false;
+}
+$('#pass').addEventListener('click', () => { audio(); handoff = false; turnWait = 0; $('#pass').hidden = true; tone(660, 0.07, 0.08, 'square'); hud(); });
 function afterShot() {
   slow = null; turnWait = 0;
   G.t += 0.4; gridDirty = true;                    // les flashs de la dernière coupe vont jusqu'au bout
   const over = endShot(G);
   if (play) track('turn');
   if (over) return finish(over);
+  if (MODE === '2p' && timerOn && !G.timeUp) startHandoff();
   hud();
 }
 function cpuTurn(dt) {
@@ -1315,7 +1463,7 @@ let cpuAim = null;
 function finish(over) {
   if (state === 'over') return;
   state = 'over'; G.over = over; cpuAim = null;
-  const w = over.winner;
+  const w = over.winner, play0 = {mode: MODE, level: LEVEL, country: PLAYER};   // réglages de la partie (le menu peut les changer après)
   track(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw', over.reason);
   winSound(w);
   if (w >= 0) for (let i = 0; i < 160; i++) {
@@ -1335,9 +1483,72 @@ function finish(over) {
       : w === 0 ? `You beat ${them}!` : w === 1 ? `${them[0].toUpperCase() + them.slice(1)} beat you. Try again!` : 'Nobody wins this time.';
     $('#end-why').textContent = {eliminated: 'All balls destroyed', time: `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%`}[over.reason];
     e.hidden = false; $('#again').focus({preventScroll: true});
-    nextLeft = NEXT_IN;
+    nextLeft = NEXT_IN; nextTotal = NEXT_IN;
+    rankEnd(w, play0);
   }, 1100);
   hud();
+}
+
+/* ------------------------------ classement (fin de partie) ------------------------------ */
+// Victoire contre l'ordi = 1 / 2 / 3 points pour ton pays (facile / moyen / difficile). Le mode 2 joueurs ne compte pas.
+// 1re victoire : on demande le pseudo. Puis « +3 for Turkey! », top 5 des pays (le tien en avant), « You are #12 this week ».
+const label = n => n === 'United States' ? 'USA' : n;
+function rankEnd(w, p) {
+  const card = $('#end .card'), G0 = G;
+  $('#rank-box').hidden = true; $('#name-form').hidden = true; card.classList.remove('ranked'); $('#end').classList.remove('ranked');
+  const counts = p.mode === 'cpu' && w === 0;
+  if (counts && !RANK.name()) { askName(p, G0); return; }
+  if (counts) submitWin(p, G0); else showRanking(p, G0, null, null);
+}
+function askName(p, G0) {
+  nextLeft = null; $('#next-in').textContent = '';            // pas de partie suivante tant qu'il écrit
+  $('#end .card').classList.add('ranked'); $('#end').classList.add('ranked');
+  $('#name-form').hidden = false; $('#name-err').textContent = ''; $('#name-in').value = '';
+  if (!isPhone) $('#name-in').focus({preventScroll: true});
+  $('#name-form').onsubmit = e => {
+    e.preventDefault();
+    const v = $('#name-in').value.trim(), bad = RANK.nameProblem(v);
+    if (bad) { $('#name-err').textContent = bad; tone(196, 0.1, 0.15, 'square'); return; }
+    RANK.setName(v); $('#name-form').hidden = true; $('#name-in').blur();
+    nextLeft = nextTotal = NEXT_IN;                            // la partie suivante repart
+    if (typeof window.gtag === 'function') window.gtag('event', 'ranking_name_set');
+    submitWin(p, G0);
+  };
+  $('#name-skip').onclick = () => { $('#name-form').hidden = true; nextLeft = nextTotal = NEXT_IN; showRanking(p, G0, null, 'skip'); };
+}
+function submitWin(p, G0) {
+  RANK.addWin(p.country, p.level)
+    .then(res => showRanking(p, G0, res && res.ok ? res : null, res && !res.ok ? res.reason : 'offline'))
+    .catch(() => showRanking(p, G0, null, 'offline'));
+}
+function showRanking(p, G0, res, why) {
+  RANK.get().catch(() => null).then(data => {
+    if (G !== G0 || $('#end').hidden) return;                   // déjà une autre partie
+    const box = $('#rank-box'), top = $('#rank-top');
+    if (!data && !res) { box.hidden = true; return; }           // serveur injoignable : on n'affiche rien
+    $('#rank-gain').textContent = res ? `+${res.points} for ${label(p.country)}!`
+      : {limit: 'Max 30 points per hour. Take a break!', too_fast: 'Too fast! Wait a few seconds.', skip: 'Add your name next time to score points.'}[why] || '';
+    $('#rank-gain').className = res ? 'gain' : 'warn';
+    top.replaceChildren();
+    const list = (data && data.countries) || [], mine = list.findIndex(c => c.country === p.country);
+    const row = i => {
+      const c = list[i], li = document.createElement('li'), im = new Image(), nm = document.createElement('span'), pt = document.createElement('b');
+      li.dataset.rank = '#' + (i + 1); if (i === mine) li.className = 'me';
+      if (COUNTRIES.some(x => x.name === c.country)) im.src = flagOf(c.country, undefined, 96).toDataURL(); im.alt = '';
+      nm.textContent = label(c.country); pt.textContent = c.points.toLocaleString('en-US');
+      li.append(im, nm, pt); top.append(li);
+    };
+    for (let i = 0; i < Math.min(5, list.length); i++) row(i);
+    if (mine >= 5) row(mine);                                   // ton pays, même s'il n'est pas dans le top 5
+    let me = res ? res.week_rank : null;
+    if (!me && data && RANK.name()) {
+      const k = (data.week || []).findIndex(x => x.name === RANK.name() && x.country === p.country);
+      if (k >= 0) me = k + 1;
+    }
+    $('#rank-me').textContent = me ? `You are #${me} this week` : '';
+    box.hidden = false; $('#end .card').classList.add('ranked'); $('#end').classList.add('ranked');
+    if (nextLeft !== null) { nextLeft += NEXT_IN_RANK - nextTotal; nextTotal = NEXT_IN_RANK; }
+  });
 }
 
 /* ------------------------------ dessin ------------------------------ */

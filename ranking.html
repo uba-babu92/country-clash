@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-02S2YB073X"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);}
+gtag('consent', 'default', {ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'granted'});
+gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ranking · Country Clash</title>
+<meta name="description" content="The Country Clash ranking: which country has won the most matches of all time, and the top 50 players of the week. Win against the CPU to score points for your country.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Pages texte du site (How to play, Privacy). Même identité que le jeu : Bricolage Grotesque, rouge Turquie, bleu USA, jaune.
+   Colonne de lecture unique, ~65 caractères. */
+:root {
+  --bg: #F7F6F2; --panel: #FFFFFF; --fg: #141416; --muted: #5E5E66; --rule: #E2E1DB;
+  --red: #E0241B; --blue: #1F66E0; --yellow: #FFD60A; --link: #1F55C0; --empty: #E6E5DF;
+  --display: "Bricolage Grotesque", "Arial Black", system-ui, sans-serif;
+  --body: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0E0E10; --panel: #18181B; --fg: #F2F1EE; --muted: #A8A7A1; --rule: #2C2C31; --red: #FF5147; --blue: #4C8DFF; --link: #8DB4FF; --empty: #232328; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0E0E10; --panel: #18181B; --fg: #F2F1EE; --muted: #A8A7A1; --rule: #2C2C31; --red: #FF5147; --blue: #4C8DFF; --link: #8DB4FF; --empty: #232328; color-scheme: dark; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 17px/1.6 var(--body); }
+.wrap { max-width: 720px; margin: 0 auto; box-sizing: border-box; padding-block: 20px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 1px solid var(--rule); }
+.brand { font: 800 22px/1 var(--display); color: var(--fg); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+.brand i { width: 18px; height: 18px; border-radius: 50%; background: var(--red); display: inline-block; box-shadow: 12px 0 0 var(--blue); margin-right: 12px; }
+.navlinks { display: flex; gap: 16px; flex-wrap: wrap; font-weight: 600; font-size: 15px; }
+.navlinks a { color: var(--muted); text-decoration: none; }
+.navlinks a[aria-current="page"] { color: var(--fg); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.play { background: var(--yellow); color: #141416 !important; padding: 6px 14px; border-radius: 18px; }
+h1 { font: 800 clamp(34px, 7vw, 52px)/1.05 var(--display); margin: 36px 0 10px; text-wrap: balance; letter-spacing: -.01em; }
+.lead { font-size: 19px; color: var(--muted); margin: 0 0 8px; max-width: 60ch; }
+h2 { font: 800 clamp(22px, 4.2vw, 28px)/1.2 var(--display); margin: 44px 0 10px; text-wrap: balance; }
+h3 { font: 700 18px/1.3 var(--body); margin: 26px 0 6px; }
+p, li { max-width: 65ch; }
+a { color: var(--link); }
+ul, ol { padding-left: 1.3em; }
+li + li { margin-top: 6px; }
+.meta { font: 500 13px var(--mono); color: var(--muted); letter-spacing: .04em; }
+.steps { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin: 18px 0 8px; padding: 0; list-style: none; counter-reset: s; }
+.steps li { margin: 0; background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; padding: 12px 14px 16px; min-width: 0; }
+.steps svg { width: 100%; height: auto; display: block; margin-bottom: 8px; }
+.steps b { display: block; font: 800 18px/1.2 var(--display); margin-bottom: 4px; }
+.steps b::before { counter-increment: s; content: counter(s) "  "; color: var(--muted); font-family: var(--mono); font-size: 14px; }
+.steps span { font-size: 15px; color: var(--muted); }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 14px; margin-top: 14px; }
+.controls div { border-left: 4px solid var(--yellow); padding: 4px 0 4px 14px; }
+.controls strong { font: 800 17px var(--display); display: block; }
+.tip { background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; padding: 4px 18px 8px; margin-top: 14px; }
+footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--muted); display: flex; gap: 16px; flex-wrap: wrap; }
+footer a { color: var(--muted); }
+svg .ar { fill: var(--empty); stroke: var(--fg); stroke-width: 3; }
+svg .red { fill: var(--red); } svg .blue { fill: var(--blue); }
+svg .tr { fill: none; stroke: #FF8A80; stroke-width: 5; stroke-linecap: round; }
+svg .tr-b { fill: none; stroke: #8DB8FF; stroke-width: 5; stroke-linecap: round; }
+svg .ol { fill: none; stroke: var(--fg); stroke-width: 9; stroke-linecap: round; }
+svg .aim { fill: none; stroke: var(--fg); stroke-width: 3; stroke-dasharray: 2 6; stroke-linecap: round; }
+svg .arr { fill: var(--yellow); stroke: var(--fg); stroke-width: 2; }
+svg .ball { stroke: #fff; stroke-width: 2.5; }
+svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
+@media (max-width: 340px) { .steps { grid-template-columns: 1fr; } }
+/* menu : sur téléphone, les liens passent sous le logo */
+.navlinks { align-items: center; }
+/* contact */
+.contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 14px; margin-top: 20px; }
+.contact-cards .card { background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; padding: 16px 18px; min-width: 0; }
+.contact-cards .big { font: 800 20px/1.3 var(--display); margin: 6px 0; overflow-wrap: anywhere; }
+.contact-cards p:last-child { margin: 0; color: var(--muted); font-size: 15px; }
+/* liste des pays */
+.flag-grid { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; margin: 10px 0 0; }
+.flag-grid li { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font-size: 14px; font-weight: 600; }
+.flag-grid img { width: 64px; height: 64px; }
+/* paires de drapeaux */
+.pair { display: flex; gap: 22px; margin-top: 36px; }
+.pair figure { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; font-weight: 700; font-size: 14px; }
+.pair img { width: 96px; height: 96px; }
+.pair + h2 { margin-top: 12px; }
+/* liste des articles */
+.articles { list-style: none; padding: 0; display: grid; gap: 12px; margin-top: 24px; }
+.articles li { margin: 0; max-width: none; }
+.articles a { display: flex; flex-direction: column; gap: 4px; padding: 16px 18px; background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; color: var(--fg); text-decoration: none; }
+.articles a:hover { border-color: var(--fg); }
+.articles strong { font: 800 20px/1.25 var(--display); }
+.articles span:last-child { color: var(--muted); font-size: 15px; }
+/* page Ranking */
+.tabs { display: flex; gap: 4px; margin-top: 28px; background: var(--empty); padding: 4px; border-radius: 14px; }
+.tabs button { flex: 1; border: 0; background: none; border-radius: 10px; padding: 10px 8px; font: 800 15px/1.2 var(--display); color: var(--muted); cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--panel); color: var(--fg); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.rk-note { font-size: 14px; color: var(--muted); margin: 12px 0 6px; }
+.rk { list-style: none; padding: 0; margin: 0; background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; overflow: hidden; }
+.rk li { display: grid; grid-template-columns: 2.6em 32px 1fr auto; align-items: center; gap: 10px; padding: 8px 14px; margin: 0; max-width: none; border-top: 1px solid var(--rule); }
+.rk li:first-child { border-top: 0; }
+.rk .r { font: 700 13px var(--mono); color: var(--muted); }
+.rk li:nth-child(-n+3) .r { color: var(--fg); font-size: 15px; }
+.rk .t { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.rk .t strong { font: 800 17px var(--display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rk .t small { font-size: 13px; color: var(--muted); }
+.rk b { font: 700 15px var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rk li.me { background: var(--yellow); color: #141416; } .rk li.me .r, .rk li.me small { color: #141416; }
+.rk-empty { display: block !important; text-align: center; color: var(--muted); padding: 24px 14px !important; }
+.champ { display: flex; align-items: center; gap: 12px; margin-top: 24px; padding: 14px 16px; border-radius: 14px; background: var(--panel); border: 2px solid var(--yellow); }
+.champ .crown { font-size: 30px; line-height: 1; }
+.champ img { width: 40px; height: 40px; }
+.champ div { display: flex; flex-direction: column; min-width: 0; }
+.champ small { font: 700 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.champ strong { font: 800 22px/1.2 var(--display); overflow-wrap: anywhere; }
+.champ span { font-size: 14px; color: var(--muted); }
+.cta { display: inline-block; margin-top: 18px; font-weight: 700; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="brand" href="index.html"><i aria-hidden="true"></i>Country Clash</a>
+    <div class="navlinks"><a href="ranking.html" aria-current="page">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a class="play" href="index.html">Play</a></div>
+  </nav>
+
+  <p class="meta">RANKING · UPDATED LIVE</p>
+  <h1>Country Clash ranking</h1>
+  <p class="lead">Every win against the CPU scores points for your country. Which flag rules the world? And who is the best player this week?</p>
+
+  <div id="champ" class="champ" hidden><span class="crown" aria-hidden="true">👑</span><div><small>Champion of the week</small><strong id="champ-name"></strong><span id="champ-sub"></span></div></div>
+
+  <div class="tabs" role="tablist" aria-label="Ranking">
+    <button type="button" role="tab" id="tab-c" aria-selected="true" aria-controls="panel-c">Countries</button>
+    <button type="button" role="tab" id="tab-p" aria-selected="false" aria-controls="panel-p">Top players this week</button>
+  </div>
+  <section id="panel-c" role="tabpanel" aria-labelledby="tab-c">
+    <p class="rk-note">All-time points, all players together.</p>
+    <ol class="rk" id="list-c"><li class="rk-empty">Loading the ranking…</li></ol>
+  </section>
+  <section id="panel-p" role="tabpanel" aria-labelledby="tab-p" hidden>
+    <p class="rk-note">Top 50 · resets <span id="reset-in">every Monday at 0:00 (Paris time)</span>.</p>
+    <ol class="rk" id="list-p"><li class="rk-empty">Loading the ranking…</li></ol>
+  </section>
+  <p><a class="cta" href="index.html">Play and score for your country →</a></p>
+
+  <h2>How to score points</h2>
+  <p>Points are earned by winning a match against the computer. The harder the level, the more your win is worth:</p>
+  <ul>
+    <li><strong>Easy</strong>: 1 point for your country.</li>
+    <li><strong>Medium</strong>: 2 points.</li>
+    <li><strong>Hard</strong>: 3 points.</li>
+  </ul>
+  <p>The points go to the country you play with, and to you in the weekly players ranking. A lost match or a draw gives no points, but it costs nothing either. The <strong>2 players</strong> mode is just for fun: it does not count for the ranking, because both players share the same screen.</p>
+  <p>After each match, the game shows the points you just won (for example <em>“+3 for Turkey!”</em>), the top 5 countries with yours highlighted, and your place in this week's players ranking.</p>
+
+  <h2>Two rankings</h2>
+  <h3>Countries, of all time</h3>
+  <p>The countries ranking never resets. It adds up every point won by every player since the ranking started. If your country is low on the list, it needs you: pick it on the home screen, choose the hard level and win as many matches as you can.</p>
+  <h3>Top players of the week</h3>
+  <p>The players ranking shows the 50 best players of the current week. It starts again from zero <strong>every Monday at 0:00, Paris time</strong>. The number one of the previous week becomes the <strong>👑 Champion of the week</strong> and is shown at the top of this page for the whole next week.</p>
+
+  <h2>Your name</h2>
+  <p>The first time you win, the game asks for a name for the ranking. It must be 2 to 16 letters or numbers, with no spaces. There is no account and no email: your name and your country are the only things shown. Names with bad words are refused, because many young people play Country Clash. The game remembers your name in your browser; if you clear your browser data, you will start again with a new name.</p>
+
+  <h2>Fair play rules</h2>
+  <p>To keep the ranking fair, the server checks every win before it counts:</p>
+  <ul>
+    <li><strong>30 points per hour at most</strong> for each player. After that, wins still feel good, but they do not count until the hour has passed.</li>
+    <li><strong>15 seconds at least between two wins.</strong> A real match always takes longer than that.</li>
+    <li>Points can only be added by the game itself, never by hand.</li>
+  </ul>
+  <p>We may remove names or points that break these rules or that are offensive. To report a name, write to us from the <a href="contact.html">contact page</a>.</p>
+
+  <footer>
+    <span>© 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
+  </footer>
+</div>
+<script>// Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, Bazil) :
+// taille au choix (drapeaux nets en grand), étoile du Pakistan plus bas, emblème au centre du Mexique.
+const FAM = {red: '#FF3B30', blue: '#2F7BFF', green: '#22C55E', yellow: '#FFD60A', orange: '#FF8A00', white: '#F4F4F2'};
+const COUNTRIES = [
+  ['France', 'v', ['#002395', '#fff', '#ED2939'], 'blue'],
+  ['Italy', 'v', ['#009246', '#fff', '#CE2B37'], 'green'],
+  ['Ireland', 'v', ['#169B62', '#fff', '#FF883E'], 'green'],
+  ['Belgium', 'v', ['#111', '#FDDA24', '#EF3340'], 'yellow'],
+  ['Mexico', 'mexico', ['#006847', '#fff', '#CE1126'], 'green'],
+  ['Nigeria', 'v', ['#008751', '#fff', '#008751'], 'green'],
+  ['Peru', 'v', ['#D91023', '#fff', '#D91023'], 'red'],
+  ['Romania', 'v', ['#002B7F', '#FCD116', '#CE1126'], 'blue'],
+  ['Senegal', 'v', ['#00853F', '#FDEF42', '#E31B23'], 'green'],
+  ['Ivory Coast', 'v', ['#F77F00', '#fff', '#009E60'], 'orange'],
+  ['Germany', 'h', ['#111', '#DD0000', '#FFCE00'], 'red'],
+  ['Russia', 'h', ['#fff', '#0039A6', '#D52B1E'], 'blue'],
+  ['Netherlands', 'h', ['#AE1C28', '#fff', '#21468B'], 'orange'],
+  ['Austria', 'h', ['#ED2939', '#fff', '#ED2939'], 'red'],
+  ['Hungary', 'h', ['#CE2939', '#fff', '#477050'], 'green'],
+  ['Colombia', 'h', ['#FCD116', '#FCD116', '#003893', '#CE1126'], 'yellow'],
+  ['Indonesia', 'h', ['#FF0000', '#fff'], 'red'],
+  ['Poland', 'h', ['#fff', '#DC143C'], 'red'],
+  ['Ukraine', 'h', ['#0057B7', '#FFD700'], 'blue'],
+  ['Argentina', 'h', ['#74ACDF', '#fff', '#74ACDF'], 'blue'],
+  ['Spain', 'h', ['#AA151B', '#F1BF00', '#F1BF00', '#AA151B'], 'yellow'],
+  ['Egypt', 'h', ['#CE1126', '#fff', '#111'], 'red'],
+  ['India', 'india', ['#FF9933', '#fff', '#138808'], 'orange'],
+  ['Japan', 'disc', ['#fff', '#BC002D'], 'white'],
+  ['Bangladesh', 'disc', ['#006A4E', '#F42A41'], 'green'],
+  ['Brazil', 'brazil', ['#009C3B', '#FFDF00', '#002776'], 'yellow'],
+  ['Switzerland', 'swiss', ['#FF0000', '#fff'], 'red'],
+  ['Sweden', 'nordic', ['#006AA7', '#FECC00'], 'blue'],
+  ['Denmark', 'nordic', ['#C8102E', '#fff'], 'red'],
+  ['Finland', 'nordic', ['#fff', '#002F6C'], 'white'],
+  ['China', 'china', ['#EE1C25', '#FFDE00'], 'red'],
+  ['Vietnam', 'star', ['#DA251D', '#FFDE00'], 'red'],
+  ['Turkey', 'turkey', ['#E30A17', '#fff'], 'red'],
+  ['Portugal', 'portugal', ['#046A38', '#DA291C', '#FFE900'], 'green'],
+  ['United States', 'usa', ['#B22234', '#fff', '#3C3B6E'], 'blue'],
+  ['Morocco', 'morocco', ['#C1272D', '#006233'], 'red'],
+  ['Algeria', 'algeria', ['#006233', '#fff', '#D21034'], 'green'],
+  ['Tunisia', 'tunisia', ['#E70013', '#fff'], 'red'],
+  ['Philippines', 'philippines', ['#0038A8', '#CE1126', '#fff', '#FCD116'], 'blue'],
+  ['Pakistan', 'pakistan', ['#01411C', '#fff'], 'green'],
+  ['Greece', 'greece', ['#0D5EAF', '#fff'], 'blue'],
+  ['Ghana', 'ghana', ['#CE1126', '#FCD116', '#006B3F', '#111'], 'yellow'],
+  ['Cameroon', 'cameroon', ['#007A5E', '#CE1126', '#FCD116'], 'green'],
+  ['Chile', 'chile', ['#0039A6', '#fff', '#D52B1E'], 'red'],
+  ['England', 'england', ['#fff', '#CE1124'], 'white'],
+  ['Guinea', 'v', ['#CE1126', '#FCD116', '#009460'], 'red'],
+  ['Mali', 'v', ['#14B53A', '#FCD116', '#CE1126'], 'green'],
+  ['Lithuania', 'h', ['#FDB913', '#006A44', '#C1272D'], 'yellow'],
+  ['Estonia', 'h', ['#0072CE', '#111', '#fff'], 'blue'],
+  ['Bulgaria', 'h', ['#fff', '#00966E', '#D62612'], 'green'],
+  ['Bolivia', 'h', ['#D52B1E', '#F9E300', '#007934'], 'red'],
+  ['Armenia', 'h', ['#D90012', '#0033A0', '#F2A800'], 'red'],
+  ['Gabon', 'h', ['#009E60', '#FCD116', '#3A75C4'], 'green'],
+  ['Sierra Leone', 'h', ['#1EB53A', '#fff', '#0072C6'], 'green'],
+  ['Latvia', 'h', ['#9E3039', '#9E3039', '#fff', '#9E3039', '#9E3039'], 'red'],
+  ['Thailand', 'h', ['#A51931', '#F4F5F8', '#2D2A4A', '#2D2A4A', '#F4F5F8', '#A51931'], 'blue'],
+  ['Somalia', 'star', ['#4189DD', '#fff'], 'blue'],
+  ['Norway', 'nordic2', ['#BA0C2F', '#fff', '#00205B'], 'red'],
+  ['Iceland', 'nordic2', ['#02529C', '#fff', '#DC1E35'], 'blue'],
+  ['Uruguay', 'uruguay', ['#fff', '#0038A8', '#FCD116'], 'white'],
+  ['UAE', 'uae', ['#00732F', '#fff', '#111', '#FF0000'], 'green'],
+  ['Ethiopia', 'ethiopia', ['#078930', '#FCDD09', '#DA121A', '#0F47AF'], 'yellow'],
+].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}));
+function star(g, x, y, r, color) {
+  g.fillStyle = color; g.beginPath();
+  for (let i = 0; i < 10; i++) {
+    const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.4 : r;
+    g.lineTo(x + Math.cos(a) * rr, y + Math.sin(a) * rr);
+  }
+  g.closePath(); g.fill();
+}
+function disc(g, x, y, r, color) { g.fillStyle = color; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
+function crescent(g, x, y, r, color, bg, dx) { disc(g, x, y, r, color); disc(g, x + dx, y, r * 0.8, bg); }
+
+function makeFlag({name, motif, colors: c}, ring = 'rgba(244,244,242,.9)', S = 160) {
+  const u = S / 160, canvas = Object.assign(document.createElement("canvas"), {width: S, height: S}), g = canvas.getContext('2d');
+  const box = (x, y, w, h, color) => { g.fillStyle = color; g.fillRect(x * S, y * S, w * S + 1, h * S + 1); };
+  const stripes = (cols, vertical) => cols.forEach((col, i) =>
+    vertical ? box(i / cols.length, 0, 1 / cols.length, 1, col) : box(0, i / cols.length, 1, 1 / cols.length, col));
+  g.save(); g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 3 * u, 0, Math.PI * 2); g.clip();
+  switch (motif) {
+    case 'v': stripes(c, true); break;
+    case 'mexico': {                                // bandes + emblème (aigle sur un cactus, couronne de feuilles)
+      stripes(c, true);
+      const cx = S / 2, cy = S * 0.5;
+      g.strokeStyle = '#3F7D2C'; g.lineWidth = S * 0.028; g.lineCap = 'round';
+      g.beginPath(); g.arc(cx, cy, S * 0.135, Math.PI * 0.15, Math.PI * 0.85); g.stroke();
+      g.fillStyle = '#4F8A35'; g.beginPath(); g.ellipse(cx, cy + S * 0.06, S * 0.05, S * 0.025, 0, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#7A4A1E';
+      g.beginPath(); g.ellipse(cx + S * 0.005, cy - S * 0.01, S * 0.045, S * 0.065, -0.25, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.ellipse(cx - S * 0.045, cy - S * 0.04, S * 0.055, S * 0.03, -0.9, 0, Math.PI * 2); g.fill();
+      g.beginPath(); g.arc(cx + S * 0.035, cy - S * 0.07, S * 0.022, 0, Math.PI * 2); g.fill();
+      g.fillStyle = '#C8A12B'; g.beginPath(); g.moveTo(cx + S * 0.05, cy - S * 0.075); g.lineTo(cx + S * 0.075, cy - S * 0.065); g.lineTo(cx + S * 0.05, cy - S * 0.06); g.fill();
+      break;
+    }
+    case 'h': stripes(c, false); break;
+    case 'india': stripes(c, false); g.strokeStyle = '#06038D'; g.lineWidth = 5 * u; g.beginPath(); g.arc(S / 2, S / 2, S * 0.1, 0, Math.PI * 2); g.stroke(); break;
+    case 'disc': box(0, 0, 1, 1, c[0]); disc(g, S * (name === 'Bangladesh' ? 0.46 : 0.5), S / 2, S * 0.24, c[1]); break;
+    case 'brazil':
+      box(0, 0, 1, 1, c[0]); g.fillStyle = c[1]; g.beginPath();
+      g.moveTo(S * 0.5, S * 0.14); g.lineTo(S * 0.9, S * 0.5); g.lineTo(S * 0.5, S * 0.86); g.lineTo(S * 0.1, S * 0.5); g.fill();
+      disc(g, S / 2, S / 2, S * 0.2, c[2]); break;
+    case 'swiss': box(0, 0, 1, 1, c[0]); box(0.4, 0.2, 0.2, 0.6, c[1]); box(0.2, 0.4, 0.6, 0.2, c[1]); break;
+    case 'nordic': box(0, 0, 1, 1, c[0]); box(0.3, 0, 0.16, 1, c[1]); box(0, 0.42, 1, 0.16, c[1]); break;
+    case 'nordic2': box(0, 0, 1, 1, c[0]); box(0.26, 0, 0.24, 1, c[1]); box(0, 0.38, 1, 0.24, c[1]); box(0.31, 0, 0.14, 1, c[2]); box(0, 0.43, 1, 0.14, c[2]); break;
+    case 'uruguay':
+      for (let i = 0; i < 9; i++) box(0, i / 9, 1, 1 / 9, i % 2 ? c[1] : c[0]);
+      box(0, 0, 0.45, 5 / 9, c[0]); disc(g, S * 0.22, S * 0.28, S * 0.13, c[2]); break;
+    case 'uae': stripes(c.slice(0, 3), false); box(0, 0, 0.28, 1, c[3]); break;
+    case 'ethiopia': stripes(c.slice(0, 3), false); disc(g, S / 2, S / 2, S * 0.24, c[3]); star(g, S / 2, S * 0.52, S * 0.17, c[1]); break;
+    case 'england': box(0, 0, 1, 1, c[0]); box(0.42, 0, 0.16, 1, c[1]); box(0, 0.42, 1, 0.16, c[1]); break;
+    case 'china':
+      box(0, 0, 1, 1, c[0]); star(g, S * 0.34, S * 0.36, S * 0.15, c[1]);
+      [[0.55, 0.2], [0.62, 0.32], [0.62, 0.47], [0.55, 0.58]].forEach(([x, y]) => star(g, S * x, S * y, S * 0.05, c[1])); break;
+    case 'star': box(0, 0, 1, 1, c[0]); star(g, S / 2, S * 0.52, S * 0.28, c[1]); break;
+    case 'turkey': box(0, 0, 1, 1, c[0]); crescent(g, S * 0.42, S / 2, S * 0.25, c[1], c[0], S * 0.06); star(g, S * 0.68, S / 2, S * 0.11, c[1]); break;
+    case 'portugal':
+      box(0, 0, 0.4, 1, c[0]); box(0.4, 0, 0.6, 1, c[1]); disc(g, S * 0.4, S / 2, S * 0.17, c[2]);
+      g.fillStyle = c[1]; g.fillRect(S * 0.33, S * 0.42, S * 0.14, S * 0.17); break;
+    case 'usa':
+      for (let i = 0; i < 13; i++) box(0, i / 13, 1, 1 / 13, i % 2 ? c[1] : c[0]);
+      box(0, 0, 0.46, 7 / 13, c[2]);
+      for (let y = 0; y < 4; y++) for (let x = 0; x < 4; x++) disc(g, S * (0.07 + x * 0.11), S * (0.07 + y * 0.12), S * 0.02, c[1]);
+      break;
+    case 'morocco':
+      box(0, 0, 1, 1, c[0]); g.strokeStyle = c[1]; g.lineWidth = 6 * u; g.beginPath();
+      for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + i * 4 * Math.PI / 5; g.lineTo(S / 2 + Math.cos(a) * S * 0.24, S * 0.52 + Math.sin(a) * S * 0.24); }
+      g.closePath(); g.stroke(); break;
+    case 'algeria': box(0, 0, 0.5, 1, c[0]); box(0.5, 0, 0.5, 1, c[1]); crescent(g, S * 0.48, S / 2, S * 0.22, c[2], c[1], S * 0.07); star(g, S * 0.6, S / 2, S * 0.1, c[2]); break;
+    case 'tunisia': box(0, 0, 1, 1, c[0]); disc(g, S / 2, S / 2, S * 0.27, c[1]); crescent(g, S * 0.48, S / 2, S * 0.19, c[0], c[1], S * 0.05); star(g, S * 0.56, S / 2, S * 0.09, c[0]); break;
+    case 'philippines':
+      box(0, 0, 1, 0.5, c[0]); box(0, 0.5, 1, 0.5, c[1]); g.fillStyle = c[2]; g.beginPath();
+      g.moveTo(0, 0); g.lineTo(S * 0.6, S / 2); g.lineTo(0, S); g.fill(); disc(g, S * 0.2, S / 2, S * 0.09, c[3]); break;
+    case 'pakistan': box(0, 0, 0.28, 1, c[1]); box(0.28, 0, 0.72, 1, c[0]); crescent(g, S * 0.62, S * 0.52, S * 0.22, c[1], c[0], S * 0.06); star(g, S * 0.71, S * 0.45, S * 0.08, c[1]); break;   // étoile descendue (Bazil, 29/10)
+    case 'greece':
+      for (let i = 0; i < 9; i++) box(0, i / 9, 1, 1 / 9, i % 2 ? c[1] : c[0]);
+      box(0, 0, 5 / 9, 5 / 9, c[0]); box(2 / 9, 0, 1 / 9, 5 / 9, c[1]); box(0, 2 / 9, 5 / 9, 1 / 9, c[1]); break;
+    case 'ghana': stripes(c.slice(0, 3), false); star(g, S / 2, S * 0.52, S * 0.15, c[3]); break;
+    case 'cameroon': stripes(c, true); star(g, S / 2, S * 0.52, S * 0.13, c[2]); break;
+    case 'chile': box(0, 0, 1, 0.5, c[1]); box(0, 0.5, 1, 0.5, c[2]); box(0, 0, 0.42, 0.5, c[0]); star(g, S * 0.21, S * 0.26, S * 0.1, c[1]); break;
+  }
+  g.restore();
+  g.strokeStyle = ring; g.lineWidth = 4 * u;
+  g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 3 * u, 0, Math.PI * 2); g.stroke();
+  return canvas;
+}
+
+/* =========================== choix des 3 pays =========================== */
+
+const FLAG_CACHE = {};
+// 256 px : net pour les balles et les scores ; le carrousel de l'accueil dessine les siens en 512 px
+function flagOf(name, ring, size = 256) { const k = name + (ring || '') + size; return FLAG_CACHE[k] || (FLAG_CACHE[k] = makeFlag(COUNTRIES.find(c => c.name === name), ring, size)); }
+</script>
+<script>// Classement (Supabase) : utilisé par le jeu (ui.js) et la page ranking.html.
+// Le site appelle seulement 2 fonctions du serveur : add_win et get_ranking (voir appli/supabase.sql).
+// La clé est la clé PUBLIQUE (faite pour être dans le site). Anti-triche : côté serveur.
+const RANK = (() => {
+  const URL = 'https://uutmgbdgcajlyplcwejg.supabase.co/rest/v1/rpc/';
+  const KEY = 'sb_publishable_w5P04vwWukaP5Gautl6EuA_SchUOzPg';
+  const POINTS = {easy: 1, medium: 2, hard: 3};
+  async function rpc(fn, body) {
+    const ctl = new AbortController(), t = setTimeout(() => ctl.abort(), 8000);
+    try {
+      const r = await fetch(URL + fn, {method: 'POST', signal: ctl.signal,
+        headers: {apikey: KEY, Authorization: 'Bearer ' + KEY, 'Content-Type': 'application/json'}, body: JSON.stringify(body || {})});
+      if (!r.ok) throw new Error('http ' + r.status);
+      return await r.json();
+    } finally { clearTimeout(t); }
+  }
+  const store = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
+  // id du joueur : un numéro au hasard gardé dans le navigateur (pas de compte, pas d'e-mail)
+  function playerId() {
+    let id = store('cc-pid');
+    if (!id || !/^[0-9a-f-]{36}$/.test(id)) {
+      id = crypto.randomUUID ? crypto.randomUUID() : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+        const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 3) | 8).toString(16); });
+      store('cc-pid', id);
+    }
+    return id;
+  }
+
+  /* ---------- filtre à gros mots (public jeune) ---------- */
+  // on enlève le « leet » (0 → o, 1 → i…) et les lettres répétées, puis on cherche les mots interdits
+  const norm = s => s.toLowerCase().replace(/[013457@$8]/g, c => ({0: 'o', 1: 'i', 3: 'e', 4: 'a', 5: 's', 7: 't', '@': 'a', $: 's', 8: 'b'}[c])).replace(/(.)\1+/g, '$1');
+  // mots cherchés PARTOUT dans le pseudo (assez longs pour ne pas bloquer de vrais prénoms)
+  const BAD_IN = ['fuck', 'fuk', 'fck', 'fack', 'shit', 'bitch', 'bich', 'cunt', 'nigg', 'niga', 'nigr', 'faggot', 'whore', 'slut', 'porn', 'pussy', 'dick', 'cock', 'penis', 'vagina',
+    'boob', 'tits', 'rape', 'rapist', 'nazi', 'hitler', 'isis', 'jihad', 'terror', 'pedo', 'molest', 'incest', 'sexy', 'horny', 'milf', 'hentai', 'nude', 'naked',
+    'bastard', 'wank', 'jerkof', 'blowjob', 'handjob', 'dildo', 'retard', 'asshole', 'arsehole', 'motherf', 'killyou', 'suicide',
+    'pute', 'putain', 'salope', 'conard', 'connard', 'conasse', 'encule', 'batard', 'niktamer', 'tamere', 'bite', 'couille', 'chatte', 'branle', 'merde', 'tapette', 'bouffon',
+    'puta', 'puto', 'mierda', 'pendejo', 'verga', 'cabron', 'chinga', 'culero', 'joto', 'marica', 'malparido', 'gilipolla', 'cojone',
+    'caralho', 'buceta', 'viado', 'foder', 'fodase', 'cuzao', 'arombado',
+    'fotze', 'hurensohn', 'wichser', 'schlampe', 'arschloch', 'scheis', 'fick',
+    'cazzo', 'stronzo', 'vaffancul', 'puttana', 'minchia',
+    'orospu', 'siktir', 'yarak', 'yarrak', 'pezevenk', 'kahpe', 'gavat', 'ibne', 'sikis', 'sikerim', 'amcik',
+    'sharmout', 'charmout', 'zebi', 'zeby', 'kahba', 'qahba', 'khara', 'manyak', 'kosomak', 'kosom', 'nikomak',
+    'kontol', 'memek', 'ngentot', 'bangsat', 'jancok', 'jancuk', 'pantek', 'puki', 'putangina', 'tangina', 'gago', 'kupal', 'bhenchod', 'madarchod', 'chutiya', 'bhosdi', 'gandu',
+    'kurwa', 'chuj', 'pierdol', 'jebac', 'cyka', 'blyat', 'pizda'];
+  // mots interdits seulement s'ils sont TOUT le pseudo (sinon « Hassan » serait bloqué à cause de « ass »)
+  const BAD_EQ = ['ass', 'arse', 'sex', 'cum', 'tit', 'fag', 'gay', 'pd', 'con', 'cul', 'nik', 'sik', 'got', 'pic', 'amk', 'aq', 'oc', 'kus', 'kuss', 'cono', 'porra', 'wtf', 'stfu', 'kys',
+    'admin', 'moderator', 'countryclash', 'anjing', 'babi', 'hoe', 'ho', 'pig', 'xxx', 'sperm', 'semen', 'hate', 'kill', 'die', 'dead', 'gun'];
+  function nameProblem(raw) {
+    const s = (raw || '').trim();
+    if (s.length < 2) return 'At least 2 letters or numbers.';
+    if (s.length > 16) return '16 letters or numbers max.';
+    if (!/^[A-Za-z0-9]+$/.test(s)) return 'Only letters (A–Z) and numbers, no spaces.';
+    if (/^\d+$/.test(s)) return 'Add at least one letter.';
+    const n = norm(s), plain = s.toLowerCase();
+    if ([n, plain, plain.replace(/\d+/g, ''), n.replace(/\d+/g, '')].some(x => BAD_EQ.includes(x)) || BAD_IN.some(w => n.includes(norm(w)) || plain.includes(w)))
+      return 'Please choose another name.';
+    return null;
+  }
+
+  return {
+    POINTS, nameProblem, playerId,
+    name: () => store('cc-name'),
+    setName: n => store('cc-name', n.trim()),
+    // victoire contre l'ordi → {ok, points, country_total, country_rank, week_points, week_rank} ou {ok:false, reason}
+    addWin: (country, level) => rpc('add_win', {p_player: playerId(), p_name: store('cc-name'), p_country: country, p_level: level}),
+    // {countries:[{country, points, wins}], week:[{name, country, points}], champion, week_start}
+    get: () => rpc('get_ranking'),
+    // prochaine remise à zéro : lundi 0 h, heure de Paris
+    nextReset() {
+      const f = new Intl.DateTimeFormat('en-GB', {timeZone: 'Europe/Paris', weekday: 'short', hour: 'numeric', hourCycle: 'h23'});
+      const h0 = Math.ceil(Date.now() / 3600000) * 3600000;
+      for (let i = 0; i < 24 * 8; i++) {
+        const t = h0 + i * 3600000, p = Object.fromEntries(f.formatToParts(t).map(x => [x.type, x.value]));
+        if (p.weekday === 'Mon' && +p.hour === 0) return new Date(t);
+      }
+      return null;
+    },
+  };
+})();
+</script>
+<script>
+// Page Ranking : onglets Countries (tous les pays, de tout temps) et Top players this week (top 50 + champion)
+const $ = s => document.querySelector(s);
+const label = n => n === 'United States' ? 'USA' : n;
+const flagImg = n => { const im = new Image(); im.alt = ''; im.width = im.height = 32; const c = COUNTRIES.find(x => x.name === n); if (c) im.src = makeFlag(c, 'rgba(20,20,22,.9)', 96).toDataURL(); return im; };
+let mine = null; try { mine = localStorage.getItem('cc-country'); } catch (e) {}
+const myName = RANK.name();
+function row(rank, n, main, sub, pts, me) {
+  const li = document.createElement('li'), r = document.createElement('span'), t = document.createElement('span'), m = document.createElement('strong'), b = document.createElement('b');
+  r.className = 'r'; r.textContent = rank; t.className = 't'; m.textContent = main; t.append(m);
+  if (sub) { const s = document.createElement('small'); s.textContent = sub; t.append(s); }
+  b.textContent = pts; if (me) li.className = 'me';
+  li.append(r, flagImg(n), t, b); return li;
+}
+function tab(which) {
+  for (const [k, id] of [['c', 'tab-c'], ['p', 'tab-p']]) { $('#' + id).setAttribute('aria-selected', String(k === which)); $('#panel-' + k).hidden = k !== which; }
+  try { history.replaceState(null, '', which === 'p' ? '#players' : '#countries'); } catch (e) {}
+}
+$('#tab-c').onclick = () => tab('c'); $('#tab-p').onclick = () => tab('p');
+if (location.hash === '#players') tab('p');
+const reset = RANK.nextReset();
+if (reset) { const h = Math.max(1, Math.round((reset - Date.now()) / 3600000)), d = Math.floor(h / 24);
+  $('#reset-in').textContent = `every Monday at 0:00 Paris time (next reset in ${d ? d + 'd ' : ''}${h % 24}h)`; }
+RANK.get().then(data => {
+  // tous les pays : ceux qui ont des points d'abord, puis les autres à 0 (ordre alphabétique)
+  const pts = Object.fromEntries((data.countries || []).map(c => [c.country, c]));
+  const all = COUNTRIES.map(c => c.name).sort((a, b) => ((pts[b] || {}).points || 0) - ((pts[a] || {}).points || 0) || a.localeCompare(b));
+  const lc = $('#list-c'); lc.replaceChildren();
+  all.forEach((n, i) => { const c = pts[n]; lc.append(row(c ? '#' + (i + 1) : '–', n, label(n), c ? c.wins.toLocaleString('en-US') + (c.wins === 1 ? ' win' : ' wins') : 'no points yet', (c ? c.points : 0).toLocaleString('en-US') + ' pts', n === mine)); });
+  const lp = $('#list-p'); lp.replaceChildren();
+  if (!(data.week || []).length) lp.innerHTML = '<li class="rk-empty">No wins yet this week. Be the first!</li>';
+  (data.week || []).forEach((p, i) => lp.append(row('#' + (i + 1), p.country, p.name, label(p.country), p.points.toLocaleString('en-US') + ' pts', p.name === myName && p.country === mine)));
+  if (data.champion) { $('#champ').hidden = false; $('#champ-name').textContent = data.champion.name;
+    $('#champ-sub').textContent = `${label(data.champion.country)} · ${data.champion.points} pts last week`; $('#champ .crown').after(flagImg(data.champion.country)); }
+}).catch(() => { for (const id of ['#list-c', '#list-p']) $(id).innerHTML = '<li class="rk-empty">The ranking cannot be loaded right now. Try again in a minute.</li>'; });
+</script>
+</body>
+</html>

@@ -91,18 +91,42 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
 .articles a:hover { border-color: var(--fg); }
 .articles strong { font: 800 20px/1.25 var(--display); }
 .articles span:last-child { color: var(--muted); font-size: 15px; }
+/* page Ranking */
+.tabs { display: flex; gap: 4px; margin-top: 28px; background: var(--empty); padding: 4px; border-radius: 14px; }
+.tabs button { flex: 1; border: 0; background: none; border-radius: 10px; padding: 10px 8px; font: 800 15px/1.2 var(--display); color: var(--muted); cursor: pointer; }
+.tabs button[aria-selected="true"] { background: var(--panel); color: var(--fg); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+.rk-note { font-size: 14px; color: var(--muted); margin: 12px 0 6px; }
+.rk { list-style: none; padding: 0; margin: 0; background: var(--panel); border: 1px solid var(--rule); border-radius: 14px; overflow: hidden; }
+.rk li { display: grid; grid-template-columns: 2.6em 32px 1fr auto; align-items: center; gap: 10px; padding: 8px 14px; margin: 0; max-width: none; border-top: 1px solid var(--rule); }
+.rk li:first-child { border-top: 0; }
+.rk .r { font: 700 13px var(--mono); color: var(--muted); }
+.rk li:nth-child(-n+3) .r { color: var(--fg); font-size: 15px; }
+.rk .t { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
+.rk .t strong { font: 800 17px var(--display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rk .t small { font-size: 13px; color: var(--muted); }
+.rk b { font: 700 15px var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rk li.me { background: var(--yellow); color: #141416; } .rk li.me .r, .rk li.me small { color: #141416; }
+.rk-empty { display: block !important; text-align: center; color: var(--muted); padding: 24px 14px !important; }
+.champ { display: flex; align-items: center; gap: 12px; margin-top: 24px; padding: 14px 16px; border-radius: 14px; background: var(--panel); border: 2px solid var(--yellow); }
+.champ .crown { font-size: 30px; line-height: 1; }
+.champ img { width: 40px; height: 40px; }
+.champ div { display: flex; flex-direction: column; min-width: 0; }
+.champ small { font: 700 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.champ strong { font: 800 22px/1.2 var(--display); overflow-wrap: anywhere; }
+.champ span { font-size: 14px; color: var(--muted); }
+.cta { display: inline-block; margin-top: 18px; font-weight: 700; }
 </style>
 </head>
 <body>
 <div class="wrap">
   <nav>
     <a class="brand" href="index.html"><i aria-hidden="true"></i>Country Clash</a>
-    <div class="navlinks"><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a class="play" href="index.html">Play</a></div>
+    <div class="navlinks"><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a class="play" href="index.html">Play</a></div>
   </nav>
 
   <h1>Privacy Policy</h1>
-  <p class="meta">LAST UPDATED: 29 October 2026</p>
-  <p class="lead">Country Clash is a free browser game. You can play without an account, and we never ask for your name, email address or phone number. This page explains the little data the game uses and the cookies set by our advertising partner.</p>
+  <p class="meta">LAST UPDATED: 30 October 2026</p>
+  <p class="lead">Country Clash is a free browser game. You can play without an account, and we never ask for your email address or phone number. If you want to appear in the ranking, you choose a nickname. This page explains the little data the game uses and the cookies set by our advertising partner.</p>
 
   <h2>Who we are</h2>
   <p>Country Clash (country-clash.online) is run by Bazil Falah. For any question about this policy or your data, write to <strong>bazil.falah@gmail.com</strong>.</p>
@@ -117,11 +141,14 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
   </ul>
   <p>These statistics are linked to a random match number only. They contain no name, no contact details and no precise location, and we do not use them to identify you. They are kept for up to 24 months, then deleted.</p>
 
+  <h3>Ranking</h3>
+  <p>When you win against the computer, the game sends your win to our ranking server (Supabase) so that it counts for your country. The ranking only stores <strong>the name you chose and your country</strong>, with the points and the time of each win, linked to a random player number kept in your browser. No email, no account, no real name is needed: choose a nickname, not your full name. Names and countries are shown publicly on the <a href="ranking.html">Ranking</a> page. To remove your name from the ranking, write to <strong>bazil.falah@gmail.com</strong>.</p>
+
   <h3>Google Analytics</h3>
   <p>We use Google Analytics to count visits and matches and to see how the game is used (for example which arenas are played most, or whether people play on a phone or a computer). Google Analytics uses cookies and receives technical information such as your browser type and approximate region. We do not send your name or contact details to Google. You can block it with the <a href="https://tools.google.com/dlpage/gaoptout" rel="noopener">Google Analytics opt-out browser add-on</a>. Learn more in <a href="https://policies.google.com/privacy" rel="noopener">Google's Privacy Policy</a>.</p>
 
   <h2>What is saved on your device</h2>
-  <p>The game saves one small setting in your browser's local storage, so that the short tutorial is only shown the first time you play. It is not sent to us. You can remove it at any time by clearing your browser's site data.</p>
+  <p>The game saves a few small settings in your browser's local storage: your country, mode and level, whether you have seen the short tutorial, and, if you play for the ranking, your ranking name and random player number. Only the ranking name, player number and country are sent with your wins. You can remove them at any time by clearing your browser's site data.</p>
 
   <h2>Advertising and cookies</h2>
   <p>We show ads to keep the game free. Ads are served by Google AdSense.</p>
@@ -146,7 +173,7 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
   <p>We may update this policy when the game changes, for example when the mobile app is released. The date at the top of this page shows the latest version.</p>
 
   <footer>
-    <span>© 2026 Country Clash</span><a href="index.html">Play</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
+    <span>© 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
   </footer>
 </div>
 </body>
