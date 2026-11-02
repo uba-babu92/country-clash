@@ -10,7 +10,7 @@ gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3184513018818503" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ranking · Country Clash</title>
-<meta name="description" content="The Country Clash ranking: which country has won the most matches of all time, and the top 50 players of the week. Win against the CPU to score points for your country.">
+<meta name="description" content="The Country Clash ranking: which country has won the most matches of all time, and the top 50 players of all time. Win against the CPU to score points for your country.">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500;700&display=swap">
 <style>
@@ -128,20 +128,20 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
 
   <p class="meta">RANKING · UPDATED LIVE</p>
   <h1>Country Clash ranking</h1>
-  <p class="lead">Every win against the CPU scores points for your country. Which flag rules the world? And who is the best player this week?</p>
+  <p class="lead">Every win against the CPU scores points for your country. Which flag rules the world? And who is the best player of all time?</p>
 
   <div id="champ" class="champ" hidden><span class="crown" aria-hidden="true">👑</span><div><small>Champion of the week</small><strong id="champ-name"></strong><span id="champ-sub"></span></div></div>
 
   <div class="tabs" role="tablist" aria-label="Ranking">
     <button type="button" role="tab" id="tab-c" aria-selected="true" aria-controls="panel-c">Countries</button>
-    <button type="button" role="tab" id="tab-p" aria-selected="false" aria-controls="panel-p">Top players this week</button>
+    <button type="button" role="tab" id="tab-p" aria-selected="false" aria-controls="panel-p">Top players</button>
   </div>
   <section id="panel-c" role="tabpanel" aria-labelledby="tab-c">
     <p class="rk-note">All-time points, all players together.</p>
     <ol class="rk" id="list-c"><li class="rk-empty">Loading the ranking…</li></ol>
   </section>
   <section id="panel-p" role="tabpanel" aria-labelledby="tab-p" hidden>
-    <p class="rk-note">Top 50 · resets <span id="reset-in">every Monday at 0:00 (Paris time)</span>.</p>
+    <p class="rk-note">Top 50 of all time. The 👑 Champion of the week is the best player of last week (Monday to Sunday, Paris time).</p>
     <ol class="rk" id="list-p"><li class="rk-empty">Loading the ranking…</li></ol>
   </section>
   <p><a class="cta" href="index.html">Play and score for your country →</a></p>
@@ -153,14 +153,16 @@ svg .x { stroke: var(--fg); stroke-width: 4; stroke-linecap: round; }
     <li><strong>Medium</strong>: 2 points.</li>
     <li><strong>Hard</strong>: 3 points.</li>
   </ul>
-  <p>The points go to the country you play with, and to you in the weekly players ranking. A lost match or a draw gives no points, but it costs nothing either. The <strong>2 players</strong> mode is just for fun: it does not count for the ranking, because both players share the same screen.</p>
-  <p>After each match, the game shows the points you just won (for example <em>“+3 for Turkey!”</em>), the top 5 countries with yours highlighted, and your place in this week's players ranking.</p>
+  <p>The points go to the country you play with, and to you in the players ranking. A lost match or a draw gives no points, but it costs nothing either. The <strong>2 players</strong> mode is just for fun: it does not count for the ranking, because both players share the same screen.</p>
+  <p>After each match, the game shows the points you just won (for example <em>“+3 for Turkey!”</em>), the top 5 countries with yours highlighted, and your place in the players ranking.</p>
 
   <h2>Two rankings</h2>
   <h3>Countries, of all time</h3>
   <p>The countries ranking never resets. It adds up every point won by every player since the ranking started. If your country is low on the list, it needs you: pick it on the home screen, choose the hard level and win as many matches as you can.</p>
-  <h3>Top players of the week</h3>
-  <p>The players ranking shows the 50 best players of the current week. It starts again from zero <strong>every Monday at 0:00, Paris time</strong>. The number one of the previous week becomes the <strong>👑 Champion of the week</strong> and is shown at the top of this page for the whole next week.</p>
+  <h3>Top players, of all time</h3>
+  <p>The players ranking shows the 50 best players since the ranking started. It never resets: every win counts forever.</p>
+  <h3>👑 Champion of the week</h3>
+  <p>Every Monday at 0:00 (Paris time), the player who scored the most points during the previous week becomes the <strong>Champion of the week</strong> and is shown at the top of this page for the whole week.</p>
 
   <h2>Your name</h2>
   <p>The first time you win, the game asks for a name for the ranking. It must be 2 to 16 letters or numbers, with no spaces. There is no account and no email: your name and your country are the only things shown. Names with bad words are refused, because many young people play Country Clash. The game remembers your name in your browser; if you clear your browser data, you will start again with a new name.</p>
@@ -354,7 +356,8 @@ const RANK = (() => {
     } finally { clearTimeout(t); }
   }
   const store = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
-  // id du joueur : un numéro au hasard gardé dans le navigateur (pas de compte, pas d'e-mail)
+  // id du joueur : un numéro au hasard gardé dans le navigateur (pas de compte, pas d'e-mail).
+  // Chaque navigateur (Safari, appli Instagram, appli TikTok) a le sien : le pseudo + code secret permet de le retrouver ailleurs.
   function playerId() {
     let id = store('cc-pid');
     if (!id || !/^[0-9a-f-]{36}$/.test(id)) {
@@ -398,6 +401,16 @@ const RANK = (() => {
 
   return {
     POINTS, nameProblem, playerId,
+    // pseudo unique + code secret à 4 chiffres (02/11) → {ok, player, status, stats} ou {ok:false, reason}
+    // code à 4 chiffres créé tout seul (le joueur ne le tape que pour reprendre son pseudo sur un autre téléphone)
+    pin() { let c = store('cc-pin'); if (!/^\d{4}$/.test(c || '')) { c = String(Math.floor(Math.random() * 10000)).padStart(4, '0'); store('cc-pin', c); } return c; },
+    setPin: c => store('cc-pin', c),
+    saveEmail: (email, country) => rpc('save_email', {p_player: playerId(), p_email: email, p_name: store('cc-name') || '', p_country: country}),
+    claim: (name, pin, country) => rpc('claim_name', {p_player: playerId(), p_name: name, p_pin: pin, p_country: country}),
+    adopt: id => { if (/^[0-9a-f-]{36}$/.test(id)) store('cc-pid', id); },   // sur un autre navigateur : on reprend le numéro du joueur
+    claimed: () => store('cc-claimed') === store('cc-name') && !!store('cc-name'),
+    setClaimed: () => store('cc-claimed', store('cc-name')),
+    saveProgress: stats => rpc('save_progress', {p_player: playerId(), p_stats: stats}).catch(() => null),
     name: () => store('cc-name'),
     setName: n => store('cc-name', n.trim()),
     // victoire contre l'ordi → {ok, points, country_total, country_rank, week_points, week_rank} ou {ok:false, reason}
@@ -418,7 +431,7 @@ const RANK = (() => {
 })();
 </script>
 <script>
-// Page Ranking : onglets Countries (tous les pays, de tout temps) et Top players this week (top 50 + champion)
+// Page Ranking : onglets Countries (tous les pays, de tout temps) et Top players (top 50 de tout temps) + champion de la semaine passée
 const $ = s => document.querySelector(s);
 const label = n => n === 'United States' ? 'USA' : n;
 const flagImg = n => { const im = new Image(); im.alt = ''; im.width = im.height = 32; const c = COUNTRIES.find(x => x.name === n); if (c) im.src = makeFlag(c, 'rgba(20,20,22,.9)', 96).toDataURL(); return im; };
@@ -437,9 +450,6 @@ function tab(which) {
 }
 $('#tab-c').onclick = () => tab('c'); $('#tab-p').onclick = () => tab('p');
 if (location.hash === '#players') tab('p');
-const reset = RANK.nextReset();
-if (reset) { const h = Math.max(1, Math.round((reset - Date.now()) / 3600000)), d = Math.floor(h / 24);
-  $('#reset-in').textContent = `every Monday at 0:00 Paris time (next reset in ${d ? d + 'd ' : ''}${h % 24}h)`; }
 RANK.get().then(data => {
   // tous les pays : ceux qui ont des points d'abord, puis les autres à 0 (ordre alphabétique)
   const pts = Object.fromEntries((data.countries || []).map(c => [c.country, c]));
@@ -447,8 +457,9 @@ RANK.get().then(data => {
   const lc = $('#list-c'); lc.replaceChildren();
   all.forEach((n, i) => { const c = pts[n]; lc.append(row(c ? '#' + (i + 1) : '–', n, label(n), c ? c.wins.toLocaleString('en-US') + (c.wins === 1 ? ' win' : ' wins') : 'no points yet', (c ? c.points : 0).toLocaleString('en-US') + ' pts', n === mine)); });
   const lp = $('#list-p'); lp.replaceChildren();
-  if (!(data.week || []).length) lp.innerHTML = '<li class="rk-empty">No wins yet this week. Be the first!</li>';
-  (data.week || []).forEach((p, i) => lp.append(row('#' + (i + 1), p.country, p.name, label(p.country), p.points.toLocaleString('en-US') + ' pts', p.name === myName && p.country === mine)));
+  const players = data.alltime || data.week || [];   // « alltime » existe une fois le SQL du 02/11 lancé dans Supabase
+  if (!players.length) lp.innerHTML = '<li class="rk-empty">No wins yet. Be the first!</li>';
+  players.forEach((p, i) => lp.append(row('#' + (i + 1), p.country, p.name, label(p.country), p.points.toLocaleString('en-US') + ' pts', p.name === myName && p.country === mine)));
   if (data.champion) { $('#champ').hidden = false; $('#champ-name').textContent = data.champion.name;
     $('#champ-sub').textContent = `${label(data.champion.country)} · ${data.champion.points} pts last week`; $('#champ .crown').after(flagImg(data.champion.country)); }
 }).catch(() => { for (const id of ['#list-c', '#list-p']) $(id).innerHTML = '<li class="rk-empty">The ranking cannot be loaded right now. Try again in a minute.</li>'; });

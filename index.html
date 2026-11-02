@@ -8,7 +8,7 @@ gtag('consent', 'default', {ad_storage: 'denied', ad_user_data: 'denied', ad_per
 gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
 <meta name="google-adsense-account" content="ca-pub-3184513018818503">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3184513018818503" crossorigin="anonymous"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Country Clash</title>
 <meta name="description" content="Country Clash: a turn-based flag ball game. Pull, aim and release to cut the arena and take territory for your country. Free to play on phone and computer.">
 </head>
@@ -38,6 +38,12 @@ gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
 [hidden] { display: none !important; }
 html, body { height: 100%; margin: 0; }
 body { background: var(--g-bg); color: var(--g-fg); font-family: var(--display); transition: background .4s; }
+/* pas de zoom (pincer, double tap), pas de loupe ni de sélection au doigt (02/11, Bazil) */
+html, body { touch-action: manipulation; -webkit-text-size-adjust: 100%; }
+body:not(.show-stats) { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+body:not(.show-stats) input { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
+#arena { touch-action: none; }
+#pick-stage { touch-action: pan-x; }
 body.show-stats { background: var(--s-bg); color: var(--s-fg); font-family: system-ui, -apple-system, "Segoe UI", sans-serif; height: auto; min-height: 100%; }
 button { font: inherit; cursor: pointer; }
 :focus-visible { outline: 3px solid var(--g-accent); outline-offset: 2px; }
@@ -126,7 +132,13 @@ body.my-turn #arena { cursor: grab; }
 #ns-form { display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(100%, 360px); }
 #ns-form label { font: 800 clamp(24px, 6.5vw, 32px)/1.1 var(--display); text-wrap: balance; }
 #ns-in { width: 100%; box-sizing: border-box; height: 56px; border-radius: 14px; border: 2px solid #3A3A40; background: #18181B; color: #F4F4F2; font: 700 20px var(--mono); text-align: center; }
-#ns-in:focus { border-color: #FFD60A; outline: none; }
+#ns-in:focus, #ns-pin:focus { border-color: #FFD60A; outline: none; }
+#ns-pin { width: 100%; box-sizing: border-box; height: 56px; border-radius: 14px; border: 2px solid #3A3A40; background: #18181B; color: #F4F4F2; font: 700 22px var(--mono); text-align: center; letter-spacing: .3em; }
+#ns-pin::placeholder { letter-spacing: normal; font: 600 17px system-ui, sans-serif; }
+#ns-pin-help { margin: 0; color: #C9C9CE; font: 500 15px/1.4 system-ui, sans-serif; text-align: center; }
+#ns-pin-help b { color: #FFD60A; }
+.ns-note b { color: #FFD60A; }
+#ns-go:disabled { opacity: .6; }
 #ns-err { margin: 0; min-height: 1.2em; color: #FF6B60; font: 600 15px system-ui, sans-serif; }
 #ns-go { width: 100%; height: 60px; border: 0; border-radius: 30px; background: #FFD60A; color: #141416; font: 800 24px var(--display); letter-spacing: .05em; box-shadow: 0 6px 0 #B89400; }
 .ns-note { margin: 0; color: #A9A8A2; font: 500 14px/1.5 system-ui, sans-serif; }
@@ -146,10 +158,6 @@ body.my-turn #arena { cursor: grab; }
 #rank-top li.me { background: var(--g-accent); color: #141416; }
 #rank-top li.me::before { color: #141416; }
 #rank-top li:nth-child(6) { margin-top: 6px; }
-#end-hook { margin: 0; font-weight: 800; font-size: 17px; color: #FF6B60; text-wrap: balance; }
-#end-hook.hot { color: var(--g-accent); font-size: 19px; animation: pop .5s cubic-bezier(.2, 1.4, .4, 1); }
-#end-hook:empty, #rank-chase:empty { display: none; }
-#rank-chase { margin: 0 0 4px; font-weight: 700; font-size: 15px; line-height: 1.3; color: var(--g-fg); text-wrap: balance; }
 #rank-me { margin: 2px 0 0; font: 700 14px var(--mono); color: var(--g-fg); }
 #rank-me:empty { display: none; }
 /* 2 joueurs : on se passe le téléphone */
@@ -170,36 +178,44 @@ body.picking { overflow: hidden; }
 .logo span:first-child { color: #FF3B30; } .logo span:last-child { color: #2F7BFF; }
 .pick-eyebrow { margin: 0; font: 500 13px var(--mono); letter-spacing: .18em; color: #8A8A90; }
 .pick-row { flex: 1; min-height: 0; width: 100%; max-width: 900px; position: relative; display: flex; align-items: center; }
-#pick-stage { --S: min(50vw, 34vh, 300px); --ring: #8A8A90; position: relative; flex: 1; height: 100%; min-height: calc(var(--S) + 30px); overflow: hidden;
-  touch-action: pan-y; user-select: none; -webkit-user-select: none; cursor: grab; }
-#pick-stage::before { content: ""; position: absolute; left: 50%; top: 50%; width: var(--S); height: var(--S); transform: translate(-50%, -50%); border-radius: 50%;
-  box-shadow: 0 0 0 6px var(--ring), 0 0 60px color-mix(in srgb, var(--ring) 55%, transparent); transition: box-shadow .3s; z-index: 11; pointer-events: none; }
-.slot { position: absolute; left: 50%; top: 50%; width: var(--S); height: var(--S); border-radius: 50%;
-  transition: transform .32s cubic-bezier(.2, .8, .2, 1), opacity .32s; -webkit-user-drag: none; }
+#pick-stage { --S: min(46vw, 32vh, 300px); position: relative; flex: 1; height: 100%; min-height: calc(var(--S) + 30px); display: flex; align-items: center;
+  overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+  padding-inline: calc(50% - var(--S) * 0.31); box-sizing: border-box; user-select: none; -webkit-user-select: none; cursor: grab; }
+#pick-stage::-webkit-scrollbar { display: none; }
+#pick-stage.dragging { scroll-snap-type: none; cursor: grabbing; }
+/* chaque drapeau : une case étroite (les voisins se voient), le drapeau en grand dedans, réduit selon la distance au centre */
+.slot { flex: 0 0 calc(var(--S) * 0.62); height: var(--S); scroll-snap-align: center; display: grid; place-items: center; }
+.slot { position: relative; }
+.slot img { position: absolute; left: 50%; top: 50%; width: var(--S); height: var(--S); max-width: none; max-height: none; transform: translate(-50%, -50%); border-radius: 50%; will-change: transform; pointer-events: none; -webkit-user-drag: none; }
+.pick-row { --ring: #8A8A90; }
+.pick-row::after { content: ""; position: absolute; left: 50%; top: 50%; width: min(46vw, 32vh, 300px); aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%;
+  box-shadow: 0 0 0 6px var(--ring), 0 0 60px color-mix(in srgb, var(--ring) 55%, transparent); transition: box-shadow .3s; pointer-events: none; z-index: 11; }
 .pick-arrow { flex: none; width: 52px; height: 52px; border-radius: 50%; border: 2px solid #3A3A40; background: #151518; color: #F4F4F2; font-size: 20px;
   display: grid; place-items: center; z-index: 12; position: absolute; top: 50%; transform: translateY(-50%); }
 #pick-prev { left: 0; } #pick-next { right: 0; }
+@media (max-width: 500px) { .pick-arrow { width: 40px; height: 40px; font-size: 16px; opacity: .85; } }
 .pick-arrow:hover { border-color: #FFD60A; color: #FFD60A; }
 .pick-arrow:active { transform: translateY(-50%) scale(.92); }
 #pick-name { margin: 0; font: 800 clamp(30px, 8vw, 52px)/1.05 var(--display); text-align: center; text-transform: uppercase; letter-spacing: .02em; min-height: 1.05em; }
-@media (prefers-reduced-motion: reduce) { .slot { transition: none; } }
 #pick-go { width: min(100%, 360px); height: 60px; border: 0; border-radius: 30px; background: #FFD60A; color: #141416; font: 800 24px var(--display);
   letter-spacing: .06em; flex: none; box-shadow: 0 6px 0 #B89400; margin-bottom: 6px; }
 #pick-go:active { transform: translateY(4px); box-shadow: 0 2px 0 #B89400; }
 
-/* ouvert dans Instagram / TikTok… : petite pastille en haut à droite, le jeu reste jouable */
-#inapp { position: fixed; z-index: 60; top: calc(6px + env(safe-area-inset-top, 0px)); right: max(8px, env(safe-area-inset-right, 0px));
-  display: flex; flex-direction: column; align-items: flex-end; gap: 6px; max-width: min(300px, calc(100vw - 16px)); }
-#inapp-btn { display: flex; align-items: center; gap: 6px; border: 0; border-radius: 16px; background: #FFD60A; color: #141416; height: 30px; padding: 0 6px 0 12px;
-  font: 700 13px system-ui, sans-serif; box-shadow: 0 3px 12px rgba(0, 0, 0, .35); }
-#inapp-btn .arr { font-size: 16px; font-weight: 800; animation: nudge 1.2s infinite; }
-#inapp-x { display: grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(0, 0, 0, .14); font-size: 11px; margin-left: 2px; }
-#inapp-tip { margin: 0; background: #141416; color: #F4F4F2; border: 1px solid #3A3A40; border-radius: 12px; padding: 8px 12px; font: 500 13px/1.35 system-ui, sans-serif; text-align: right; }
-#inapp-tip b { color: #FFD60A; }
-#inapp-copy { margin-left: 6px; border: 1px solid #FFD60A; background: none; color: #FFD60A; border-radius: 10px; padding: 2px 8px; font: 700 12px system-ui, sans-serif; }
-@keyframes nudge { 50% { transform: translate(2px, -2px); } }
-body.inapp #game { padding-top: calc(12px + 34px); }
-@media (prefers-reduced-motion: reduce) { #inapp-btn .arr { animation: none; } }
+/* ouvert dans TikTok / Instagram… : écran qui bloque, avec les 2 gestes pour ouvrir Safari / Chrome */
+#inapp { position: fixed; inset: 0; z-index: 100; background: #0B0B0D; color: #F4F4F2; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 14px; text-align: center; box-sizing: border-box; padding: calc(24px + env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(24px, env(safe-area-inset-left, 0px)); }
+html.inapp body { overflow: hidden; }
+.iw-arrow { position: absolute; top: calc(6px + env(safe-area-inset-top, 0px)); right: max(18px, env(safe-area-inset-right, 0px)); font: 800 54px/1 var(--display); color: #FFD60A; }
+#inapp .logo { font-size: clamp(30px, 9vw, 44px); }
+.iw-big { margin: 6px 0 0; font: 800 clamp(26px, 7.5vw, 36px)/1.1 var(--display); text-wrap: balance; }
+.iw-sub { margin: 0; color: #A9A8A2; font: 500 16px/1.4 system-ui, sans-serif; }
+.iw-steps { margin: 6px 0; padding: 0; list-style: none; counter-reset: s; display: grid; gap: 10px; width: min(100%, 340px); }
+.iw-steps li { counter-increment: s; display: flex; align-items: center; gap: 12px; background: #18181B; border: 1px solid #2E2E33; border-radius: 14px; padding: 12px 14px; font: 600 17px system-ui, sans-serif; text-align: left; }
+.iw-steps li::before { content: counter(s); flex: none; width: 30px; height: 30px; border-radius: 50%; background: #FFD60A; color: #141416; display: grid; place-items: center; font: 800 16px var(--display); }
+.iw-steps b { color: #FFD60A; }
+#iw-go { width: min(100%, 340px); height: 56px; border: 0; border-radius: 28px; background: #FFD60A; color: #141416; font: 800 20px var(--display); box-shadow: 0 6px 0 #B89400; }
+#iw-copy { width: min(100%, 340px); height: 50px; border-radius: 25px; border: 2px solid #3A3A40; background: none; color: #F4F4F2; font: 700 17px system-ui, sans-serif; }
+.iw-or { margin: 0; color: #8A8A90; font: 500 14px system-ui, sans-serif; }
 
 /* barre du haut du jeu : logo = retour au choix du pays */
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
@@ -247,6 +263,40 @@ body.inapp #game { padding-top: calc(12px + 34px); }
 #onboard svg .x { stroke: #FFD60A; stroke-width: 4; stroke-linecap: round; }
 #onboard svg .clock { fill: #FFD60A; font: 700 26px var(--mono); }
 @media (prefers-reduced-motion: reduce) { .ob-slide { transition: none; } }
+
+/* trophées */
+.pick-extras { display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; }
+#pick-trophies { color: #A9A8A2; font-size: 15px; }
+#trophy-new { margin: 2px 0 0; padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, #FFD60A 18%, transparent); color: var(--g-fg); font: 700 14px/1.35 system-ui, sans-serif; text-align: center; }
+#trophies { position: fixed; inset: 0; z-index: 26; background: #0B0B0D; color: #F4F4F2; overflow-y: auto; box-sizing: border-box;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+#trophies > * { max-width: 560px; margin-left: auto; margin-right: auto; }
+.tr-head { display: flex; align-items: center; gap: 12px; }
+.tr-head h2 { margin: 0; flex: 1; font: 800 28px var(--display); }
+#tr-back { background: #18181B; border: 1px solid #2E2E33; border-radius: 18px; height: 36px; padding: 0 14px; color: #F4F4F2; font: 700 14px system-ui, sans-serif; }
+#tr-count { font: 700 15px var(--mono); color: #FFD60A; }
+.tr-note { color: #A9A8A2; font: 500 15px/1.45 system-ui, sans-serif; margin: 10px auto 14px; }
+#tr-list { list-style: none; padding: 0; display: grid; gap: 10px; }
+.tr { display: grid; grid-template-columns: 72px 1fr; gap: 12px; align-items: center; background: #151518; border: 2px solid #232328; border-radius: 16px; padding: 10px 12px; text-align: left; width: 100%; color: inherit; font: inherit; }
+.tr.on { border-color: #FFD60A; }
+.tr canvas { width: 72px; height: 72px; }
+.tr.locked canvas { filter: grayscale(1) brightness(.55); }
+.tr b { font: 800 18px var(--display); display: block; }
+.tr .rar { font: 700 11px var(--mono); letter-spacing: .08em; color: #FFD60A; margin-left: 6px; }
+.tr small { display: block; color: #A9A8A2; font: 500 14px/1.35 system-ui, sans-serif; margin-top: 2px; }
+.tr .bar { height: 6px; border-radius: 3px; background: #2A2A2F; margin-top: 7px; overflow: hidden; }
+.tr .bar i { display: block; height: 100%; background: #FFD60A; }
+.tr .st { font: 600 12px var(--mono); color: #8A8A90; margin-top: 4px; display: block; }
+
+/* e-mail après une victoire */
+#mail-box { width: 100%; max-width: 300px; box-sizing: border-box; padding: 12px; border-radius: 16px; background: color-mix(in srgb, #FFD60A 14%, transparent); border: 2px solid #FFD60A; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.mb-t { margin: 0; font: 800 18px/1.2 var(--display); text-align: center; } .mb-t b { color: #FFD60A; }
+#mail-form { display: flex; gap: 6px; width: 100%; }
+#mail-in { flex: 1; min-width: 0; width: 0; height: 44px; border-radius: 12px; border: 2px solid #3A3A40; background: #18181B; color: #F4F4F2; padding: 0 10px; font: 600 16px system-ui, sans-serif; }
+#mail-in:focus { border-color: #FFD60A; outline: none; }
+#mail-go { height: 44px; border: 0; border-radius: 12px; background: #FFD60A; color: #141416; padding: 0 14px; font: 800 15px var(--display); }
+.mb-n { margin: 0; font: 500 12px system-ui, sans-serif; color: var(--g-muted); text-align: center; }
+#mail-no { font-size: 14px; }
 
 /* ---------- stats ---------- */
 #stats { max-width: 1040px; margin: 0 auto; box-sizing: border-box; padding-block: 28px 48px;
@@ -302,13 +352,18 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
       <img id="end-flag" alt="">
       <h2 id="end-title">TURKEY WINS</h2>
       <p id="end-sub"></p>
-      <p id="end-hook"></p>
       <p id="end-why"></p>
       <div id="rank-box" hidden>
         <p id="rank-gain"></p>
-        <p id="rank-chase"></p>
         <ol id="rank-top" aria-label="Top countries"></ol>
         <p id="rank-me"></p>
+      </div>
+      <p id="trophy-new" hidden></p>
+      <div id="mail-box" hidden>
+        <p class="mb-t">👑 Get the <b>golden crown</b><br>+ the app first!</p>
+        <form id="mail-form" autocomplete="on"><input id="mail-in" type="email" inputmode="email" autocomplete="email" enterkeyhint="send" placeholder="your@email.com" aria-label="Your e-mail"><button id="mail-go" type="submit">GET IT</button></form>
+        <p class="mb-n" id="mail-note">We'll e-mail you when the app is out. No spam.</p>
+        <button id="mail-no" class="linkish" type="button">Not now</button>
       </div>
       <button id="again" type="button"><span class="fill" aria-hidden="true"></span><span class="lbl">PLAY AGAIN</span></button>
       <p id="next-in" aria-live="polite"></p>
@@ -343,19 +398,27 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
     <button type="button" data-level="easy">EASY</button><button type="button" data-level="medium">MEDIUM</button><button type="button" data-level="hard">HARD</button>
   </div>
   <button id="pick-go" type="button">PLAY</button>
-  <button id="pick-player" class="linkish" type="button" hidden></button>
+  <div class="pick-extras"><button id="pick-player" class="linkish" type="button" hidden></button><button id="pick-trophies" class="linkish" type="button">🏆 Trophies</button></div>
 </section>
 
 <section id="name-screen" hidden aria-label="Your name for the ranking">
   <img id="ns-flag" alt="">
   <form id="ns-form" autocomplete="off">
-    <label for="ns-in">Enter your name for the ranking</label>
-    <input id="ns-in" maxlength="16" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Your name">
+    <label for="ns-in" id="ns-title">Enter your name for the ranking</label>
+    <input id="ns-in" maxlength="16" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="Your name">
+    <p id="ns-pin-help" hidden>This name is taken. Is it yours? Enter <b>your code</b> (on your other phone: ☰ MENU → your name).</p>
+    <input id="ns-pin" hidden maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="go" placeholder="Your 4-digit code" aria-label="Your 4-digit code">
     <p id="ns-err" aria-live="polite"></p>
     <button id="ns-go" type="submit">PLAY</button>
   </form>
-  <p class="ns-note">2–16 letters or numbers · no email, no account.<br>Each win scores points for your country.</p>
-  <button id="ns-skip" class="linkish" type="button" hidden>← Back</button>
+  <p class="ns-note" id="ns-note">2–16 letters or numbers · no email, no account.<br>Each win scores points for your country.</p>
+  <button id="ns-skip" class="linkish" type="button">Play without ranking</button>
+</section>
+
+<section id="trophies" hidden aria-label="Trophies">
+  <div class="tr-head"><button id="tr-back" type="button">← Back</button><h2>Trophies</h2><span id="tr-count"></span></div>
+  <p class="tr-note">Win trophies against the CPU. Each one unlocks an accessory for your flag ball: tap it to wear it.</p>
+  <ul id="tr-list"></ul>
 </section>
 
 <section id="onboard" hidden aria-label="How to play">
@@ -428,41 +491,46 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
   <a class="back" href="#">← Back to the game</a>
 </section>
 
-<div id="inapp" hidden>
-  <button id="inapp-btn" type="button"><span class="arr" aria-hidden="true">↗</span><span id="inapp-label">Open in Safari</span><span id="inapp-x" role="button" aria-label="Hide">✕</span></button>
-  <p id="inapp-tip" hidden></p>
+<div id="inapp" hidden role="dialog" aria-label="Open in your browser">
+  <span class="iw-arrow" aria-hidden="true">↗</span>
+  <h1 class="logo"><span>COUNTRY</span> <span>CLASH</span></h1>
+  <p class="iw-big">Open in <span id="iw-browser">Safari</span> to play</p>
+  <p class="iw-sub">The <span id="iw-app">TikTok</span> browser is too small for the game.</p>
+  <ol class="iw-steps">
+    <li>Tap <b id="iw-dots">•••</b> at the top right</li>
+    <li>Tap <b id="iw-open">Open in browser</b></li>
+  </ol>
+  <button id="iw-go" type="button" hidden>OPEN IN CHROME</button>
+  <button id="iw-copy" type="button">Copy the link</button>
+  <p class="iw-or">or paste it in <span id="iw-browser2">Safari</span></p>
 </div>
 <script>
-// Ouvert dans Instagram / TikTok / Facebook / Snapchat : le jeu se lance normalement (le plus important : qu'on puisse jouer).
-// Juste une petite pastille « ↗ Open in Safari / Chrome » en haut à droite ; au toucher : on essaie d'ouvrir le navigateur + 1 ligne d'aide.
+// Ouvert dans TikTok / Instagram / Facebook / Snapchat : le jeu y est injouable (petite fenêtre, gestes de l'appli).
+// On bloque et on explique comment l'ouvrir dans Safari (iPhone) ou Chrome (Android) (Bazil, 02/11).
 (function () {
   const ua = navigator.userAgent || '';
   if (!/Instagram|FBAN|FBAV|FB_IAB|FBIOS|musical_ly|Bytedance|TikTok|Snapchat|LinkedInApp|Line\//i.test(ua)) return;
   const ios = /iPhone|iPad|iPod/i.test(ua), android = /Android/i.test(ua);
   if (!ios && !android) return;
   const app = /Instagram/i.test(ua) ? 'Instagram' : /musical_ly|Bytedance|TikTok/i.test(ua) ? 'TikTok' : /Snapchat/i.test(ua) ? 'Snapchat' : 'Facebook';
-  const browser = ios ? 'Safari' : 'Chrome';
-  const el = document.getElementById('inapp'), tip = document.getElementById('inapp-tip');
-  document.getElementById('inapp-label').textContent = 'Open in ' + browser;
-  el.hidden = false; document.body.classList.add('inapp');
-  const hide = () => { el.hidden = true; document.body.classList.remove('inapp'); window.dispatchEvent(new Event('resize')); };
-  document.getElementById('inapp-x').addEventListener('click', e => { e.stopPropagation(); hide(); });
-  document.getElementById('inapp-btn').addEventListener('click', () => {
-    const url = location.href;
-    if (typeof window.gtag === 'function') window.gtag('event', 'open_in_browser_tap', {app, browser});
-    // iPhone : Instagram bloque toute sortie vers Safari (écran blanc) → on montre seulement comment faire.
-    // Android : l'ouverture de Chrome par « intent » marche dans la plupart des applis.
-    if (android) try { location.href = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end'; } catch (e) {}
-    tip.innerHTML = (ios ? 'Tap <b>•••</b> at the top, then <b>Open in Safari</b>.' : 'If nothing happens: tap <b>⋮</b> at the top, then <b>Open in Chrome</b>.')
-      + ' <button type="button" id="inapp-copy">Copy link</button>';
-    tip.hidden = false;
-    document.getElementById('inapp-copy').onclick = e => {
-      e.stopPropagation();
-      const done = () => { e.target.textContent = 'Copied ✓'; };
-      try { navigator.clipboard.writeText(url).then(done, () => { prompt('Copy this link', url); }); } catch (err) { done(); }
-    };
-    clearTimeout(tip._t); tip._t = setTimeout(() => { tip.hidden = true; }, 7000);   // ne cache pas le jeu longtemps
+  const browser = ios ? 'Safari' : 'Chrome', url = location.href.split('#')[0];
+  const set = (id, t) => { document.getElementById(id).textContent = t; };
+  set('iw-browser', browser); set('iw-browser2', browser); set('iw-app', app);
+  set('iw-dots', ios ? '•••' : '⋮');
+  set('iw-open', ios ? (app === 'Instagram' ? 'Open in external browser' : 'Open in browser') : 'Open in Chrome');
+  const el = document.getElementById('inapp');
+  el.hidden = false; document.documentElement.classList.add('inapp');
+  const intent = 'intent://' + url.replace(/^https?:\/\//, '') + '#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=' + encodeURIComponent(url) + ';end';
+  if (android) {                                   // Android : on essaie d'ouvrir Chrome tout de suite, et un bouton pour réessayer
+    const go = document.getElementById('iw-go'); go.hidden = false;
+    go.addEventListener('click', () => { location.href = intent; });
+    try { location.href = intent; } catch (e) {}
+  }
+  document.getElementById('iw-copy').addEventListener('click', e => {
+    const b = e.currentTarget, ok = () => { b.textContent = 'Link copied ✓'; };
+    try { navigator.clipboard.writeText(url).then(ok, () => { prompt('Copy this link', url); }); } catch (x) { prompt('Copy this link', url); }
   });
+  if (typeof window.gtag === 'function') window.gtag('event', 'inapp_wall', {app, browser});
 })();
 </script>
 <script>
@@ -993,7 +1061,8 @@ const RANK = (() => {
     } finally { clearTimeout(t); }
   }
   const store = (k, v) => { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
-  // id du joueur : un numéro au hasard gardé dans le navigateur (pas de compte, pas d'e-mail)
+  // id du joueur : un numéro au hasard gardé dans le navigateur (pas de compte, pas d'e-mail).
+  // Chaque navigateur (Safari, appli Instagram, appli TikTok) a le sien : le pseudo + code secret permet de le retrouver ailleurs.
   function playerId() {
     let id = store('cc-pid');
     if (!id || !/^[0-9a-f-]{36}$/.test(id)) {
@@ -1037,6 +1106,16 @@ const RANK = (() => {
 
   return {
     POINTS, nameProblem, playerId,
+    // pseudo unique + code secret à 4 chiffres (02/11) → {ok, player, status, stats} ou {ok:false, reason}
+    // code à 4 chiffres créé tout seul (le joueur ne le tape que pour reprendre son pseudo sur un autre téléphone)
+    pin() { let c = store('cc-pin'); if (!/^\d{4}$/.test(c || '')) { c = String(Math.floor(Math.random() * 10000)).padStart(4, '0'); store('cc-pin', c); } return c; },
+    setPin: c => store('cc-pin', c),
+    saveEmail: (email, country) => rpc('save_email', {p_player: playerId(), p_email: email, p_name: store('cc-name') || '', p_country: country}),
+    claim: (name, pin, country) => rpc('claim_name', {p_player: playerId(), p_name: name, p_pin: pin, p_country: country}),
+    adopt: id => { if (/^[0-9a-f-]{36}$/.test(id)) store('cc-pid', id); },   // sur un autre navigateur : on reprend le numéro du joueur
+    claimed: () => store('cc-claimed') === store('cc-name') && !!store('cc-name'),
+    setClaimed: () => store('cc-claimed', store('cc-name')),
+    saveProgress: stats => rpc('save_progress', {p_player: playerId(), p_stats: stats}).catch(() => null),
     name: () => store('cc-name'),
     setName: n => store('cc-name', n.trim()),
     // victoire contre l'ordi → {ok, points, country_total, country_rank, week_points, week_rank} ou {ok:false, reason}
@@ -1111,6 +1190,13 @@ const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
 const lighten = (hex, f) => `rgb(${rgb(hex).map(v => Math.round(v + (255 - v) * f)).join(',')})`;
 const $ = s => document.querySelector(s);
 const isPhone = matchMedia('(pointer: coarse)').matches;
+// iPhone : bloque le zoom au pincer et au double tap, et le menu « copier / loupe » de l'appui long (sauf dans les champs de texte)
+for (const ev of ['gesturestart', 'gesturechange', 'gestureend']) document.addEventListener(ev, e => e.preventDefault(), {passive: false});
+document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, {passive: false});
+let lastTouchEnd = 0;
+document.addEventListener('touchend', e => { const t = Date.now(); if (t - lastTouchEnd < 320 && !e.target.closest('input, button, a')) e.preventDefault(); lastTouchEnd = t; }, {passive: false});
+document.addEventListener('contextmenu', e => { if (!e.target.closest('input') && !document.body.classList.contains('show-stats')) e.preventDefault(); });
+document.addEventListener('selectstart', e => { if (!e.target.closest('input') && !document.body.classList.contains('show-stats')) e.preventDefault(); });
 document.body.classList.toggle('phone', isPhone);
 
 let G, T, themeName, lastTheme, lastArena, flags, state = 'aim', aim = null, ai = null;
@@ -1176,18 +1262,11 @@ let gridDirty = true, flashUntil = 0;
 
 function pick(list, not) { const l = list.filter(x => x !== not); return l[Math.floor(Math.random() * l.length)]; }
 
-/* ------------------------------ série de victoires + revanche (Bazil, 30/10 : rendre le jeu addictif) ------------------------------ */
-// VS CPU : chaque victoire ajoute 1 à la série ; défaite, nul ou partie quittée = la série retombe à 0.
-let streak = 0; try { streak = Math.max(0, parseInt(localStorage.getItem('cc-streak'), 10) || 0); } catch (e) {}
-const setStreak = n => { streak = n; try { localStorage.setItem('cc-streak', String(n)); } catch (e) {} };
-let revengeOpp = null, play0Mode = 'cpu';   // après une défaite : PLAY AGAIN devient REVENGE, contre le même pays
-
-function newMatch(opp) {
-  if (play && play.started && state !== 'over') { track('abandon'); if (play0Mode === 'cpu') setStreak(0); }
-  revengeOpp = null;
-  CPU = MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : opp && opp !== PLAYER ? opp : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
-  play0Mode = MODE;
-  $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : (streak >= 2 ? LEVEL.toUpperCase() + ' · 🔥' + streak : 'VS CPU · ' + LEVEL.toUpperCase());   // série en cours : on garde la place pour le logo
+function newMatch() {
+  if (play && play.started && state !== 'over') { trophyResult('abandon'); track('abandon'); }
+  matchBreaks = 0;
+  CPU = MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
+  $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : 'VS CPU · ' + LEVEL.toUpperCase();
   const fams = teamColors(PLAYER, CPU); TEAM_COL = fams.map(f => FAM[f]);
   const white = fams.includes('white');            // une équipe blanche : fond foncé obligatoire (comme les vidéos)
   themeName = pick(Object.keys(THEMES).filter(k => !white || !THEMES[k].LINE), lastTheme); lastTheme = themeName;
@@ -1281,7 +1360,7 @@ cv.addEventListener('pointerup', release);
 cv.addEventListener('pointercancel', () => { aim = null; });
 function nudge() { const h = $('#hint'); h.classList.remove('shake'); void h.offsetWidth; h.classList.add('shake'); }
 
-$('#again').addEventListener('click', () => { audio(); newMatch(revengeOpp); });
+$('#again').addEventListener('click', () => { audio(); newMatch(); });
 // fin de partie : comme Netflix, la partie suivante se lance toute seule après 5 s
 const NEXT_IN = 5, NEXT_IN_RANK = 9;   // avec le classement : un peu plus de temps pour lire
 let nextLeft = null, nextTotal = NEXT_IN;
@@ -1319,6 +1398,7 @@ function sounds(events) {
       fx.rings.push({x: ev.x, y: ev.y, t: clock, team: ev.team, gained: ev.gained});
     }
     if (ev.kind === 'dead') {
+      if (ev.team === 1 && ev.by >= 0 && G.balls[ev.by] && G.balls[ev.by].team === 0) matchBreaks++;   // trophée Trail Breaker
       glassSound();
       if (!alive(G, ev.team).length) outSound();
       fx.pops.push({x: ev.x, y: ev.y, t: clock});
@@ -1422,7 +1502,7 @@ function frame(now) {
     nextLeft -= dt;
     $('#again').style.setProperty('--p', Math.min(1, 1 - nextLeft / nextTotal));
     $('#next-in').textContent = 'Next match in ' + Math.max(1, Math.ceil(nextLeft)) + '…';
-    if (nextLeft <= 0) { nextLeft = null; newMatch(revengeOpp); }
+    if (nextLeft <= 0) { nextLeft = null; newMatch(); }
   }
   const cam = camNow();
   if (timerOn && state !== 'over' && !G.timeUp && !handoff) {
@@ -1492,23 +1572,11 @@ function finish(over) {
   if (state === 'over') return;
   state = 'over'; G.over = over; cpuAim = null;
   const w = over.winner, play0 = {mode: MODE, level: LEVEL, country: PLAYER};   // réglages de la partie (le menu peut les changer après)
+  const fresh = trophyResult(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw');
+  $('#trophy-new').hidden = !fresh.length;
+  maybeAskMail(w === 0);
+  if (fresh.length) $('#trophy-new').textContent = '🏆 ' + fresh.map(t => `${t.name} unlocked!`).join(' ') + ' New accessory in Trophies.';
   track(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw', over.reason);
-  // série + message « si près ! » + revanche
-  let hook = '', lost = 0;
-  if (play0.mode === 'cpu') {
-    if (w === 0) { setStreak(streak + 1); if (streak >= 2) hook = `🔥 ${streak} wins in a row!`; }
-    else {
-      lost = streak; setStreak(0);
-      const gap = Math.round((pct(G, 1) - pct(G, 0)) * 100);
-      if (w === 1) {
-        hook = over.reason === 'time' && gap <= 10 ? `So close! Only ${Math.max(1, gap)}% away.`
-          : over.reason === 'eliminated' && alive(G, 1).length === 1 ? 'So close! They had 1 ball left.' : 'Take your revenge!';
-        revengeOpp = CPU;
-      }
-      if (lost >= 2) hook += (hook ? ' ' : '') + `Your 🔥${lost} streak is over.`;
-    }
-  }
-  const revenge = revengeOpp;
   winSound(w);
   if (w >= 0) for (let i = 0; i < 160; i++) {
     const a = Math.random() * Math.PI * 2, sp = 200 + Math.random() * 700;
@@ -1526,8 +1594,6 @@ function finish(over) {
     $('#end-sub').textContent = MODE === '2p' ? (w < 0 ? 'Nobody wins this time.' : `Player ${w + 1} wins!`)
       : w === 0 ? `You beat ${them}!` : w === 1 ? `${them[0].toUpperCase() + them.slice(1)} beat you. Try again!` : 'Nobody wins this time.';
     $('#end-why').textContent = {eliminated: 'All balls destroyed', time: `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%`}[over.reason];
-    $('#end-hook').textContent = hook; $('#end-hook').className = w === 0 ? 'hot' : '';
-    $('#again .lbl').textContent = revenge ? 'REVENGE' : 'PLAY AGAIN';
     e.hidden = false; $('#again').focus({preventScroll: true});
     nextLeft = NEXT_IN; nextTotal = NEXT_IN;
     rankEnd(w, play0);
@@ -1537,7 +1603,7 @@ function finish(over) {
 
 /* ------------------------------ classement (fin de partie) ------------------------------ */
 // Victoire contre l'ordi = 1 / 2 / 3 points pour ton pays (facile / moyen / difficile). Le mode 2 joueurs ne compte pas.
-// 1re victoire : on demande le pseudo. Puis « +3 for Turkey! », top 5 des pays (le tien en avant), « You are #12 this week ».
+// 1re victoire : on demande le pseudo. Puis « +3 for Turkey! », top 5 des pays (le tien en avant), « You are #12 of all time ».
 const label = n => n === 'United States' ? 'USA' : n;
 function rankEnd(w, p) {
   const card = $('#end .card'), G0 = G;
@@ -1555,8 +1621,8 @@ function showRanking(p, G0, res, why) {
     if (G !== G0 || $('#end').hidden) return;                   // déjà une autre partie
     const box = $('#rank-box'), top = $('#rank-top');
     if (!data && !res) { box.hidden = true; return; }           // serveur injoignable : on n'affiche rien
-    $('#rank-gain').textContent = res ? `+${res.points} for ${label(p.country)}!`
-      : {limit: 'Max 30 points per hour. Take a break!', too_fast: 'Too fast! Wait a few seconds.', noname: 'Add your name in ☰ MENU to score points.'}[why] || '';
+    $('#rank-gain').textContent = res && res.points ? `+${res.points} for ${label(p.country)}!`
+      : {limit: 'Max 30 points per hour. Take a break!', too_fast: 'Too fast! Wait a few seconds.', noname: 'Add your name in ☰ MENU to score points.', name_taken: 'This name belongs to another player. Change it in ☰ MENU.'}[why] || '';
     $('#rank-gain').className = res ? 'gain' : 'warn';
     top.replaceChildren();
     const list = (data && data.countries) || [], mine = list.findIndex(c => c.country === p.country);
@@ -1567,25 +1633,14 @@ function showRanking(p, G0, res, why) {
       nm.textContent = label(c.country); pt.textContent = c.points.toLocaleString('en-US');
       li.append(im, nm, pt); top.append(li);
     };
-    // « Turkey is 14 pts behind Morocco for #2! » : la place juste au-dessus, à portée de main (VS CPU)
-    let chase = '';
-    if (p.mode === 'cpu') {
-      const me2 = list[mine], up = list[mine - 1], down = list[mine + 1], c = label(p.country), hard = n => Math.max(1, Math.ceil(n / 3));
-      if (mine < 0) chase = `${c} has no points yet. Win to put it on the map!`;
-      else if (mine === 0) chase = down ? `${c} is #1! Only ${me2.points - down.points} pts ahead of ${label(down.country)}.` : `${c} is #1!`;
-      else { const gap = up.points - me2.points + 1;
-        chase = hard(gap) <= 10 ? `${c} is ${gap} pts away from #${mine} ${label(up.country)}: just ${hard(gap)} hard win${hard(gap) > 1 ? 's' : ''}!`
-          : `${c} needs ${gap} pts to pass ${label(up.country)}. Every win counts!`; }
-    }
-    $('#rank-chase').textContent = chase;
     for (let i = 0; i < Math.min(5, list.length); i++) row(i);
     if (mine >= 5) row(mine);                                   // ton pays, même s'il n'est pas dans le top 5
-    let me = res ? res.week_rank : null;
+    let me = res ? (res.all_rank ?? res.week_rank) : null;   // classement de tout temps (02/11)
     if (!me && data && RANK.name()) {
-      const k = (data.week || []).findIndex(x => x.name === RANK.name() && x.country === p.country);
+      const k = (data.alltime || data.week || []).findIndex(x => x.name === RANK.name() && x.country === p.country);
       if (k >= 0) me = k + 1;
     }
-    $('#rank-me').textContent = me ? `You are #${me} this week` : '';
+    $('#rank-me').textContent = me ? `You are #${me} of all time` : '';
     box.hidden = false; $('#end .card').classList.add('ranked'); $('#end').classList.add('ranked');
     if (nextLeft !== null) { nextLeft += NEXT_IN_RANK - nextTotal; nextTotal = NEXT_IN_RANK; }
   });
@@ -1678,6 +1733,7 @@ function draw() {
       ctx.beginPath(); ctx.arc(b.x, b.y, R + 9, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
     }
     ctx.drawImage(flags[b.team], b.x - R, b.y - R, R * 2, R * 2);
+    if (b.team === 0 && MODE === 'cpu') drawAcc(ctx, TRO.equipped(), b.x, b.y, R);   // accessoire du trophée
   }
   // visée (toi ou l'ordi)
   if (aim) drawAim(aim.ball, aim.ball.x - aim.x, aim.ball.y - aim.y, Math.min(1, Math.hypot(aim.ball.x - aim.x, aim.ball.y - aim.y) / MAX_PULL), true);
@@ -1777,53 +1833,72 @@ addEventListener('pagehide', () => { if (play && play.started && state !== 'over
 
 let saved = null; try { saved = localStorage.getItem('cc-country'); } catch (e) {}
 if (saved && COUNTRIES.some(c => c.name === saved)) PLAYER = saved; else saved = null;
-// carrousel « comme FIFA » : un gros drapeau au milieu, ◀ ▶ / swipe / flèches du clavier pour défiler
+// choix du pays : bande de drapeaux qu'on fait défiler (doigt, souris, ◀ ▶, flèches du clavier)
 const ORDER = COUNTRIES.map(c => c.name).sort((a, b) => a.localeCompare(b));
 const HOT_START = ['Turkey', 'Brazil', 'Morocco', 'Mexico', 'Indonesia', 'Poland', 'Argentina', 'Egypt', 'Philippines', 'Pakistan', 'Bangladesh', 'Algeria'];
 const FLAG_URL = {};
-const flagUrl = n => FLAG_URL[n] || (FLAG_URL[n] = makeFlag(COUNTRIES.find(c => c.name === n), undefined, 512).toDataURL());   // grand et net, pas gardé en mémoire
-let picked = null, pIdx = 0, slots = null, pickStep = 1;   // 2 joueurs : étape 1 = joueur 1, étape 2 = joueur 2
-const SLOT = o => { const a = Math.abs(o), sg = Math.sign(o);
-  return {x: sg * [0, 0.74, 1.18, 1.55][Math.min(a, 3)], k: [1, 0.48, 0.3, 0.2][Math.min(a, 3)], op: [1, 0.65, 0.3, 0][Math.min(a, 3)]}; };
-function placeSlots(shift, anim) {
-  slots.forEach((im, i) => {
-    const o = i - 3 + shift, {x, k, op} = SLOT(o);
-    im.style.transition = anim ? '' : 'none';
-    im.style.transform = `translate(-50%, -50%) translateX(calc(var(--S) * ${x})) scale(${k})`;
-    im.style.opacity = op; im.style.zIndex = 10 - Math.abs(Math.round(o));
-  });
-}
+const flagUrl = n => FLAG_URL[n] || (FLAG_URL[n] = makeFlag(COUNTRIES.find(c => c.name === n), undefined, 400).toDataURL());   // grand et net, pas gardé en mémoire
+let picked = null, pIdx = 0, pickStep = 1;   // 2 joueurs : étape 1 = joueur 1, étape 2 = joueur 2
 let backState = null;   // réglages au moment d'ouvrir le menu (pour « Back to game »)
 function showPicker(fromGame) {
   backState = fromGame ? {MODE, LEVEL, PLAYER, PLAYER2} : null;
   $('#pick-back').hidden = !fromGame;
-  if (!slots) {
-    const st = $('#pick-stage');
-    slots = Array.from({length: 7}, (_, i) => {
-      const im = new Image(); im.alt = ''; im.className = 'slot'; im.draggable = false;
-      im.addEventListener('click', () => { const o = i - 3; if (o) move(o); });
-      st.append(im); return im;
-    });
-  }
+  buildStrip();
   pickStep = 1;
   const start = saved || HOT_START[Math.floor(Math.random() * HOT_START.length)];
-  pIdx = ORDER.indexOf(start); move(0); pickerUI();
   $('#picker').hidden = false;
+  goTo(ORDER.indexOf(start), false); pickerUI();
   document.body.classList.add('picking');
   $('#pick-go').focus({preventScroll: true});
 }
-function move(d) {
-  const n = ORDER.length;
-  pIdx = ((pIdx + d) % n + n) % n;
-  slots.forEach((im, i) => { im.src = flagUrl(ORDER[(pIdx + i - 3 + n * 3) % n]); });
-  if (d) { placeSlots(Math.sign(d), false); void $('#pick-stage').offsetWidth; }   // on part de l'ancienne place…
-  placeSlots(0, true);                                                             // …et on glisse vers la nouvelle
-  picked = ORDER[pIdx];
-  $('#pick-name').textContent = picked === 'United States' ? 'USA' : picked;
-  $('#pick-stage').style.setProperty('--ring', FAM[COUNTRIES.find(c => c.name === picked).bar]);
-  if (d && AC) tone(520 + 40 * Math.sign(d), 0.07, 0.09, 'square');
-  if (slots) pickerUI();
+// Choix du pays : une bande de drapeaux qu'on fait défiler au doigt (élan natif du téléphone), comme une liste (Bazil, 02/11).
+// Le drapeau au centre est choisi ; ses voisins rapetissent.
+let items = null, stripRaf = 0, lastIdx = -1;
+function buildStrip() {
+  if (items) return;
+  const st = $('#pick-stage');
+  items = ORDER.map((n, i) => {
+    const it = document.createElement('div'), im = new Image();
+    it.className = 'slot'; im.alt = ''; im.draggable = false; im.decoding = 'async'; im.src = flagUrl(n);
+    it.append(im); it.addEventListener('click', () => { if (!dragMoved) goTo(i, true); });
+    st.append(it); return it;
+  });
+  st.addEventListener('scroll', () => { if (!stripRaf) stripRaf = requestAnimationFrame(onStrip); }, {passive: true});
+  // souris (ordi) : on peut aussi attraper la bande et la tirer
+  let drag = null, dragMoved = false;
+  st.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse') return; drag = {x: e.clientX, left: st.scrollLeft}; dragMoved = false; st.classList.add('dragging'); });
+  addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x; if (Math.abs(dx) > 4) dragMoved = true; st.scrollLeft = drag.left - dx; });
+  addEventListener('pointerup', () => { if (!drag) return; drag = null; st.classList.remove('dragging'); goTo(lastIdx, true); setTimeout(() => { dragMoved = false; }, 0); });
 }
+function onStrip() {
+  stripRaf = 0;
+  const st = $('#pick-stage'), mid = st.scrollLeft + st.clientWidth / 2, w = items[0].offsetWidth;
+  let best = 0, bd = Infinity;
+  items.forEach((it, i) => {
+    const d = (it.offsetLeft + w / 2 - mid) / w, a = Math.abs(d);
+    if (a < bd) { bd = a; best = i; }
+    if (a > 4) return;
+    const k = a < 1 ? 1 - 0.5 * a : Math.max(0.28, 0.5 - 0.17 * (a - 1));
+    it.firstChild.style.transform = `translate(-50%, -50%) scale(${k.toFixed(3)})`;
+    it.firstChild.style.opacity = a < 1 ? 1 - 0.35 * a : Math.max(0, 0.65 - 0.3 * (a - 1));
+    it.style.zIndex = String(100 - Math.round(a * 10));   // le drapeau du centre toujours devant ses voisins
+  });
+  if (best !== lastIdx) { lastIdx = best; setPicked(best, true); }
+}
+function setPicked(i, sound) {
+  pIdx = i; picked = ORDER[i];
+  $('#pick-name').textContent = picked === 'United States' ? 'USA' : picked;
+  $('.pick-row').style.setProperty('--ring', FAM[COUNTRIES.find(c => c.name === picked).bar]);
+  if (sound && AC && !$('#picker').hidden) tone(560, 0.05, 0.05, 'square');
+  pickerUI();
+}
+function goTo(i, smooth) {
+  const st = $('#pick-stage'), n = ORDER.length; i = Math.max(0, Math.min(n - 1, i));
+  const it = items[i], left = it.offsetLeft + it.offsetWidth / 2 - st.clientWidth / 2;
+  st.scrollTo({left, behavior: smooth ? 'smooth' : 'auto'});
+  if (!smooth) { lastIdx = i; setPicked(i, false); onStrip(); }
+}
+const move = d => goTo(pIdx + d, true);
 const bannedPair = (a, b) => BANNED.some(([x, y]) => (x === a && y === b) || (y === a && x === b));
 // textes et boutons de l'accueil selon le mode et l'étape
 function pickerUI() {
@@ -1837,19 +1912,13 @@ function pickerUI() {
   $('#pick-go').disabled = bad;
   $('#pick-go').textContent = MODE === '2p' && pickStep === 1 ? 'NEXT' : 'PLAY';
   if (typeof nameLine === 'function') nameLine();
+  if (typeof trophyLine === 'function') trophyLine();
   $('#pick-player').hidden = $('#pick-player').hidden || pickStep === 2;
 }
 for (const b of document.querySelectorAll('#mode-seg button')) b.addEventListener('click', () => { audio(); MODE = b.dataset.mode; try { localStorage.setItem('cc-mode', MODE); } catch (e) {} pickerUI(); });
 for (const b of document.querySelectorAll('#level-seg button')) b.addEventListener('click', () => { audio(); LEVEL = b.dataset.level; try { localStorage.setItem('cc-level', LEVEL); } catch (e) {} pickerUI(); });
 $('#pick-prev').addEventListener('click', () => { audio(); move(-1); });
 $('#pick-next').addEventListener('click', () => { audio(); move(1); });
-let swipe = null;
-$('#pick-stage').addEventListener('pointerdown', e => { swipe = {x: e.clientX, y: e.clientY}; });
-$('#pick-stage').addEventListener('pointerup', e => {
-  if (!swipe) return;
-  const dx = e.clientX - swipe.x; swipe = null;
-  if (Math.abs(dx) > 35) { audio(); move(dx < 0 ? 1 : -1); }
-});
 addEventListener('keydown', e => {
   if (!$('#onboard').hidden) { if (e.key === 'ArrowRight') obShow(obIdx + 1); if (e.key === 'ArrowLeft') obShow(obIdx - 1); return; }
   if ($('#picker').hidden) return;
@@ -1863,7 +1932,7 @@ $('#pick-go').addEventListener('click', () => {
     PLAYER = saved = picked; try { localStorage.setItem('cc-country', picked); } catch (e) {}
     pickStep = 2;
     const p2 = PLAYER2 && PLAYER2 !== PLAYER && !bannedPair(PLAYER, PLAYER2) ? PLAYER2 : 'United States';
-    pIdx = ORDER.indexOf(p2 === PLAYER ? 'Brazil' : p2); move(0); pickerUI();
+    goTo(ORDER.indexOf(p2 === PLAYER ? 'Brazil' : p2), false);
     return;
   }
   if (pickStep === 2) { PLAYER2 = picked; try { localStorage.setItem('cc-p2', picked); } catch (e) {} }
@@ -1875,31 +1944,58 @@ $('#pick-go').addEventListener('click', () => {
 });
 
 /* ------------------------------ pseudo pour le classement : juste après le choix du pays (Bazil, 30/10) ------------------------------ */
-// VS CPU seulement, une fois. Obligatoire (Bazil, 30/10 : plus de « Play without ranking »).
+// VS CPU seulement, une fois. « Play without ranking » : les victoires ne comptent pas, on redemande à la prochaine visite.
 let nameSkipped = false;
+// pseudo absent, ou ancien pseudo pas encore protégé par un code
 const needName = () => MODE === 'cpu' && !RANK.name() && !nameSkipped;
 function showNameScreen(edit) {
   $('#ns-flag').src = flagOf(PLAYER, undefined, 256).toDataURL();
-  $('#ns-in').value = RANK.name() || ''; $('#ns-err').textContent = '';
-  $('#ns-skip').textContent = '← Back'; $('#ns-skip').hidden = !edit;   // pseudo obligatoire contre l'ordi (Bazil, 30/10) : retour seulement depuis le menu
+  $('#ns-in').value = RANK.name() || ''; $('#ns-pin').value = ''; $('#ns-err').textContent = '';
+  $('#ns-pin').hidden = $('#ns-pin-help').hidden = true;
+  $('#ns-title').textContent = RANK.name() ? 'Your name' : 'Enter your name for the ranking';
+  // ton code : seulement pour reprendre ton pseudo sur un autre téléphone ou une autre appli
+  $('#ns-note').innerHTML = RANK.name() && RANK.claimed()
+    ? `Your code: <b>${RANK.pin()}</b><br>Type your name + this code on another phone or app to keep your points and trophies.`
+    : '2–16 letters or numbers · no email, no account.<br>Each win scores points for your country.';
+  $('#ns-skip').textContent = edit ? '← Back' : 'Play without ranking';
   $('#ns-skip').dataset.edit = edit ? '1' : '';
+  $('#ns-go').disabled = false; $('#ns-go').textContent = 'PLAY';
   $('#name-screen').hidden = false; document.body.classList.add('picking');
   if (!isPhone) $('#ns-in').focus({preventScroll: true});
 }
 function closeNameScreen() {
-  $('#name-screen').hidden = true; $('#ns-in').blur();
+  $('#name-screen').hidden = true; $('#ns-in').blur(); $('#ns-pin').blur();
   if ($('#picker').hidden) document.body.classList.remove('picking');
   else nameLine();
   if ($('#picker').hidden && !obDone) showOnboard();
 }
-$('#ns-form').addEventListener('submit', e => {
+$('#ns-pin').addEventListener('input', () => { $('#ns-pin').value = $('#ns-pin').value.replace(/\D/g, '').slice(0, 4); });
+$('#ns-in').addEventListener('input', () => { $('#ns-pin').hidden = $('#ns-pin-help').hidden = true; $('#ns-err').textContent = ''; });
+$('#ns-form').addEventListener('submit', async e => {
   e.preventDefault(); audio();
-  const v = $('#ns-in').value.trim(), bad = RANK.nameProblem(v);
-  if (bad) { $('#ns-err').textContent = bad; tone(196, 0.1, 0.15, 'square'); return; }
-  RANK.setName(v);
-  if (typeof window.gtag === 'function') window.gtag('event', 'ranking_name_set');
-  closeNameScreen();
+  const v = $('#ns-in').value.trim(), bad = RANK.nameProblem(v), typed = !$('#ns-pin').hidden;
+  const err = m => { $('#ns-err').textContent = m; tone(196, 0.1, 0.15, 'square'); $('#ns-go').disabled = false; $('#ns-go').textContent = 'PLAY'; };
+  if (bad) return err(bad);
+  const pin = typed ? $('#ns-pin').value : RANK.pin();
+  if (typed && !/^\d{4}$/.test(pin)) return err('Your code has 4 digits.');
+  $('#ns-go').disabled = true; $('#ns-go').textContent = '…';
+  let res = null;
+  try { res = await RANK.claim(v, pin, PLAYER); } catch (x) { res = null; }
+  if (!res) { RANK.setName(v); closeNameScreen(); return; }          // serveur injoignable : on garde le pseudo, il sera protégé plus tard
+  if (!res.ok && (res.reason === 'taken' || (res.reason === 'wrong_pin' && !typed))) {   // pseudo déjà pris : c'est peut-être le sien (autre téléphone)
+    $('#ns-pin').hidden = $('#ns-pin-help').hidden = false; $('#ns-err').textContent = '';
+    $('#ns-go').disabled = false; $('#ns-go').textContent = 'PLAY'; $('#ns-pin').focus(); return;
+  }
+  if (!res.ok) return err({wrong_pin: 'Wrong code. Or choose another name.', too_many: 'Too many tries. Wait one hour.',
+    name: 'Only letters and numbers, 2 to 16.'}[res.reason] || 'Try again in a minute.');
+  RANK.adopt(res.player); RANK.setName(v); RANK.setClaimed(); if (typed) RANK.setPin(pin);
+  TRO.merge(res.stats || {});
+  if (typeof window.gtag === 'function') window.gtag('event', 'ranking_name_set', {status: res.status});
+  if (res.status === 'login') { $('#ns-title').textContent = `Welcome back, ${v}!`; setTimeout(closeNameScreen, 900); }
+  else closeNameScreen();
 });
+// ancien pseudo sans code : on le protège tout seul, sans rien demander
+if (RANK.name() && !RANK.claimed()) RANK.claim(RANK.name(), RANK.pin(), PLAYER).then(r => { if (r && r.ok) { RANK.adopt(r.player); RANK.setClaimed(); TRO.merge(r.stats || {}); } }).catch(() => {});
 $('#ns-skip').addEventListener('click', () => { if (!$('#ns-skip').dataset.edit) nameSkipped = true; closeNameScreen(); });
 // dans l'accueil : « Name: Bazil ✎ » pour changer (ou ajouter) son pseudo
 function nameLine() {
@@ -1908,6 +2004,175 @@ function nameLine() {
   b.replaceChildren(n ? 'Name: ' : 'Add your name for the ranking ', Object.assign(document.createElement('b'), {textContent: n || ''}), ' ✎');
 }
 $('#pick-player').addEventListener('click', () => { audio(); showNameScreen(true); });
+
+/* ------------------------------ trophées + accessoires de la balle-drapeau (02/11) ------------------------------ */
+// Gagnés contre l'ordi seulement. Progrès gardé dans le navigateur, et sur le serveur si le pseudo a un code (pour le retrouver ailleurs).
+// Accessoires fixes, sans animation (Bazil).
+const TROPHIES = [
+  {id: 'rookie', name: 'Rookie', desc: 'Win 25 matches', acc: 'eyes', goal: s => [s.wins, 25]},
+  {id: 'hattrick', name: 'Hat Trick', desc: 'Win 5 in a row on Medium or Hard', acc: 'shades', goal: s => [s.bestMH, 5]},
+  {id: 'breaker', name: 'Trail Breaker', desc: 'Break 100 rival trails', acc: 'bolt', goal: s => [s.breaks, 100]},
+  {id: 'flawless', name: 'Flawless', desc: 'Win on Hard without losing a ball', acc: 'bowtie', goal: s => [s.flawless, 1]},
+  {id: 'land', name: 'Land Grabber', desc: 'Win on Hard with 90% of the arena', acc: 'tophat', goal: s => [s.land90, 1]},
+  {id: 'devil', name: 'Devil', rarity: 'RARE', desc: 'Win 25 matches on Hard', acc: 'horns', goal: s => [s.winsHard, 25]},
+  {id: 'fire', name: 'On Fire', rarity: 'VERY RARE', desc: 'Win 10 in a row on Hard', acc: 'flame', goal: s => [s.bestHard, 10]},
+  {id: 'diamond', name: 'Diamond', rarity: 'LEGENDARY', desc: 'Win 100 matches on Hard', acc: 'diamond', goal: s => [s.winsHard, 100]},
+  {id: 'insider', name: 'Golden Crown', rarity: 'EXCLUSIVE', desc: 'Leave your e-mail after a win to get the app first', acc: 'crown', goal: s => [s.insider, 1]},
+];
+const TRO = (() => {
+  const ZERO = {wins: 0, winsHard: 0, breaks: 0, streakMH: 0, bestMH: 0, streakHard: 0, bestHard: 0, flawless: 0, land90: 0, insider: 0, equip: ''};
+  let st = {...ZERO};
+  try { st = {...ZERO, ...JSON.parse(localStorage.getItem('cc-trophies') || '{}')}; } catch (e) {}
+  const save = () => { try { localStorage.setItem('cc-trophies', JSON.stringify(st)); } catch (e) {} if (RANK.claimed()) RANK.saveProgress(st); };
+  const done = t => { const [v, g] = t.goal(st); return v >= g; };
+  const unlocked = () => TROPHIES.filter(done);
+  return {
+    get: () => st, unlocked, done,
+    equip: acc => { st.equip = acc; save(); },
+    giveCrown: () => { st.insider = 1; st.equip = 'crown'; save(); },
+    equipped: () => (unlocked().some(t => t.acc === st.equip) ? st.equip : ''),
+    // fin d'une partie contre l'ordi : 'win' | 'loss' | 'draw' | 'abandon' ; renvoie les trophées gagnés à l'instant
+    result(kind, level, info) {
+      const before = new Set(unlocked().map(t => t.id));
+      st.breaks += info.breaks || 0;
+      if (kind === 'win') {
+        st.wins++;
+        if (level === 'medium' || level === 'hard') { st.streakMH++; st.bestMH = Math.max(st.bestMH, st.streakMH); }
+        if (level === 'hard') {
+          st.winsHard++; st.streakHard++; st.bestHard = Math.max(st.bestHard, st.streakHard);
+          if (info.lost === 0) st.flawless = 1;
+          if (info.pct >= 0.9) st.land90 = 1;
+        }
+      } else { st.streakMH = 0; st.streakHard = 0; }      // une défaite, un nul ou un abandon arrête les séries
+      const fresh = unlocked().filter(t => !before.has(t.id));
+      if (fresh.length && !TRO.equipped()) st.equip = fresh[fresh.length - 1].acc;   // 1er accessoire : on le met tout de suite
+      save();
+      return fresh;
+    },
+    // pseudo retrouvé sur un autre navigateur : on garde le meilleur des deux
+    merge(o) {
+      for (const k of Object.keys(ZERO)) if (k !== 'equip' && typeof o[k] === 'number') st[k] = Math.max(st[k], o[k]);
+      if (!st.equip && o.equip) st.equip = o.equip;
+      save();
+    },
+  };
+})();
+let matchBreaks = 0;
+function trophyResult(kind) {
+  if (MODE !== 'cpu' || !play || !play.started) return [];
+  const fresh = TRO.result(kind, LEVEL, {breaks: matchBreaks, lost: BALLS - alive(G, 0).length, pct: pct(G, 0)});
+  matchBreaks = 0;
+  return fresh;
+}
+
+// accessoires dessinés par-dessus la balle (centre x, y ; rayon r) : formes simples, sans animation
+function drawAcc(c, kind, x, y, r) {
+  if (!kind) return;
+  c.save(); c.translate(x, y); c.scale(r / 24, r / 24);       // dessiné pour une balle de rayon 24
+  c.lineJoin = 'round'; c.lineCap = 'round';
+  const blk = '#141416', path = pts => { c.beginPath(); pts.forEach(([px, py], i) => i ? c.lineTo(px, py) : c.moveTo(px, py)); c.closePath(); };
+  if (kind === 'eyes') {
+    for (const sx of [-9, 9]) {
+      c.fillStyle = '#fff'; c.strokeStyle = blk; c.lineWidth = 2.2;
+      c.beginPath(); c.ellipse(sx, -5, 7.5, 9, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = blk; c.beginPath(); c.arc(sx + 2, -3, 3.8, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#fff'; c.beginPath(); c.arc(sx + 3.3, -4.5, 1.3, 0, Math.PI * 2); c.fill();
+    }
+  } else if (kind === 'shades') {
+    c.fillStyle = blk;
+    c.beginPath(); c.roundRect(-21, -10, 18, 11, [3, 3, 7, 7]); c.fill();
+    c.beginPath(); c.roundRect(3, -10, 18, 11, [3, 3, 7, 7]); c.fill();
+    c.strokeStyle = blk; c.lineWidth = 3; c.beginPath(); c.moveTo(-4, -7); c.lineTo(4, -7); c.stroke();
+    c.fillStyle = 'rgba(255,255,255,.55)'; c.fillRect(-17, -8, 5, 2.5); c.fillRect(7, -8, 5, 2.5);
+  } else if (kind === 'bolt') {
+    c.fillStyle = '#FFD60A'; c.strokeStyle = blk; c.lineWidth = 2.2;
+    path([[18, -34], [8, -18], [16, -18], [6, -2], [24, -22], [16, -22], [26, -34]]); c.fill(); c.stroke();
+  } else if (kind === 'bowtie') {
+    c.fillStyle = '#E0241B'; c.strokeStyle = blk; c.lineWidth = 2.2;
+    path([[0, 28], [-14, 21], [-14, 35], [0, 28], [14, 21], [14, 35]]); c.fill(); c.stroke();
+    c.beginPath(); c.arc(0, 28, 3.5, 0, Math.PI * 2); c.fill(); c.stroke();
+  } else if (kind === 'tophat') {
+    c.fillStyle = blk; c.strokeStyle = '#fff'; c.lineWidth = 1.5;
+    c.beginPath(); c.ellipse(0, -21, 19, 4.5, 0, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.fillRect(-11, -45, 22, 24); c.strokeRect(-11, -45, 22, 24);
+    c.fillStyle = '#E0241B'; c.fillRect(-11, -28, 22, 5);
+  } else if (kind === 'horns') {
+    c.fillStyle = '#C81E1E'; c.strokeStyle = blk; c.lineWidth = 2.2;
+    for (const sx of [-1, 1]) { path([[sx * 7, -19], [sx * 20, -15], [sx * 19, -36]]); c.fill(); c.stroke(); }
+  } else if (kind === 'flame') {
+    c.strokeStyle = blk; c.lineWidth = 2.2;
+    c.fillStyle = '#FF7A00';
+    c.beginPath(); c.moveTo(-12, -20); c.quadraticCurveTo(-15, -36, -4, -46); c.quadraticCurveTo(-4, -36, 2, -34); c.quadraticCurveTo(4, -44, 10, -48);
+    c.quadraticCurveTo(18, -34, 12, -20); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = '#FFD60A'; c.beginPath(); c.moveTo(-5, -21); c.quadraticCurveTo(-6, -30, 0, -35); c.quadraticCurveTo(2, -29, 5, -30); c.quadraticCurveTo(8, -26, 5, -21); c.closePath(); c.fill();
+  } else if (kind === 'crown') {
+    c.fillStyle = '#FFC400'; c.strokeStyle = blk; c.lineWidth = 2.2;
+    path([[-15, -18], [-17, -36], [-8, -27], [0, -40], [8, -27], [17, -36], [15, -18]]); c.fill(); c.stroke();
+    c.fillStyle = '#E0241B'; c.beginPath(); c.arc(0, -24, 2.6, 0, Math.PI * 2); c.fill();
+    c.fillStyle = '#fff'; for (const [px, py] of [[-17, -36], [0, -40], [17, -36]]) { c.beginPath(); c.arc(px, py, 2.2, 0, Math.PI * 2); c.fill(); c.stroke(); }
+  } else if (kind === 'diamond') {
+    c.fillStyle = '#7FE3FF'; c.strokeStyle = blk; c.lineWidth = 2.2;
+    path([[-12, -36], [-6, -42], [6, -42], [12, -36], [0, -22]]); c.fill(); c.stroke();
+    c.strokeStyle = 'rgba(20,20,22,.6)'; c.lineWidth = 1.4;
+    c.beginPath(); c.moveTo(-12, -36); c.lineTo(12, -36); c.moveTo(-6, -42); c.lineTo(-3, -36); c.lineTo(0, -22); c.lineTo(3, -36); c.lineTo(6, -42); c.stroke();
+    c.fillStyle = '#fff'; c.fillRect(-8, -39, 3, 2);
+  }
+  c.restore();
+}
+
+// écran des trophées
+function showTrophies() {
+  const list = $('#tr-list'), st = TRO.get(), eq = TRO.equipped();
+  list.replaceChildren();
+  $('#tr-count').textContent = `${TRO.unlocked().length}/${TROPHIES.length}`;
+  const flag = flagOf(PLAYER, undefined, 256);
+  for (const t of TROPHIES) {
+    const ok = TRO.done(t), [v, g] = t.goal(st), li = document.createElement('li'), bt = document.createElement('button');
+    bt.type = 'button'; bt.className = 'tr' + (ok ? '' : ' locked') + (ok && eq === t.acc ? ' on' : '');
+    const cv2 = document.createElement('canvas'); cv2.width = cv2.height = 144;
+    const c = cv2.getContext('2d'); c.drawImage(flag, 36, 40, 72, 72); drawAcc(c, t.acc, 72, 76, 36);
+    const txt = document.createElement('div'), b = document.createElement('b'), sm = document.createElement('small'), bar = document.createElement('div'), stx = document.createElement('span');
+    b.textContent = t.name; if (t.rarity) b.append(Object.assign(document.createElement('span'), {className: 'rar', textContent: t.rarity}));
+    sm.textContent = t.desc; bar.className = 'bar'; bar.append(Object.assign(document.createElement('i'), {style: `width:${Math.min(100, v / g * 100)}%`}));
+    stx.className = 'st'; stx.textContent = ok ? (eq === t.acc ? '✓ Wearing it · tap to take off' : 'Unlocked · tap to wear') : `${Math.min(v, g)} / ${g}`;
+    txt.append(b, sm, bar, stx); bt.append(cv2, txt);
+    bt.addEventListener('click', () => { if (!ok) { tone(196, 0.08, 0.1, 'square'); return; } audio(); TRO.equip(eq === t.acc ? '' : t.acc); tone(660, 0.07, 0.1); showTrophies(); });
+    li.append(bt); list.append(li);
+  }
+  $('#trophies').hidden = false;
+}
+$('#pick-trophies').addEventListener('click', () => { audio(); showTrophies(); });
+$('#tr-back').addEventListener('click', () => { $('#trophies').hidden = true; trophyLine(); });
+function trophyLine() { $('#pick-trophies').textContent = `🏆 Trophies ${TRO.unlocked().length}/${TROPHIES.length}`; $('#pick-trophies').hidden = MODE !== 'cpu'; }
+
+/* ------------------------------ e-mail après une victoire : couronne dorée + l'appli en avant-première (02/11) ------------------------------ */
+// Jamais au début, jamais pendant la partie : après une victoire contre l'ordi, 1 fois sur 3, toujours avec « Not now ».
+function maybeAskMail(win) {
+  const box = $('#mail-box');
+  box.hidden = true;
+  if (!win || MODE !== 'cpu' || TRO.get().insider) return;
+  let n = 0; try { n = +(localStorage.getItem('cc-mailask') || 0); localStorage.setItem('cc-mailask', String(n + 1)); } catch (e) {}
+  if (n % 3 !== 0) return;                       // 1re victoire, 4e, 7e…
+  $('#mail-in').value = ''; $('#mail-note').textContent = "We'll e-mail you when the app is out. No spam.";
+  $('#mail-form').hidden = false; $('#mail-no').hidden = false;
+  box.hidden = false;
+  if (typeof window.gtag === 'function') window.gtag('event', 'email_ask');
+}
+$('#mail-in').addEventListener('focus', () => { nextLeft = null; $('#next-in').textContent = ''; $('#again').style.setProperty('--p', 0); });   // pas de nouvelle partie pendant qu'il écrit
+$('#mail-form').addEventListener('submit', async e => {
+  e.preventDefault(); audio();
+  const v = $('#mail-in').value.trim();
+  if (!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test(v)) { $('#mail-note').textContent = 'Check your e-mail address.'; tone(196, 0.1, 0.15, 'square'); return; }
+  $('#mail-go').disabled = true;
+  let r = null; try { r = await RANK.saveEmail(v, PLAYER); } catch (x) { r = null; }
+  $('#mail-go').disabled = false;
+  if (!r || !r.ok) { $('#mail-note').textContent = r && r.reason === 'email' ? 'Check your e-mail address.' : 'Could not save it. Try again in a minute.'; return; }
+  TRO.giveCrown(); $('#mail-in').blur();
+  $('#mail-form').hidden = true; $('#mail-no').hidden = true;
+  $('#mail-note').textContent = '👑 Done! Your golden crown is on. We will tell you when the app is out.';
+  if (typeof window.gtag === 'function') window.gtag('event', 'email_given');
+});
+$('#mail-no').addEventListener('click', () => { $('#mail-box').hidden = true; if (typeof window.gtag === 'function') window.gtag('event', 'email_not_now'); });
 
 /* ------------------------------ onboarding : 5 cartes avec les pictos (1re fois seulement) ------------------------------ */
 let obDone = false; try { obDone = localStorage.getItem('cc-onboard') === '1'; } catch (e) {}
@@ -1941,7 +2206,9 @@ $('.end-help').addEventListener('click', () => { nextLeft = null; });
 
 newMatch();
 resize();
-if (!saved && location.hash !== '#stats') showPicker();
+// l'accueil s'ouvre à chaque visite, sur le dernier pays choisi : sinon un autre navigateur (Instagram, TikTok, Safari…)
+// lançait direct la partie avec un ancien pays gardé chez lui (bug « je choisis la France, j'ai la Tunisie », 02/11)
+if (location.hash !== '#stats') showPicker();
 else if (location.hash !== '#stats' && needName()) showNameScreen();
 requestAnimationFrame(frame);
 
