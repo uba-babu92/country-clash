@@ -333,7 +333,15 @@ body { font-family: var(--text); color: var(--ink); }
 .logo i:nth-child(5n+3), #logo i:nth-child(5n+3) { color: var(--mint); } .logo i:nth-child(5n+4), #logo i:nth-child(5n+4) { color: var(--salmon); }
 .logo i:nth-child(5n), #logo i:nth-child(5n) { color: var(--lilac); }
 .logo { font-size: clamp(40px, 11vw, 74px); line-height: 1; margin-bottom: 6px; }
-#pick-stage, .pick-row::after { --S: min(58vw, 36vh, 330px); }
+/* accueil : tout centré avec des espaces égaux (Bazil 02/11) ; le drapeau prend la place qui reste, sans jamais coller */
+#picker { justify-content: center; gap: clamp(10px, 2.2vh, 22px); overflow-y: auto; }
+#picker > * { flex: none; }
+.pick-row { flex: none; height: calc(var(--S) + 72px); margin-bottom: 16px; }   /* + la place de l'ombre du drapeau (décalée vers le bas) */
+#pick-stage, .pick-row::after { --S: max(150px, min(52vw, 330px, calc(100vh - 540px))); }
+@supports (height: 100dvh) { #pick-stage, .pick-row::after { --S: max(150px, min(52vw, 330px, calc(100dvh - 540px))); } }
+#pick-stage { min-height: 0; height: 100%; }
+.logo { margin-bottom: 0; } .pick-eyebrow { margin: -4px 0 0; } #pick-name { margin: 0; }
+#mode-seg { margin-top: 2px; }
 .pick-row::after { width: var(--S); }
 .logo span { display: inline-block; white-space: nowrap; }
 .logo span:first-child, .logo span:last-child, #logo span:first-child, #logo span:last-child { color: inherit; }
@@ -1909,6 +1917,9 @@ function draw() {
     ctx.beginPath(); ctx.moveTo(x - Math.cos(r) * h, y - Math.sin(r) * h); ctx.lineTo(x + Math.cos(r) * h, y + Math.sin(r) * h); ctx.stroke();
   }
   ctx.globalAlpha = 1;
+  // visée (toi ou l'ordi) : dessinée AVANT les balles, la flèche part de derrière le drapeau (Bazil 02/11)
+  if (aim) drawAim(aim.ball, aim.ball.x - aim.x, aim.ball.y - aim.y, Math.min(1, Math.hypot(aim.ball.x - aim.x, aim.ball.y - aim.y) / MAX_PULL), true);
+  if (cpuAim) { const k2 = Math.min(1, (clock - cpuAim.t) / 0.45); drawAim(cpuAim.ball, Math.cos(cpuAim.ang), Math.sin(cpuAim.ang), cpuAim.p * k2, false); }
   // balles jouables : petit halo qui respire
   const mine = state === 'aim' && human(G.side) && !G.moving && !aim;
   for (const b of G.balls) if (!b.dead) {
@@ -1916,12 +1927,10 @@ function draw() {
       ctx.globalAlpha = 0.35 + 0.25 * Math.sin(clock * 5); ctx.strokeStyle = T.ACCENT; ctx.lineWidth = 5;
       ctx.beginPath(); ctx.arc(b.x, b.y, R + 9, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
     }
+    ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(b.x + R * 0.22, b.y + R * 0.22, R, 0, Math.PI * 2); ctx.fill();   // ombre dure, style autocollant
     ctx.drawImage(flags[b.team], b.x - R, b.y - R, R * 2, R * 2);
     if (b.team === 0 && MODE === 'cpu') drawAcc(ctx, TRO.equipped(), b.x, b.y, R);   // accessoire du trophée
   }
-  // visée (toi ou l'ordi)
-  if (aim) drawAim(aim.ball, aim.ball.x - aim.x, aim.ball.y - aim.y, Math.min(1, Math.hypot(aim.ball.x - aim.x, aim.ball.y - aim.y) / MAX_PULL), true);
-  if (cpuAim) { const k2 = Math.min(1, (clock - cpuAim.t) / 0.45); drawAim(cpuAim.ball, Math.cos(cpuAim.ang), Math.sin(cpuAim.ang), cpuAim.p * k2, false); }
   if (!tutoDone && state === 'aim' && G.side === 0 && !G.moving && !aim) drawTuto();
   // confettis
   for (const c of fx.confetti) {
@@ -1963,22 +1972,31 @@ function drawTuto() {
     ctx.lineWidth = 12; ctx.strokeStyle = INK; ctx.strokeText(word, WORLD / 2 + 5, wy + 5); ctx.strokeText(word, WORLD / 2, wy); ctx.fillStyle = T.ACCENT; ctx.fillText(word, WORLD / 2, wy);
   }
 }
+// flèche de visée, style autocollant : corps qui s'élargit, grosse pointe arrondie, contour + ombre dure bleu-gris, reflet clair ; le % dans une pastille
+function rrect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
 function drawAim(b, dx, dy, p, pull) {
-  const l = Math.hypot(dx, dy) || 1, ux = dx / l, uy = dy / l, col = lighten(TEAM_COL[b.team], 0.2);
+  const l = Math.hypot(dx, dy) || 1, ux = dx / l, uy = dy / l, nx = -uy, ny = ux, col = lighten(TEAM_COL[b.team], 0.18);
   if (pull && aim) {                              // l'élastique, du doigt à la balle
-    ctx.strokeStyle = T.MUTED; ctx.lineWidth = 3; ctx.setLineDash([2, 10]);
-    ctx.beginPath(); ctx.moveTo(aim.x, aim.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = INK; ctx.globalAlpha *= 0.55; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.setLineDash([1, 12]);
+    ctx.beginPath(); ctx.moveTo(aim.x, aim.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha /= 0.55;
   }
   if (p * MAX_PULL < R * 0.9) return;
-  const L = 70 + p * 260, ex = b.x + ux * (R + L), ey = b.y + uy * (R + L);
-  ctx.strokeStyle = T.LINE || T.BG; ctx.lineWidth = 14;
-  ctx.beginPath(); ctx.moveTo(b.x + ux * R, b.y + uy * R); ctx.lineTo(ex, ey); ctx.stroke();
-  ctx.strokeStyle = col; ctx.lineWidth = 8; ctx.stroke();
-  ctx.fillStyle = col; ctx.beginPath();
-  ctx.moveTo(ex + ux * 26, ey + uy * 26); ctx.lineTo(ex - uy * 18, ey + ux * 18); ctx.lineTo(ex + uy * 18, ey - ux * 18); ctx.closePath();
-  ctx.lineWidth = 6; ctx.strokeStyle = T.LINE || T.BG; ctx.stroke(); ctx.fill();
-  ctx.font = '700 36px Fredoka, sans-serif'; ctx.fillStyle = T.FG; ctx.textAlign = 'center';
-  ctx.fillText(Math.round(p * 100) + '%', b.x - ux * 70, b.y - uy * 70 + 12);
+  const D = R + 96 + p * 260, hl = 32 + p * 6, hw = 5 + p * 3.5, hh = 19 + p * 6;   // longueur, pointe, demi-largeurs du corps et de la pointe
+  const P = (d, w) => [b.x + ux * d + nx * w, b.y + uy * d + ny * w];
+  const pts = [P(0, hw * 0.55), P(D - hl, hw), P(D - hl - 6, hh), P(D, 0), P(D - hl - 6, -hh), P(D - hl, -hw), P(0, -hw * 0.55)];
+  const shape = () => { ctx.beginPath(); pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.closePath(); };
+  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  ctx.save(); ctx.translate(5, 5); ctx.globalAlpha *= 0.3; shape(); ctx.fillStyle = INK; ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.fill(); ctx.stroke(); ctx.restore();   // ombre adoucie (Bazil 02/11)
+  shape(); ctx.fillStyle = col; ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke();
+  const [g0x, g0y] = P(R + 10, hw * 0.3), [g1x, g1y] = P(D - hl - 8, hw * 0.45);           // reflet clair sur le corps
+  ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = Math.max(2.5, hw * 0.45); ctx.beginPath(); ctx.moveTo(g0x, g0y); ctx.lineTo(g1x, g1y); ctx.stroke();
+  // pastille du % derrière la balle
+  const txt = Math.round(p * 100) + '%', cx = b.x - ux * (R + 52), cy = b.y - uy * (R + 52);
+  ctx.font = '700 32px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  const w = ctx.measureText(txt).width + 28, h = 46;
+  rrect(ctx, cx - w / 2 + 5, cy - h / 2 + 5, w, h, 16); ctx.fillStyle = INK; ctx.fill();
+  rrect(ctx, cx - w / 2, cy - h / 2, w, h, 16); ctx.fillStyle = CREAM; ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke();
+  ctx.fillStyle = INK; ctx.fillText(txt, cx, cy + 2); ctx.textBaseline = 'alphabetic';
 }
 
 /* ------------------------------ stats (db) ------------------------------ */
