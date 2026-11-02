@@ -195,6 +195,8 @@ body.picking { overflow: hidden; }
   overflow-x: auto; overflow-y: hidden; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
   padding-inline: calc(50% - var(--S) * 0.31); box-sizing: border-box; user-select: none; -webkit-user-select: none; cursor: grab; }
 #pick-stage::-webkit-scrollbar { display: none; }
+#pick-stage { -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent 56px, #000 120px, #000 calc(100% - 120px), transparent calc(100% - 56px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, transparent 56px, #000 120px, #000 calc(100% - 120px), transparent calc(100% - 56px), transparent 100%); }
+@media (max-width: 500px) { #pick-stage { -webkit-mask-image: linear-gradient(90deg, transparent 0, transparent 30px, #000 70px, #000 calc(100% - 70px), transparent calc(100% - 30px), transparent 100%); mask-image: linear-gradient(90deg, transparent 0, transparent 30px, #000 70px, #000 calc(100% - 70px), transparent calc(100% - 30px), transparent 100%); } }
 #pick-stage.dragging { scroll-snap-type: none; cursor: grabbing; }
 /* chaque drapeau : une case étroite (les voisins se voient), le drapeau en grand dedans, réduit selon la distance au centre */
 .slot { flex: 0 0 calc(var(--S) * 0.62); height: var(--S); scroll-snap-align: center; display: grid; place-items: center; }
@@ -1128,6 +1130,7 @@ const RANK = (() => {
     setClaimed: () => store('cc-claimed', store('cc-name')),
     saveProgress: stats => rpc('save_progress', {p_player: playerId(), p_stats: stats}).catch(() => null),
     name: () => store('cc-name'),
+    forget: () => { try { localStorage.removeItem('cc-name'); localStorage.removeItem('cc-claimed'); } catch (e) {} },
     setName: n => store('cc-name', n.trim()),
     // victoire contre l'ordi → {ok, points, country_total, country_rank, week_points, week_rank} ou {ok:false, reason}
     addWin: (country, level) => rpc('add_win', {p_player: playerId(), p_name: store('cc-name'), p_country: country, p_level: level}),
@@ -1373,7 +1376,7 @@ function nudge() { const h = $('#hint'); h.classList.remove('shake'); void h.off
 
 $('#again').addEventListener('click', () => { audio(); newMatch(); });
 // fin de partie : comme Netflix, la partie suivante se lance toute seule après 5 s
-const NEXT_IN = 5, NEXT_IN_RANK = 9;   // avec le classement : un peu plus de temps pour lire
+const NEXT_IN = 5, NEXT_IN_RANK = 9, NEXT_IN_MAIL = 15;   // avec le classement : un peu plus de temps pour lire ; avec la demande d'e-mail : le temps de l'écrire (Bazil 02/11)
 let nextLeft = null, nextTotal = NEXT_IN;
 $('#new').addEventListener('click', () => { audio(); newMatch(); });
 $('#mute').addEventListener('click', () => { muted = !muted; $('#mute').textContent = muted ? '🔇' : '🔊'; $('#mute').setAttribute('aria-pressed', muted); });
@@ -1585,7 +1588,7 @@ function finish(over) {
   const w = over.winner, play0 = {mode: MODE, level: LEVEL, country: PLAYER};   // réglages de la partie (le menu peut les changer après)
   const fresh = trophyResult(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw');
   $('#trophy-new').hidden = !fresh.length;
-  maybeAskMail(w === 0);
+  maybeAskMail();
   if (fresh.length) $('#trophy-new').textContent = '🏆 ' + fresh.map(t => `${t.name} unlocked!`).join(' ') + ' New accessory in Trophies.';
   track(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw', over.reason);
   winSound(w);
@@ -1606,7 +1609,7 @@ function finish(over) {
       : w === 0 ? `You beat ${them}!` : w === 1 ? `${them[0].toUpperCase() + them.slice(1)} beat you. Try again!` : 'Nobody wins this time.';
     $('#end-why').textContent = {eliminated: 'All balls destroyed', time: `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%`}[over.reason];
     e.hidden = false; $('#again').focus({preventScroll: true});
-    nextLeft = NEXT_IN; nextTotal = NEXT_IN;
+    nextLeft = nextTotal = $('#mail-box').hidden ? NEXT_IN : NEXT_IN_MAIL;
     rankEnd(w, play0);
   }, 1100);
   hud();
@@ -1653,7 +1656,7 @@ function showRanking(p, G0, res, why) {
     }
     $('#rank-me').textContent = me ? `You are #${me} of all time` : '';
     box.hidden = false; $('#end .card').classList.add('ranked'); $('#end').classList.add('ranked');
-    if (nextLeft !== null) { nextLeft += NEXT_IN_RANK - nextTotal; nextTotal = NEXT_IN_RANK; }
+    if (nextLeft !== null && nextTotal < NEXT_IN_RANK) { nextLeft += NEXT_IN_RANK - nextTotal; nextTotal = NEXT_IN_RANK; }
   });
 }
 
@@ -1881,17 +1884,22 @@ function buildStrip() {
   addEventListener('pointermove', e => { if (!drag) return; const dx = e.clientX - drag.x; if (Math.abs(dx) > 4) dragMoved = true; st.scrollLeft = drag.left - dx; });
   addEventListener('pointerup', () => { if (!drag) return; drag = null; st.classList.remove('dragging'); goTo(lastIdx, true); setTimeout(() => { dragMoved = false; }, 0); });
 }
+// en unités de taille du drapeau du centre (S) : un emplacement = 0,62 S ; taille et position voulues à 0, 1, 2, 3, 4 emplacements du centre
+const SLOT = 0.62, SCALE = [1, 0.5, 0.36, 0.28, 0.24], POS = [0, 0.8, 1.28, 1.65, 1.97];
 function onStrip() {
   stripRaf = 0;
-  const st = $('#pick-stage'), mid = st.scrollLeft + st.clientWidth / 2, w = items[0].offsetWidth;
+  const st = $('#pick-stage'), mid = st.scrollLeft + st.clientWidth / 2, w = items[0].offsetWidth, S = items[0].firstChild.offsetWidth;
   let best = 0, bd = Infinity;
   items.forEach((it, i) => {
     const d = (it.offsetLeft + w / 2 - mid) / w, a = Math.abs(d);
     if (a < bd) { bd = a; best = i; }
     if (a > 4) return;
-    const k = a < 1 ? 1 - 0.5 * a : Math.max(0.28, 0.5 - 0.17 * (a - 1));
-    it.firstChild.style.transform = `translate(-50%, -50%) scale(${k.toFixed(3)})`;
-    it.firstChild.style.opacity = a < 1 ? 1 - 0.35 * a : Math.max(0, 0.65 - 0.3 * (a - 1));
+    // taille et place de chaque drapeau : écart régulier entre les bords, drapeaux opaques (assombris, pas transparents)
+    const lerp = T => { const i = Math.min(Math.floor(a), T.length - 2), f = Math.min(1, a - i); return T[i] + (T[i + 1] - T[i]) * f; };
+    const k = lerp(SCALE), x = Math.sign(d) * (lerp(POS) - a * SLOT) * S;
+    it.firstChild.style.transform = `translate(calc(-50% + ${x.toFixed(1)}px), -50%) scale(${k.toFixed(3)})`;
+    it.firstChild.style.filter = `brightness(${lerp([1, 0.72, 0.55, 0.45, 0.4]).toFixed(2)})`;
+    it.firstChild.style.opacity = a < 3.3 ? 1 : Math.max(0, 1 - (a - 3.3) * 1.5);
     it.style.zIndex = String(100 - Math.round(a * 10));   // le drapeau du centre toujours devant ses voisins
   });
   if (best !== lastIdx) { lastIdx = best; setPicked(best, true); }
@@ -1992,7 +2000,12 @@ $('#ns-form').addEventListener('submit', async e => {
   closeNameScreen();
 });
 // ancien pseudo sans code : on le protège tout seul, sans rien demander
-if (RANK.name() && !RANK.claimed()) RANK.claim(RANK.name(), RANK.pin(), PLAYER).then(r => { if (r && r.ok) { RANK.adopt(r.player); RANK.setClaimed(); TRO.merge(r.stats || {}); } }).catch(() => {});
+// à chaque visite : on vérifie le pseudo (ça le garde actif, il se libère après 15 jours sans jouer).
+// Pseudo repris par un autre pendant l'absence → on en redemande un au prochain match.
+if (RANK.name()) RANK.claim(RANK.name(), RANK.pin(), PLAYER).then(r => {
+  if (r && r.ok) { RANK.adopt(r.player); RANK.setClaimed(); TRO.merge(r.stats || {}); }
+  else if (r && (r.reason === 'taken' || r.reason === 'wrong_pin')) { RANK.forget(); if (!$('#picker').hidden) nameLine(); }
+}).catch(() => {});
 $('#ns-skip').addEventListener('click', closeNameScreen);
 // dans l'accueil : « Name: Bazil ✎ » pour changer (ou ajouter) son pseudo
 function nameLine() {
@@ -2142,14 +2155,13 @@ $('#pick-trophies').addEventListener('click', () => { audio(); showTrophies(); }
 $('#tr-back').addEventListener('click', () => { $('#trophies').hidden = true; trophyLine(); });
 function trophyLine() { $('#pick-trophies').textContent = `🏆 Trophies ${TRO.unlocked().length}/${TROPHIES.length}`; $('#pick-trophies').hidden = MODE !== 'cpu'; }
 
-/* ------------------------------ e-mail après une victoire : couronne dorée + l'appli en avant-première (02/11) ------------------------------ */
-// Jamais au début, jamais pendant la partie : après une victoire contre l'ordi, 1 fois sur 3, toujours avec « Not now ».
-function maybeAskMail(win) {
+/* ------------------------------ e-mail en fin de partie : couronne dorée + l'appli en avant-première (02/11) ------------------------------ */
+// Jamais au début, jamais pendant la partie : à CHAQUE fin de partie (Bazil 02/11), tant qu'il n'a pas donné son e-mail,
+// toujours avec « Not now ». La partie suivante attend alors 15 s au lieu de 5, et s'arrête dès qu'il touche le champ.
+function maybeAskMail() {
   const box = $('#mail-box');
   box.hidden = true;
-  if (!win || MODE !== 'cpu' || TRO.get().insider) return;
-  let n = 0; try { n = +(localStorage.getItem('cc-mailask') || 0); localStorage.setItem('cc-mailask', String(n + 1)); } catch (e) {}
-  if (n % 3 !== 0) return;                       // 1re victoire, 4e, 7e…
+  if (TRO.get().insider) return;
   $('#mail-in').value = ''; $('#mail-note').textContent = "We'll e-mail you when the app is out. No spam.";
   $('#mail-form').hidden = false; $('#mail-no').hidden = false;
   box.hidden = false;

@@ -428,6 +428,7 @@ const RANK = (() => {
     setClaimed: () => store('cc-claimed', store('cc-name')),
     saveProgress: stats => rpc('save_progress', {p_player: playerId(), p_stats: stats}).catch(() => null),
     name: () => store('cc-name'),
+    forget: () => { try { localStorage.removeItem('cc-name'); localStorage.removeItem('cc-claimed'); } catch (e) {} },
     setName: n => store('cc-name', n.trim()),
     // victoire contre l'ordi → {ok, points, country_total, country_rank, week_points, week_rank} ou {ok:false, reason}
     addWin: (country, level) => rpc('add_win', {p_player: playerId(), p_name: store('cc-name'), p_country: country, p_level: level}),
