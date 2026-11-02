@@ -14,7 +14,7 @@ gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="manifest" href="/site.webmanifest">
-<meta name="theme-color" content="#1f2326">
+<meta name="theme-color" content="#8EB8F5">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,19 +51,19 @@ canvas { display: block; }
 <script>
 // Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, Bazil) :
 // taille au choix (drapeaux nets en grand), étoile du Pakistan plus bas, emblème au centre du Mexique.
-const FAM = {red: '#FF3B30', blue: '#2F7BFF', green: '#22C55E', yellow: '#FFD60A', orange: '#FF8A00', white: '#F4F4F2'};
+const FAM = {red: '#F25C54', blue: '#4F7DF0', green: '#3CC774', yellow: '#FFCB2E', orange: '#FF9640', white: '#FFFDF7'};   // couleurs des terrains (un peu adoucies, 02/11)
 const COUNTRIES = [
   ['France', 'v', ['#002395', '#fff', '#ED2939'], 'blue'],
   ['Italy', 'v', ['#009246', '#fff', '#CE2B37'], 'green'],
   ['Ireland', 'v', ['#169B62', '#fff', '#FF883E'], 'green'],
-  ['Belgium', 'v', ['#111', '#FDDA24', '#EF3340'], 'yellow'],
+  ['Belgium', 'v', ['#2B3550', '#FDDA24', '#EF3340'], 'yellow'],
   ['Mexico', 'mexico', ['#006847', '#fff', '#CE1126'], 'green'],
   ['Nigeria', 'v', ['#008751', '#fff', '#008751'], 'green'],
   ['Peru', 'v', ['#D91023', '#fff', '#D91023'], 'red'],
   ['Romania', 'v', ['#002B7F', '#FCD116', '#CE1126'], 'blue'],
   ['Senegal', 'v', ['#00853F', '#FDEF42', '#E31B23'], 'green'],
   ['Ivory Coast', 'v', ['#F77F00', '#fff', '#009E60'], 'orange'],
-  ['Germany', 'h', ['#111', '#DD0000', '#FFCE00'], 'red'],
+  ['Germany', 'h', ['#2B3550', '#DD0000', '#FFCE00'], 'red'],
   ['Russia', 'h', ['#fff', '#0039A6', '#D52B1E'], 'blue'],
   ['Netherlands', 'h', ['#AE1C28', '#fff', '#21468B'], 'orange'],
   ['Austria', 'h', ['#ED2939', '#fff', '#ED2939'], 'red'],
@@ -74,7 +74,7 @@ const COUNTRIES = [
   ['Ukraine', 'h', ['#0057B7', '#FFD700'], 'blue'],
   ['Argentina', 'h', ['#74ACDF', '#fff', '#74ACDF'], 'blue'],
   ['Spain', 'h', ['#AA151B', '#F1BF00', '#F1BF00', '#AA151B'], 'yellow'],
-  ['Egypt', 'h', ['#CE1126', '#fff', '#111'], 'red'],
+  ['Egypt', 'h', ['#CE1126', '#fff', '#2B3550'], 'red'],
   ['India', 'india', ['#FF9933', '#fff', '#138808'], 'orange'],
   ['Japan', 'disc', ['#fff', '#BC002D'], 'white'],
   ['Bangladesh', 'disc', ['#006A4E', '#F42A41'], 'green'],
@@ -94,14 +94,14 @@ const COUNTRIES = [
   ['Philippines', 'philippines', ['#0038A8', '#CE1126', '#fff', '#FCD116'], 'blue'],
   ['Pakistan', 'pakistan', ['#01411C', '#fff'], 'green'],
   ['Greece', 'greece', ['#0D5EAF', '#fff'], 'blue'],
-  ['Ghana', 'ghana', ['#CE1126', '#FCD116', '#006B3F', '#111'], 'yellow'],
+  ['Ghana', 'ghana', ['#CE1126', '#FCD116', '#006B3F', '#2B3550'], 'yellow'],
   ['Cameroon', 'cameroon', ['#007A5E', '#CE1126', '#FCD116'], 'green'],
   ['Chile', 'chile', ['#0039A6', '#fff', '#D52B1E'], 'red'],
   ['England', 'england', ['#fff', '#CE1124'], 'white'],
   ['Guinea', 'v', ['#CE1126', '#FCD116', '#009460'], 'red'],
   ['Mali', 'v', ['#14B53A', '#FCD116', '#CE1126'], 'green'],
   ['Lithuania', 'h', ['#FDB913', '#006A44', '#C1272D'], 'yellow'],
-  ['Estonia', 'h', ['#0072CE', '#111', '#fff'], 'blue'],
+  ['Estonia', 'h', ['#0072CE', '#2B3550', '#fff'], 'blue'],
   ['Bulgaria', 'h', ['#fff', '#00966E', '#D62612'], 'green'],
   ['Bolivia', 'h', ['#D52B1E', '#F9E300', '#007934'], 'red'],
   ['Armenia', 'h', ['#D90012', '#0033A0', '#F2A800'], 'red'],
@@ -113,7 +113,7 @@ const COUNTRIES = [
   ['Norway', 'nordic2', ['#BA0C2F', '#fff', '#00205B'], 'red'],
   ['Iceland', 'nordic2', ['#02529C', '#fff', '#DC1E35'], 'blue'],
   ['Uruguay', 'uruguay', ['#fff', '#0038A8', '#FCD116'], 'white'],
-  ['UAE', 'uae', ['#00732F', '#fff', '#111', '#FF0000'], 'green'],
+  ['UAE', 'uae', ['#00732F', '#fff', '#2B3550', '#FF0000'], 'green'],
   ['Ethiopia', 'ethiopia', ['#078930', '#FCDD09', '#DA121A', '#0F47AF'], 'yellow'],
 ].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}))
   // pays en guerre retirés du site (Bazil, 30/10 : règles AdSense sur la guerre) ; les dessins restent au-dessus
@@ -129,7 +129,7 @@ function star(g, x, y, r, color) {
 function disc(g, x, y, r, color) { g.fillStyle = color; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill(); }
 function crescent(g, x, y, r, color, bg, dx) { disc(g, x, y, r, color); disc(g, x + dx, y, r * 0.8, bg); }
 
-function makeFlag({name, motif, colors: c}, ring = 'rgba(244,244,242,.9)', S = 160) {
+function makeFlag({name, motif, colors: c}, ring = '#2B3550', S = 160) {
   const u = S / 160, canvas = Object.assign(document.createElement("canvas"), {width: S, height: S}), g = canvas.getContext('2d');
   const box = (x, y, w, h, color) => { g.fillStyle = color; g.fillRect(x * S, y * S, w * S + 1, h * S + 1); };
   const stripes = (cols, vertical) => cols.forEach((col, i) =>
@@ -197,7 +197,7 @@ function makeFlag({name, motif, colors: c}, ring = 'rgba(244,244,242,.9)', S = 1
     case 'chile': box(0, 0, 1, 0.5, c[1]); box(0, 0.5, 1, 0.5, c[2]); box(0, 0, 0.42, 0.5, c[0]); star(g, S * 0.21, S * 0.26, S * 0.1, c[1]); break;
   }
   g.restore();
-  g.strokeStyle = ring; g.lineWidth = 4 * u;
+  g.strokeStyle = ring; g.lineWidth = 6 * u;   // contour bleu-gris foncé (jamais de noir, Bazil 02/11)
   g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 3 * u, 0, Math.PI * 2); g.stroke();
   return canvas;
 }
