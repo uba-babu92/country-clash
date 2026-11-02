@@ -149,11 +149,7 @@ body.my-turn #arena { cursor: grab; }
 #ns-form { display: flex; flex-direction: column; align-items: center; gap: 10px; width: min(100%, 360px); }
 #ns-form label { font: 800 clamp(24px, 6.5vw, 32px)/1.1 var(--display); text-wrap: balance; }
 #ns-in { width: 100%; box-sizing: border-box; height: 56px; border-radius: 14px; border: 2px solid #3A3A40; background: #18181B; color: #F4F4F2; font: 700 20px var(--mono); text-align: center; }
-#ns-in:focus, #ns-pin:focus { border-color: #FFD60A; outline: none; }
-#ns-pin { width: 100%; box-sizing: border-box; height: 56px; border-radius: 14px; border: 2px solid #3A3A40; background: #18181B; color: #F4F4F2; font: 700 22px var(--mono); text-align: center; letter-spacing: .3em; }
-#ns-pin::placeholder { letter-spacing: normal; font: 600 17px system-ui, sans-serif; }
-#ns-pin-help { margin: 0; color: #C9C9CE; font: 500 15px/1.4 system-ui, sans-serif; text-align: center; }
-#ns-pin-help b { color: #FFD60A; }
+#ns-in:focus { border-color: #FFD60A; outline: none; }
 .ns-note b { color: #FFD60A; }
 #ns-go:disabled { opacity: .6; }
 #ns-err { margin: 0; min-height: 1.2em; color: #FF6B60; font: 600 15px system-ui, sans-serif; }
@@ -422,14 +418,12 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
   <img id="ns-flag" alt="">
   <form id="ns-form" autocomplete="off">
     <label for="ns-in" id="ns-title">Enter your name for the ranking</label>
-    <input id="ns-in" maxlength="16" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next" placeholder="Your name">
-    <p id="ns-pin-help" hidden>This name is taken. Is it yours? Enter <b>your code</b> (on your other phone: ☰ MENU → your name).</p>
-    <input id="ns-pin" hidden maxlength="4" inputmode="numeric" pattern="[0-9]*" autocomplete="off" enterkeyhint="go" placeholder="Your 4-digit code" aria-label="Your 4-digit code">
+    <input id="ns-in" maxlength="16" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" placeholder="Your name">
     <p id="ns-err" aria-live="polite"></p>
     <button id="ns-go" type="submit">PLAY</button>
   </form>
   <p class="ns-note" id="ns-note">2–16 letters or numbers · no email, no account.<br>Each win scores points for your country.</p>
-  <button id="ns-skip" class="linkish" type="button">Play without ranking</button>
+  <button id="ns-skip" class="linkish" type="button" hidden>← Back</button>
 </section>
 
 <section id="trophies" hidden aria-label="Trophies">
@@ -1961,59 +1955,45 @@ $('#pick-go').addEventListener('click', () => {
 });
 
 /* ------------------------------ pseudo pour le classement : juste après le choix du pays (Bazil, 30/10) ------------------------------ */
-// VS CPU seulement, une fois. « Play without ranking » : les victoires ne comptent pas, on redemande à la prochaine visite.
-let nameSkipped = false;
-// pseudo absent, ou ancien pseudo pas encore protégé par un code
-const needName = () => MODE === 'cpu' && !RANK.name() && !nameSkipped;
+// VS CPU : pseudo obligatoire (Bazil 02/11 : tout le monde classé), demandé une seule fois, puis gardé dans le navigateur.
+// Plus de code visible : un code caché (RANK.pin) protège le pseudo pour que personne d'autre ne le prenne.
+const needName = () => MODE === 'cpu' && !RANK.name();
 function showNameScreen(edit) {
   $('#ns-flag').src = flagOf(PLAYER, undefined, 256).toDataURL();
-  $('#ns-in').value = RANK.name() || ''; $('#ns-pin').value = ''; $('#ns-err').textContent = '';
-  $('#ns-pin').hidden = $('#ns-pin-help').hidden = true;
+  $('#ns-in').value = RANK.name() || ''; $('#ns-err').textContent = '';
   $('#ns-title').textContent = RANK.name() ? 'Your name' : 'Enter your name for the ranking';
-  // ton code : seulement pour reprendre ton pseudo sur un autre téléphone ou une autre appli
-  $('#ns-note').innerHTML = RANK.name() && RANK.claimed()
-    ? `Your code: <b>${RANK.pin()}</b><br>Type your name + this code on another phone or app to keep your points and trophies.`
-    : '2–16 letters or numbers · no email, no account.<br>Each win scores points for your country.';
-  $('#ns-skip').textContent = edit ? '← Back' : 'Play without ranking';
-  $('#ns-skip').dataset.edit = edit ? '1' : '';
+  $('#ns-skip').hidden = !edit;                     // « ← Back » seulement pour changer de pseudo
   $('#ns-go').disabled = false; $('#ns-go').textContent = 'PLAY';
   $('#name-screen').hidden = false; document.body.classList.add('picking');
   if (!isPhone) $('#ns-in').focus({preventScroll: true});
 }
 function closeNameScreen() {
-  $('#name-screen').hidden = true; $('#ns-in').blur(); $('#ns-pin').blur();
+  $('#name-screen').hidden = true; $('#ns-in').blur();
   if ($('#picker').hidden) document.body.classList.remove('picking');
   else nameLine();
   if ($('#picker').hidden && !obDone) showOnboard();
 }
-$('#ns-pin').addEventListener('input', () => { $('#ns-pin').value = $('#ns-pin').value.replace(/\D/g, '').slice(0, 4); });
-$('#ns-in').addEventListener('input', () => { $('#ns-pin').hidden = $('#ns-pin-help').hidden = true; $('#ns-err').textContent = ''; });
+$('#ns-in').addEventListener('input', () => { $('#ns-err').textContent = ''; });
 $('#ns-form').addEventListener('submit', async e => {
   e.preventDefault(); audio();
-  const v = $('#ns-in').value.trim(), bad = RANK.nameProblem(v), typed = !$('#ns-pin').hidden;
+  const v = $('#ns-in').value.trim(), bad = RANK.nameProblem(v);
   const err = m => { $('#ns-err').textContent = m; tone(196, 0.1, 0.15, 'square'); $('#ns-go').disabled = false; $('#ns-go').textContent = 'PLAY'; };
   if (bad) return err(bad);
-  const pin = typed ? $('#ns-pin').value : RANK.pin();
-  if (typed && !/^\d{4}$/.test(pin)) return err('Your code has 4 digits.');
+  if (v === RANK.name() && RANK.claimed()) return closeNameScreen();
   $('#ns-go').disabled = true; $('#ns-go').textContent = '…';
   let res = null;
-  try { res = await RANK.claim(v, pin, PLAYER); } catch (x) { res = null; }
+  try { res = await RANK.claim(v, RANK.pin(), PLAYER); } catch (x) { res = null; }
   if (!res) { RANK.setName(v); closeNameScreen(); return; }          // serveur injoignable : on garde le pseudo, il sera protégé plus tard
-  if (!res.ok && (res.reason === 'taken' || (res.reason === 'wrong_pin' && !typed))) {   // pseudo déjà pris : c'est peut-être le sien (autre téléphone)
-    $('#ns-pin').hidden = $('#ns-pin-help').hidden = false; $('#ns-err').textContent = '';
-    $('#ns-go').disabled = false; $('#ns-go').textContent = 'PLAY'; $('#ns-pin').focus(); return;
-  }
-  if (!res.ok) return err({wrong_pin: 'Wrong code. Or choose another name.', too_many: 'Too many tries. Wait one hour.',
-    name: 'Only letters and numbers, 2 to 16.'}[res.reason] || 'Try again in a minute.');
-  RANK.adopt(res.player); RANK.setName(v); RANK.setClaimed(); if (typed) RANK.setPin(pin);
+  if (!res.ok) return err({taken: 'This name is taken. Choose another one.', wrong_pin: 'This name is taken. Choose another one.',
+    too_many: 'Too many tries. Wait one hour.', name: 'Only letters and numbers, 2 to 16.'}[res.reason] || 'Try again in a minute.');
+  RANK.adopt(res.player); RANK.setName(v); RANK.setClaimed();
   TRO.merge(res.stats || {});
   if (typeof window.gtag === 'function') window.gtag('event', 'ranking_name_set', {status: res.status});
-  if (res.status === 'login') { $('#ns-title').textContent = `Welcome back, ${v}!`; setTimeout(closeNameScreen, 900); }
-  else closeNameScreen();
+  closeNameScreen();
 });
 // ancien pseudo sans code : on le protège tout seul, sans rien demander
 if (RANK.name() && !RANK.claimed()) RANK.claim(RANK.name(), RANK.pin(), PLAYER).then(r => { if (r && r.ok) { RANK.adopt(r.player); RANK.setClaimed(); TRO.merge(r.stats || {}); } }).catch(() => {});
-$('#ns-skip').addEventListener('click', () => { if (!$('#ns-skip').dataset.edit) nameSkipped = true; closeNameScreen(); });
+$('#ns-skip').addEventListener('click', closeNameScreen);
 // dans l'accueil : « Name: Bazil ✎ » pour changer (ou ajouter) son pseudo
 function nameLine() {
   const n = RANK.name(), b = $('#pick-player');
@@ -2023,7 +2003,7 @@ function nameLine() {
 $('#pick-player').addEventListener('click', () => { audio(); showNameScreen(true); });
 
 /* ------------------------------ trophées + accessoires de la balle-drapeau (02/11) ------------------------------ */
-// Gagnés contre l'ordi seulement. Progrès gardé dans le navigateur, et sur le serveur si le pseudo a un code (pour le retrouver ailleurs).
+// Gagnés contre l'ordi seulement. Progrès gardé dans le navigateur, et sur le serveur avec le pseudo.
 // Accessoires fixes, sans animation (Bazil).
 const TROPHIES = [
   {id: 'rookie', name: 'Rookie', desc: 'Win 25 matches', acc: 'eyes', goal: s => [s.wins, 25]},
