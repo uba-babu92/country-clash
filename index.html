@@ -586,6 +586,7 @@ html, body { overflow-x: hidden; }
 .bk-final { position: absolute; left: 50%; top: 66%; transform: translate(-50%, 0); font: 800 11px var(--text); letter-spacing: .08em; background: var(--ink); color: var(--cream); border-radius: 999px; padding: 2px 10px; }
 #cup-sub { font: 700 16px var(--text); margin: 4px 0 0; }
 @media (prefers-reduced-motion: reduce) { #bk-zoom { transition: none; } .bk-f.next, .bk-f.pop { animation: none; } }
+.foot.nohint { justify-content: center; }
 /* ---------- stats ---------- */
 #stats { max-width: 1040px; margin: 0 auto; box-sizing: border-box; padding-block: 28px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -1644,8 +1645,11 @@ const CUP = (() => {
     list,
     ensure(me) { if (!c || c.country !== me || c.out != null || c.champion) { c = {country: me, teams: drawTeams(me), w: [], round: 0, out: null, champion: false, last: -1}; save(); } },
     opponent() { if (!c || c.country !== PLAYER) this.ensure(PLAYER); const l = list(c.round), i = l.indexOf(c.country); return l[i ^ 1]; },
+    // match de Coupe quitté en cours (relancer, changer de pays, fermer la page) = défaite : pas de seconde chance (Bazil 03/11)
+    forfeit() { if (!c || c.out != null || c.champion) return; playRound(c.round, false); c.out = c.round; c.last = c.round; save(); if (typeof window.gtag === 'function') window.gtag('event', 'cup_forfeit', {round: c.round}); },
     // fin d'un match de la Coupe → texte sous le résultat + bouton
     result(w) {
+      if (c.out != null || c.champion) return {sub: 'Match left before the end: you are out.', btn: 'SEE THE CUP'};
       const r = c.round;
       if (w === 0) {
         playRound(r, true); c.round++; c.last = r;
@@ -1795,6 +1799,7 @@ function slowLength() {
 }
 function launch(b, dx, dy, p) { shoot(G, b, dx, dy, p); slow = predict(); }
 let tutoDone = false; try { tutoDone = localStorage.getItem('cc-tuto') === '1'; } catch (e) {}
+let firstDone = false; try { firstDone = localStorage.getItem('cc-first') === '1'; } catch (e) {}   // après la 1re partie : plus le texte d'aide en bas (Bazil 03/11)
 
 const cv = $('#arena'), ctx = cv.getContext('2d');
 const grid = document.createElement('canvas'); grid.width = grid.height = N;
@@ -1806,7 +1811,7 @@ let gridDirty = true, flashUntil = 0;
 function pick(list, not) { const l = list.filter(x => x !== not); return l[Math.floor(Math.random() * l.length)]; }
 
 function newMatch() {
-  if (play && play.started && state !== 'over') { trophyResult('abandon'); track('abandon'); }
+  if (play && play.started && state !== 'over') { if (play.mode === 'cup') CUP.forfeit(); trophyResult('abandon'); track('abandon'); }
   matchBreaks = 0;
   CPU = MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : MODE === 'cup' ? CUP.opponent() : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
   $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : MODE === 'cup' ? 'CUP · ' + ROUND_NAMES[Math.min(3, CUP.get().round)] : 'VS CPU · ' + LEVEL.toUpperCase();
@@ -1837,6 +1842,7 @@ function newMatch() {
     el.replaceChildren(NAMES[i], ' ', t); el.title = (i ? CPU : PLAYER) + ' · ' + tag;
   }
   $('#end').hidden = true;
+  $('#new').hidden = MODE === 'cup';   // World Cup : on ne relance pas un match (Bazil 03/11)
   for (const s of [0, 1]) delete $('#balls' + s).dataset.n;
   play = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), startedAt: Date.now(), arena, theme: themeName, country: PLAYER, opponent: CPU, mode: MODE, level: MODE === '2p' ? '' : aiLevel()};
   cpuAim = null;
@@ -1876,7 +1882,8 @@ function hud() {
   $('#turnbar').hidden = !myTurn;
   if (myTurn) $('#turnbar i').style.transform = `scaleX(${Math.max(0, 1 - turnWait / TURN_LIMIT)})`;
   $('#hint').classList.toggle('rules', tutoDone);   // après le 1er tir : la règle du jeu au lieu des commandes
-  $('#hint').hidden = !tutoDone && !(G.side === 0 && !G.moving && state === 'aim');
+  $('#hint').hidden = firstDone || (!tutoDone && !(G.side === 0 && !G.moving && state === 'aim'));
+  $('.foot').classList.toggle('nohint', $('#hint').hidden);
   document.body.classList.toggle('my-turn', human(G.side) && !G.moving && state === 'aim');
 }
 
@@ -2155,6 +2162,7 @@ let cpuAim = null;
 function finish(over) {
   if (state === 'over') return;
   state = 'over'; G.over = over; cpuAim = null;
+  if (play && play.started && !firstDone) { firstDone = true; try { localStorage.setItem('cc-first', '1'); } catch (e) {} }
   const w = over.winner, play0 = {mode: MODE, level: aiLevel(), country: PLAYER};   // réglages de la partie (le menu peut les changer après)
   const fresh = trophyResult(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw');
   $('#trophy-new').hidden = !fresh.length;
@@ -2488,7 +2496,7 @@ function track(kind, reason) {
     return (kind === 'start' ? ref.set(body) : ref.update(body)).catch(() => {});
   });
 }
-addEventListener('pagehide', () => { if (play && play.started && state !== 'over') track('abandon'); });
+addEventListener('pagehide', () => { if (play && play.started && state !== 'over') { if (play.mode === 'cup') CUP.forfeit(); track('abandon'); } });
 
 /* ------------------------------ accueil : choix du pays ------------------------------ */
 
@@ -2605,7 +2613,10 @@ $('#pick-go').addEventListener('click', () => {
   else { PLAYER = saved = picked; try { localStorage.setItem('cc-country', picked); } catch (e) {} }
   if (typeof window.gtag === 'function') window.gtag('event', 'country_picked', {country: picked, mode: MODE, level: MODE === '2p' ? '' : LEVEL});
   $('#picker').hidden = true; document.body.classList.remove('picking');
-  if (MODE === 'cup') { CUP.ensure(PLAYER); showCup(); if (needName()) showNameScreen(); return; }   // World Cup : d'abord le tableau
+  if (play && play.started && state !== 'over') {   // un match était en cours : il est abandonné (en Coupe = éliminé)
+    if (play.mode === 'cup') CUP.forfeit(); trophyResult('abandon'); track('abandon'); if (play) play.started = false; state = 'over';
+  }
+  if (MODE === 'cup') { const c = CUP.get(); if (!c.teams.length || c.country !== PLAYER) CUP.ensure(PLAYER); showCup(); if (needName()) showNameScreen(); return; }   // World Cup : d'abord le tableau (éliminé : on le montre, TRY AGAIN relance)
   newMatch(); resize();
   if (needName()) showNameScreen(); else if (!obDone) showOnboard();
 });
