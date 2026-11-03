@@ -322,7 +322,7 @@ html.inapp body { overflow: hidden; }
   --g-bg: #8EB8F5; --g-fg: #2B3550; --g-muted: #4A5470; --g-accent: #FFD45C; --g-empty: #FFF6EA; --g-line: #2B3550; }
 body { font-family: var(--text); color: var(--ink); }
 :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
-.stk, .icon-btn, #menu, .team, .pick-arrow, .seg, #pick-go, #pick-back, #again, #ns-go, #ns-in, #ob-next, #iw-go, #iw-copy, #tr-back, .tr, #mail-go, .iw-steps li, #pick-player, #pick-trophies, #pick-streak {
+.stk, .icon-btn, #menu, .team, .pick-arrow, .seg, #pick-go, #pick-back, #again, #ns-go, #ns-in, #ob-next, #iw-go, #iw-copy, #tr-back, .tr, #mail-go, .iw-steps li, #pick-player, #pick-trophies, #pick-streak, #pick-shop {
   border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
 .stk:active, .icon-btn:active, #menu:active, .pick-arrow:active, #tr-back:active, #pick-back:active, #pick-player:active, #pick-trophies:active { box-shadow: 1px 1px 0 var(--ink); transform: translate(2px, 2px); }
 .pick-arrow:active { transform: translateY(-50%) translate(2px, 2px); }
@@ -347,7 +347,9 @@ body { font-family: var(--text); color: var(--ink); }
 .logo span:first-child, .logo span:last-child, #logo span:first-child, #logo span:last-child { color: inherit; }
 /* barre du haut */
 #logo { font-size: 22px; padding: 2px 4px 6px 0; }
-#mode-tag { font: 800 11px var(--text); letter-spacing: .06em; color: var(--ink); }
+#mode-tag { font: 800 11px var(--text); letter-spacing: .06em; color: var(--ink); min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.topbar, .topright { min-width: 0; } #logo { flex: none; }
+html, body { overflow-x: hidden; }
 #menu { height: 40px; padding: 0 14px; border-radius: 12px; background: var(--cream); color: var(--ink); font: 800 13px var(--text); letter-spacing: .04em; }
 #menu:hover { background: var(--butter); color: var(--ink); }
 /* scores en cartes */
@@ -375,7 +377,7 @@ body { font-family: var(--text); color: var(--ink); }
 .links { font: 700 13px var(--text); } .links a { color: var(--ink); opacity: .75; } .links a:hover { color: var(--ink); opacity: 1; }
 /* fin de partie */
 #end .card { background: var(--cream); border: 3px solid var(--ink); border-radius: 24px; box-shadow: 6px 6px 0 var(--ink); backdrop-filter: none; color: var(--ink); }
-#end-flag { filter: drop-shadow(4px 4px 0 var(--ink)); }
+#end-flag { filter: none; border-radius: 50%; box-shadow: 4px 4px 0 var(--ink); }   /* box-shadow : Safari coupe les drop-shadow */
 #end-title { font-family: var(--display); font-weight: 700; color: var(--butter); -webkit-text-stroke: .07em var(--ink); paint-order: stroke fill; text-shadow: .06em .06em 0 var(--ink); letter-spacing: .01em; }
 #end-sub { font: 700 16px var(--text); }
 #end-why, #next-in { font: 700 13px var(--text); color: var(--g-muted); }
@@ -430,14 +432,14 @@ body { font-family: var(--text); color: var(--ink); }
 #pick-go:disabled { background: #C9D3E6; color: #5D6782; box-shadow: 0 6px 0 var(--ink); }
 #pick-note { color: var(--ink); background: var(--salmon); border: 2px solid var(--ink); border-radius: 999px; padding: 2px 12px; font: 700 14px var(--text); }
 .pick-extras { gap: 10px; }
-#pick-player, #pick-trophies, #pick-streak { background: var(--cream); color: var(--ink); border-radius: 999px; height: 42px; padding: 0 16px; font: 800 14px var(--text); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+#pick-player, #pick-trophies, #pick-streak, #pick-shop { background: var(--cream); color: var(--ink); border-radius: 999px; height: 42px; padding: 0 16px; font: 800 14px var(--text); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
 #pick-player b { color: var(--ink); }
 #pick-trophies svg, #pick-player svg { width: 18px; height: 18px; flex: none; }
 #pick-back { background: var(--cream); color: var(--ink); border-radius: 14px; font: 800 14px var(--text); }
 #pick-back:hover { background: var(--butter); color: var(--ink); }
 /* pseudo */
 #name-screen { background: var(--lilac); color: var(--ink); }
-#ns-flag { filter: drop-shadow(5px 5px 0 var(--ink)); }
+#ns-flag { filter: none; border-radius: 50%; box-shadow: 5px 5px 0 var(--ink); }
 #ns-form label { font: 700 clamp(26px, 7vw, 34px)/1.1 var(--display); }
 #ns-in { background: var(--cream); color: var(--ink); border-radius: 16px; font: 700 20px var(--text); }
 #ns-in::placeholder { color: #6B7490; }
@@ -465,7 +467,7 @@ body { font-family: var(--text); color: var(--ink); }
 #ob-skip { color: var(--ink); font: 800 15px var(--text); }
 .ob-slide h2 { font: 700 clamp(30px, 8vw, 42px)/1.05 var(--display); }
 .ob-slide p { color: var(--ink); font: 600 18px/1.4 var(--text); }
-.ob-slide svg { filter: drop-shadow(5px 5px 0 var(--ink)); }
+.ob-slide svg { filter: drop-shadow(5px 5px 0 var(--ink)); overflow: visible; }
 #ob-dots i { background: color-mix(in srgb, var(--ink) 25%, transparent); } #ob-dots i.on { background: var(--ink); }
 #ob-next { background: var(--sky); color: var(--ink); border-radius: 20px; font: 700 26px var(--display); box-shadow: 0 6px 0 var(--ink); }
 #onboard svg .ar { fill: var(--cream); stroke: var(--ink); stroke-width: 3; }
@@ -496,14 +498,14 @@ body { font-family: var(--text); color: var(--ink); }
 .fxb:empty { display: none; }
 .fxb:not(:empty) { background: var(--butter); border: 2px solid var(--ink); border-radius: 999px; padding: 1px 6px; align-self: flex-start; }
 .team.right .fxb:not(:empty) { align-self: flex-end; }
-#cup { position: fixed; inset: 0; z-index: 22; background: var(--butter); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center;
+#cup { position: fixed; inset: 0; z-index: 22; overflow-x: hidden; background: var(--butter); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: clamp(8px, 1.8vh, 16px); overflow-y: auto; box-sizing: border-box; text-align: center;
   padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
 #cup > * { flex: none; }
 .cup-trophy { width: 64px; height: 64px; filter: drop-shadow(4px 4px 0 var(--ink)); }
 .cup-logo { font-size: clamp(38px, 10vw, 60px); margin: 0; }
 #cup-sub { margin: 0; font: 700 16px var(--text); }
-#cup-flag { width: 76px; height: 76px; filter: drop-shadow(4px 4px 0 var(--ink)); }
+#cup-flag { width: 76px; height: 76px; border-radius: 50%; box-shadow: 4px 4px 0 var(--ink); }
 #cup-path { list-style: none; margin: 0; padding: 0; width: min(100%, 380px); display: flex; flex-direction: column; gap: 8px; }
 #cup-path li { display: grid; grid-template-columns: 1fr 32px auto 54px; align-items: center; gap: 10px; padding: 8px 12px; background: var(--cream); border: 3px solid var(--ink); border-radius: 16px; box-shadow: 3px 3px 0 var(--ink); text-align: left; }
 #cup-path li span { font: 800 11px var(--text); letter-spacing: .05em; }
@@ -537,6 +539,53 @@ body { font-family: var(--text); color: var(--ink); }
 #dl-go { width: 100%; height: 60px; border: 3px solid var(--ink); border-radius: 20px; background: var(--butter); color: var(--ink); font: 700 26px var(--display); letter-spacing: .06em; box-shadow: 0 6px 0 var(--ink); }
 #dl-go:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
 #pick-streak svg { width: 20px; height: 20px; }
+
+/* ---------- pièces + boutique (03/11) ---------- */
+#pick-shop svg, .sh-coins svg, #coin-gain svg, .sh-act svg, .tr .st svg { width: 20px; height: 20px; flex: none; vertical-align: -4px; }
+#pick-shop { background: var(--butter) !important; }
+#pick-shop .coin-n { font: 700 16px var(--display); }
+.sh-coins { display: inline-flex; align-items: center; gap: 6px; font: 700 20px var(--display); background: var(--butter); border: 3px solid var(--ink); border-radius: 999px; padding: 2px 12px; box-shadow: 3px 3px 0 var(--ink); }
+#coin-gain { margin: 0; display: inline-flex; align-items: center; gap: 6px; font: 700 20px var(--display); background: var(--butter); border: 3px solid var(--ink); border-radius: 999px; padding: 2px 12px; }
+#coin-gain[hidden] { display: none; }
+#shop { position: fixed; inset: 0; z-index: 26; background: var(--peach); color: var(--ink); overflow-y: auto; box-sizing: border-box;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+#shop > * { max-width: 560px; margin-left: auto; margin-right: auto; }
+#shop-back { background: var(--cream); color: var(--ink); border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); border-radius: 14px; height: 36px; padding: 0 14px; font: 800 14px var(--text); }
+#shop-tabs { display: flex; gap: 4px; margin-top: 14px; background: var(--cream); border: 3px solid var(--ink); border-radius: 16px; padding: 4px; box-shadow: 3px 3px 0 var(--ink); }
+#shop-tabs button { flex: 1; border: 0; background: none; border-radius: 11px; height: 40px; font: 700 17px var(--display); color: var(--ink); }
+#shop-tabs button[aria-selected="true"] { background: var(--ink); color: var(--cream); }
+#shop-note { min-height: 1.2em; margin: 0 auto 8px; font: 700 14px var(--text); text-align: center; }
+#shop-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.sh { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 8px 12px; background: var(--cream); color: var(--ink); border: 3px solid var(--ink); border-radius: 18px; box-shadow: 4px 4px 0 var(--ink); font: inherit; }
+.sh canvas { width: 96px; height: 96px; }
+.sh b { font: 700 17px var(--display); }
+.sh-act { display: inline-flex; align-items: center; gap: 5px; min-height: 34px; padding: 0 14px; border-radius: 999px; border: 3px solid var(--ink); font: 800 14px var(--text); background: var(--cream); }
+.sh-act span { font: 700 17px var(--display); }
+.sh.buy .sh-act { background: var(--butter); }
+.sh.own .sh-act { background: var(--mint); }
+.sh.on { background: var(--butter); } .sh.on .sh-act { background: var(--ink); color: var(--cream); }
+.sh.lock { } .sh.lock canvas { opacity: .8; } .sh.lock .sh-act { opacity: .7; }
+.sh:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+.tr.done { background: #FFFDF8; }
+
+/* ---------- tableau de la World Cup (03/11) ---------- */
+#bk-zoom { width: min(calc(100% - 10px), 440px); margin-right: 6px; transition: transform .65s cubic-bezier(.6, 0, .3, 1), opacity .65s ease-in; }
+#bk { position: relative; box-sizing: border-box; width: 100%; aspect-ratio: 4 / 5; background: var(--cream); border: 3px solid var(--ink); border-radius: 22px; box-shadow: 6px 6px 0 var(--ink); }
+#bk-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#bk-lines path { fill: none; stroke: var(--ink); stroke-width: 2.5; vector-effect: non-scaling-stroke; stroke-linejoin: round; opacity: .55; }
+#bk-lines path.hot { stroke: var(--salmon); stroke-width: 5; opacity: 1; }
+.bk-f { position: absolute; width: 9.5%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 50%; box-shadow: 2px 2px 0 var(--ink); z-index: 1; }
+.bk-f.lost { filter: grayscale(.9); opacity: .5; box-shadow: none; }
+.bk-f.me { outline: 3px solid var(--salmon); outline-offset: 2px; z-index: 2; }
+.bk-f.next { animation: bkpulse 1s ease-in-out infinite; }
+@keyframes bkpulse { 50% { transform: translate(-50%, -50%) scale(1.18); } }
+.bk-f.pop { animation: bkpop .7s .55s cubic-bezier(.2, 1.6, .4, 1) both; }
+@keyframes bkpop { from { transform: translate(-50%, -50%) scale(0); } }
+#bk .cup-trophy { position: absolute; left: 50%; top: 22%; width: 22%; height: auto; transform: translate(-50%, -50%); }
+#bk-champ { position: absolute; left: 50%; top: 40%; width: 14%; transform: translate(-50%, -50%); border-radius: 50%; box-shadow: 3px 3px 0 var(--ink); outline: 3px solid #FFC400; outline-offset: 2px; z-index: 2; }
+.bk-final { position: absolute; left: 50%; top: 66%; transform: translate(-50%, 0); font: 800 11px var(--text); letter-spacing: .08em; background: var(--ink); color: var(--cream); border-radius: 999px; padding: 2px 10px; }
+#cup-sub { font: 700 16px var(--text); margin: 4px 0 0; }
+@media (prefers-reduced-motion: reduce) { #bk-zoom { transition: none; } .bk-f.next, .bk-f.pop { animation: none; } }
 /* ---------- stats ---------- */
 #stats { max-width: 1040px; margin: 0 auto; box-sizing: border-box; padding-block: 28px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -597,6 +646,7 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
         <ol id="rank-top" aria-label="Top countries"></ol>
         <p id="rank-me"></p>
       </div>
+      <p id="coin-gain" hidden><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="#2B3550"/><circle cx="15" cy="15" r="13" fill="#FFC94A" stroke="#2B3550" stroke-width="3"/><circle cx="15" cy="15" r="8" fill="none" stroke="#E0A12A" stroke-width="2.5"/></svg><span id="cg-txt">+4</span></p>
       <p id="trophy-new" hidden></p>
       <div id="mail-box" hidden>
         <p class="mb-t"><svg viewBox="0 0 34 28" aria-hidden="true"><path d="M3 24 L5 7 L12 14 L17 3 L22 14 L29 7 L31 24 Z" fill="#FFD45C" stroke="#2B3550" stroke-width="3" stroke-linejoin="round"/></svg><span>Get the <b>golden crown</b><br>+ the app first!</span></p>
@@ -631,21 +681,26 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
   <p id="pick-name" aria-live="polite">Turkey</p>
   <p id="pick-note" hidden>Pick another country</p>
   <div class="seg" id="mode-seg" role="group" aria-label="Mode">
-    <button type="button" data-mode="cpu">VS CPU</button><button type="button" data-mode="2p">2 PLAYERS</button><button type="button" data-mode="cup">WORLD CUP</button>
+    <button type="button" data-mode="cup">WORLD CUP</button><button type="button" data-mode="cpu">VS CPU</button><button type="button" data-mode="2p">2 PLAYERS</button>
   </div>
   <div class="seg small" id="level-seg" role="group" aria-label="Level">
     <button type="button" data-level="easy">EASY</button><button type="button" data-level="medium">MEDIUM</button><button type="button" data-level="hard">HARD</button>
   </div>
   <button id="pick-go" type="button">PLAY</button>
-  <div class="pick-extras"><button id="pick-streak" class="linkish" type="button" hidden aria-label="Daily streak"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-6 1-9z" fill="#FF9640" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg><span id="ps-txt"></span></button><button id="pick-player" class="linkish" type="button" hidden></button><button id="pick-trophies" class="linkish" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v3M9 17h6v3H9z"/></svg><span id="pt-txt">Trophies</span></button></div>
+  <div class="pick-extras"><button id="pick-shop" class="linkish" type="button"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="#2B3550"/><circle cx="15" cy="15" r="13" fill="#FFC94A" stroke="#2B3550" stroke-width="3"/><circle cx="15" cy="15" r="8" fill="none" stroke="#E0A12A" stroke-width="2.5"/></svg><span class="coin-n">0</span><span>Shop</span></button><button id="pick-streak" class="linkish" type="button" hidden aria-label="Daily streak"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-6 1-9z" fill="#FF9640" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg><span id="ps-txt"></span></button><button id="pick-player" class="linkish" type="button" hidden></button><button id="pick-trophies" class="linkish" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v3M9 17h6v3H9z"/></svg><span id="pt-txt">Trophies</span></button></div>
 </section>
 
 <section id="cup" hidden aria-label="World Cup">
-  <svg class="cup-trophy" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 8h28c0 18-4 24-11 26v8h7v6H22v-6h7v-8c-7-2-11-8-11-26z" fill="#FFC400" stroke="#2B3550" stroke-width="3" stroke-linejoin="round"/><path d="M18 12h-7c0 8 4 12 9 12M46 12h7c0 8-4 12-9 12" fill="none" stroke="#2B3550" stroke-width="3" stroke-linecap="round"/><rect x="18" y="48" width="28" height="8" rx="2" fill="#B7A6F2" stroke="#2B3550" stroke-width="3"/></svg>
   <h1 class="logo cup-logo"><span><i>W</i><i>o</i><i>r</i><i>l</i><i>d</i></span> <span><i>C</i><i>u</i><i>p</i></span></h1>
+  <div id="bk-zoom">
+    <div id="bk" aria-label="World Cup bracket">
+      <svg id="bk-lines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"></svg>
+      <svg class="cup-trophy" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 8h28c0 18-4 24-11 26v8h7v6H22v-6h7v-8c-7-2-11-8-11-26z" fill="#FFC400" stroke="#2B3550" stroke-width="3" stroke-linejoin="round"/><path d="M18 12h-7c0 8 4 12 9 12M46 12h7c0 8-4 12-9 12" fill="none" stroke="#2B3550" stroke-width="3" stroke-linecap="round"/><rect x="18" y="48" width="28" height="8" rx="2" fill="#B7A6F2" stroke="#2B3550" stroke-width="3"/></svg>
+      <img id="bk-champ" alt="World Champion" hidden>
+      <span class="bk-final">FINAL</span>
+    </div>
+  </div>
   <p id="cup-sub"></p>
-  <img id="cup-flag" alt="">
-  <ol id="cup-path" aria-label="Your path to the cup"></ol>
   <button id="cup-go" type="button">PLAY</button>
   <button id="cup-change" class="linkish" type="button">Change country</button>
 </section>
@@ -672,9 +727,17 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
   </div>
 </section>
 
+<section id="shop" hidden aria-label="Shop">
+  <div class="tr-head"><button id="shop-back" type="button">← Back</button><h2>Shop</h2><span class="sh-coins"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="#2B3550"/><circle cx="15" cy="15" r="13" fill="#FFC94A" stroke="#2B3550" stroke-width="3"/><circle cx="15" cy="15" r="8" fill="none" stroke="#E0A12A" stroke-width="2.5"/></svg><span class="coin-n">0</span></span></div>
+  <div class="tabs" id="shop-tabs" role="tablist"><button type="button" role="tab" data-tab="skins">Skins</button><button type="button" role="tab" data-tab="boosts">Boosts</button></div>
+  <p class="tr-note">Win coins every day and with every win. Skins are yours forever. A boost lasts one match against the CPU (one at a time).</p>
+  <p id="shop-note" aria-live="polite"></p>
+  <ul id="shop-list"></ul>
+</section>
+
 <section id="trophies" hidden aria-label="Trophies">
   <div class="tr-head"><button id="tr-back" type="button">← Back</button><h2>Trophies</h2><span id="tr-count"></span></div>
-  <p class="tr-note">Win trophies against the CPU. Each one unlocks an accessory for your flag ball: tap it to wear it.</p>
+  <p class="tr-note">Win trophies against the CPU. Each trophy gives you coins to spend in the shop.</p>
   <ul id="tr-list"></ul>
 </section>
 
@@ -1508,7 +1571,8 @@ const RANK = (() => {
 let PLAYER = 'Turkey', CPU = 'United States', NAMES = ['TURKEY', 'USA'];
 // mode : 'cpu' (contre l'ordi) ou '2p' (2 joueurs sur le même écran) ; niveau de l'ordi : easy / medium / hard (Bazil, 30/10)
 let MODE = 'cpu', LEVEL = 'medium', PLAYER2 = null;
-try { MODE = ['2p', 'cup'].includes(localStorage.getItem('cc-mode')) ? localStorage.getItem('cc-mode') : 'cpu'; LEVEL = ['easy', 'medium', 'hard'].includes(localStorage.getItem('cc-level')) ? localStorage.getItem('cc-level') : 'medium'; PLAYER2 = localStorage.getItem('cc-p2'); } catch (e) {}
+try { MODE = localStorage.getItem('cc-mode2') || 'cup';   // 03/11 : World Cup par défaut pour tout le monde (cc-mode2 = choix fait depuis)
+  if (!['2p', 'cup', 'cpu'].includes(MODE)) MODE = 'cup'; LEVEL = ['easy', 'medium', 'hard'].includes(localStorage.getItem('cc-level')) ? localStorage.getItem('cc-level') : 'medium'; PLAYER2 = localStorage.getItem('cc-p2'); } catch (e) {}
 if (PLAYER2 && !COUNTRIES.some(c => c.name === PLAYER2)) PLAYER2 = null;   // pays retiré depuis
 const human = s => MODE === '2p' || s === 0;   // qui joue avec le doigt ?
 const vsCpu = () => MODE !== '2p';               // contre l'ordi : VS CPU ou World Cup (classement, trophées, pseudo)
@@ -1536,52 +1600,102 @@ function pickOpponent(me) {
   for (let i = 0; i < pool.length; i++) if ((r -= w[i]) < 0) return pool[i].name;
   return pool[0].name;
 }
-/* ------------------------------ World Cup (Bazil 03/11) ------------------------------ */
-// 4 matchs contre l'ordi : huitièmes, quarts, demi, finale ; l'ordi devient plus fort à chaque tour ; une défaite = éliminé.
+/* ------------------------------ World Cup (Bazil 03/11) : un vrai tableau à 16 pays ------------------------------ */
+// Tableau comme une affiche de Coupe du monde : 8 pays à gauche, 8 à droite, la coupe au centre.
+// Le joueur fait 4 matchs (huitièmes facile, quarts moyen, demi moyen, finale difficile) ; les autres matchs se jouent tout seuls.
+// Une défaite = éliminé ; un nul = on rejoue. PLAY zoome sur le match, la fin du match dézoome et le drapeau avance.
 const ROUND_NAMES = ['ROUND OF 16', 'QUARTER-FINAL', 'SEMI-FINAL', 'FINAL'], CUP_LEVELS = ['easy', 'medium', 'medium', 'hard'];
-const CUP_BIG = ['Brazil', 'Argentina', 'France', 'Germany', 'Spain', 'England', 'Italy', 'Portugal'];   // la finale : contre un grand
+const CUP_BIG = ['Brazil', 'Argentina', 'France', 'Germany', 'Spain', 'England', 'Italy', 'Portugal'];
 const CUP = (() => {
   let c = null; try { c = JSON.parse(localStorage.getItem('cc-cup') || 'null'); } catch (e) {}
+  if (c && !c.teams) c = null;                                   // ancienne coupe (avant le tableau) : on repart
   const save = () => { try { localStorage.setItem('cc-cup', JSON.stringify(c)); } catch (e) {} };
-  function drawOpps(me) {
+  const shuffle = l => { for (let i = l.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [l[i], l[j]] = [l[j], l[i]]; } return l; };
+  // 16 pays : le joueur dans une moitié, 3 « grands » dans l'autre (la finale se joue souvent contre un grand)
+  function drawTeams(me) {
     const ok = n => n !== me && !BANNED.some(([x, y]) => (x === me && y === n) || (y === me && x === n));
-    const pool = COUNTRIES.map(x => x.name).filter(ok), big = CUP_BIG.filter(ok);
-    const fin = big[Math.floor(Math.random() * big.length)] || pool[0], rest = pool.filter(n => n !== fin).sort(() => Math.random() - 0.5);
-    return [rest[0], rest[1], rest[2], fin];
+    const big = shuffle(CUP_BIG.filter(ok)), others = shuffle(COUNTRIES.map(x => x.name).filter(n => ok(n) && !CUP_BIG.includes(n)));
+    const mine = shuffle([me, big[0], ...others.slice(0, 6)]), theirs = shuffle([...big.slice(1, 4), ...others.slice(6, 11)]);
+    return Math.random() < 0.5 ? [...mine, ...theirs] : [...theirs, ...mine];
+  }
+  const list = r => r === 0 ? c.teams : c.w[r - 1];               // les pays encore là au tour r
+  // match simulé : un « grand » gagne 2 fois sur 3
+  const sim = (a, b) => { const ba = CUP_BIG.includes(a), bb = CUP_BIG.includes(b); return ba === bb ? (Math.random() < 0.5 ? a : b) : Math.random() < 0.67 === ba ? a : b; };
+  function playRound(r, playerWins) {
+    const l = list(r), w = [];
+    for (let i = 0; i < l.length; i += 2) {
+      const a = l[i], b = l[i + 1];
+      w.push(a === c.country || b === c.country ? (playerWins ? c.country : (a === c.country ? b : a)) : sim(a, b));
+    }
+    c.w[r] = w;
   }
   return {
-    get: () => c || {round: 0, opps: [], country: ''},
-    ensure(me) { if (!c || c.country !== me || c.out != null || c.champion) { c = {country: me, opps: drawOpps(me), round: 0, out: null, champion: false}; save(); } },
-    opponent() { if (!c || c.country !== PLAYER) this.ensure(PLAYER); return c.opps[Math.min(3, c.round)]; },
+    get: () => c || {round: 0, teams: [], w: [], country: ''},
+    list,
+    ensure(me) { if (!c || c.country !== me || c.out != null || c.champion) { c = {country: me, teams: drawTeams(me), w: [], round: 0, out: null, champion: false, last: -1}; save(); } },
+    opponent() { if (!c || c.country !== PLAYER) this.ensure(PLAYER); const l = list(c.round), i = l.indexOf(c.country); return l[i ^ 1]; },
     // fin d'un match de la Coupe → texte sous le résultat + bouton
     result(w) {
       const r = c.round;
       if (w === 0) {
-        c.round++;
-        if (c.round >= 4) { c.champion = true; TRO.addCup(); save(); if (typeof window.gtag === 'function') window.gtag('event', 'cup_won'); return {sub: 'WORLD CHAMPION! The cup is yours.', btn: 'NEW CUP'}; }
-        save(); return {sub: `${ROUND_NAMES[c.round][0] + ROUND_NAMES[c.round].slice(1).toLowerCase()} next: ${label(c.opps[c.round])}`, btn: 'NEXT MATCH'};
+        playRound(r, true); c.round++; c.last = r;
+        if (c.round >= 4) { c.champion = true; TRO.addCup(); save(); if (typeof window.gtag === 'function') window.gtag('event', 'cup_won'); return {sub: `WORLD CHAMPION! +${CUP_COINS} coins`, btn: 'SEE THE CUP', champion: true}; }
+        save(); return {sub: `${ROUND_NAMES[c.round][0] + ROUND_NAMES[c.round].slice(1).toLowerCase()} next: ${label(this.opponent())}`, btn: 'NEXT'};
       }
-      if (w === 1) { c.out = r; save(); if (typeof window.gtag === 'function') window.gtag('event', 'cup_out', {round: r}); return {sub: `Out in the ${ROUND_NAMES[r].toLowerCase()}. Try again!`, btn: 'TRY AGAIN'}; }
+      if (w === 1) { playRound(r, false); c.out = r; c.last = r; save(); if (typeof window.gtag === 'function') window.gtag('event', 'cup_out', {round: r}); return {sub: `Out in the ${ROUND_NAMES[r].toLowerCase()}. Try again!`, btn: 'SEE THE CUP'}; }
       return {sub: 'Draw! Replay the match.', btn: 'REPLAY'};
     },
   };
 })();
-function showCup() {
-  const c = CUP.get(), list = $('#cup-path');
-  $('#cup-flag').src = flagOf(PLAYER, undefined, 256).toDataURL();
-  $('#cup-sub').textContent = c.champion ? 'World Champion! Play a new cup?' : c.out != null ? 'Eliminated. Try again!' : 'Win 4 matches in a row to lift the cup.';
-  list.replaceChildren();
-  ROUND_NAMES.forEach((rn, i) => {
-    const st = c.champion || i < c.round ? 'won' : i === c.round ? (c.out === i ? 'lost' : 'next') : 'todo';
-    const li = document.createElement('li'), r = document.createElement('span'), im = new Image(), nm = document.createElement('b'), tag = document.createElement('em');
-    li.dataset.st = st; r.textContent = rn; im.src = flagOf(c.opps[i], undefined, 96).toDataURL(); im.alt = '';
-    nm.textContent = label(c.opps[i]); tag.textContent = {won: 'WON', next: 'NEXT', lost: 'OUT', todo: ''}[st];
-    li.append(r, im, nm, tag); list.append(li);
-  });
-  $('#cup-go').textContent = c.champion ? 'NEW CUP' : c.out != null ? 'TRY AGAIN' : 'PLAY ' + ROUND_NAMES[c.round];
-  $('#cup').hidden = false; document.body.classList.add('picking');
+// position d'un pays dans le tableau (en % de la boîte) : niveau 0 = huitièmes … 3 = finalistes
+const BK_X = [6, 18.5, 31, 43];
+function bkPos(L, j) {
+  const per = 8 >> L, side = L === 3 ? j : Math.floor(j / per), k = L === 3 ? 0 : j % per;
+  const y = L === 3 ? 58 : 8 + (k + 0.5) * 84 / per, x = side ? 100 - BK_X[L] : BK_X[L];
+  return [x, y];
 }
-function cupNext() { nextLeft = null; showCup(); }   // le tableau montre d'abord le résultat (champion, éliminé) ; le bouton relance une coupe
+function showCup(fromMatch) {
+  const c = CUP.get(), box = $('#bk'), svg = $('#bk-lines'), me = c.country;
+  box.querySelectorAll('.bk-f').forEach(e => e.remove());
+  const NS = 'http://www.w3.org/2000/svg'; svg.replaceChildren();
+  const line = (d, hot) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('class', hot ? 'hot' : ''); svg.append(p); };
+  // traits : chaque paire rejoint le pays qui passe au tour suivant
+  for (let L = 1; L <= 3; L++) for (let j = 0; j < (16 >> L); j++) {
+    const [x1, y1] = bkPos(L - 1, 2 * j), [, y2] = bkPos(L - 1, 2 * j + 1), [xp, yp] = bkPos(L, j), xm = (x1 + xp) / 2;
+    const won = c.w[L - 1] && c.w[L - 1][j], hot = won === me;
+    if (L === 3) { line(`M${x1} ${y1} H${xm} V${y2} H${x1} M${xm} ${(y1 + y2) / 2} V${yp} H${xp}`, hot); continue; }
+    line(`M${x1} ${y1} H${xm} V${y2} H${x1} M${xm} ${(y1 + y2) / 2} H${xp}`, hot);
+  }
+  line('M43 58 H57', false);
+  let target = null;
+  for (let L = 0; L <= 3; L++) {
+    const l = L === 0 ? c.teams : c.w[L - 1] || [];
+    l.forEach((n, j) => {
+      if (!n) return;
+      const [x, y] = bkPos(L, j), im = new Image(), next = c.w[L], lost = next && !next.includes(n);
+      im.src = flagOf(n, undefined, 96).toDataURL(); im.alt = label(n); im.title = label(n);
+      im.className = 'bk-f' + (n === me ? ' me' : '') + (lost ? ' lost' : '') + (fromMatch && L === c.last + 1 && n === me ? ' pop' : '');
+      im.style.left = x + '%'; im.style.top = y + '%'; box.append(im);
+      if (L === c.round && n === me && c.out == null && !c.champion) { const [ox, oy] = bkPos(L, j ^ 1); target = [(x + ox) / 2, (y + oy) / 2]; im.classList.add('next'); }
+      if (L === c.round && c.out == null && !c.champion && l[j ^ 1] === me) im.classList.add('next');
+    });
+  }
+  const champ = c.w[3] && c.w[3][0];
+  $('#bk-champ').hidden = !champ; if (champ) $('#bk-champ').src = flagOf(champ, undefined, 128).toDataURL();
+  const opp = c.out == null && !c.champion ? CUP.opponent() : null;
+  $('#cup-sub').textContent = c.champion ? 'World Champion! The cup is yours.' : c.out != null ? `Out in the ${ROUND_NAMES[c.out].toLowerCase()}.` : `${ROUND_NAMES[c.round]} · ${label(me)} vs ${label(opp)}`;
+  $('#cup-go').textContent = c.champion ? 'NEW CUP' : c.out != null ? 'TRY AGAIN' : 'PLAY ' + ROUND_NAMES[c.round];
+  const z = $('#bk-zoom');
+  box.dataset.tx = target ? target[0] : 50; box.dataset.ty = target ? target[1] : 50;
+  $('#cup').hidden = false; document.body.classList.add('picking');
+  if (fromMatch && c.last >= 0) {                                 // retour de match : on part zoomé sur ce match, puis on dézoome
+    const [px, py] = (() => { const l = CUP.list(c.last), i = l.indexOf(me), [ax, ay] = bkPos(c.last, i), [bx, by] = bkPos(c.last, i ^ 1); return [(ax + bx) / 2, (ay + by) / 2]; })();
+    z.style.transition = 'none'; z.style.transformOrigin = `${px}% ${py}%`; z.style.transform = 'scale(3.2)'; z.style.opacity = '0';
+    void z.offsetWidth;
+    z.style.transition = ''; z.style.transform = 'scale(1)'; z.style.opacity = '1';
+  } else { z.style.transition = 'none'; z.style.transform = 'scale(1)'; z.style.opacity = '1'; }
+}
+function cupNext() { nextLeft = null; showCup(true); }   // le tableau montre d'abord le résultat ; le bouton relance une coupe
 
 // couleurs de terrain : celle du drapeau ; si les deux se ressemblent, l'ordi prend une autre couleur de son drapeau
 function teamColors(a, b) {
@@ -1685,7 +1799,7 @@ function newMatch() {
   if (play && play.started && state !== 'over') { trophyResult('abandon'); track('abandon'); }
   matchBreaks = 0;
   CPU = MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : MODE === 'cup' ? CUP.opponent() : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
-  $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : MODE === 'cup' ? 'WORLD CUP · ' + ROUND_NAMES[Math.min(3, CUP.get().round)] : 'VS CPU · ' + LEVEL.toUpperCase();
+  $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : MODE === 'cup' ? 'CUP · ' + ROUND_NAMES[Math.min(3, CUP.get().round)] : 'VS CPU · ' + LEVEL.toUpperCase();
   const fams = teamColors(PLAYER, CPU); TEAM_COL = fams.map(f => FAM[f]);
   const white = fams.includes('white');            // une équipe blanche : arène vide en couleur, pas en crème
   themeName = pick(Object.keys(THEMES), lastTheme); lastTheme = themeName;
@@ -2036,7 +2150,9 @@ function finish(over) {
   $('#trophy-new').hidden = !fresh.length;
   maybeAskMail();
   const cupMsg = MODE === 'cup' ? CUP.result(w) : null;   // World Cup : on avance, on est éliminé, ou on rejoue
-  if (fresh.length) $('#trophy-new').textContent = '🏆 ' + fresh.map(t => `${t.name} unlocked!`).join(' ') + ' New accessory in Trophies.';
+  const gain = vsCpu() && play && play.started && w === 0 ? (TRO.get().lastGain || 0) + (cupMsg && cupMsg.champion ? CUP_COINS : 0) : 0;
+  $('#coin-gain').hidden = !gain; $('#cg-txt').textContent = '+' + gain;
+  if (fresh.length) $('#trophy-new').textContent = '🏆 ' + fresh.map(t => `${t.name} unlocked! +${TROPHY_COINS[t.rarity || '']} coins`).join(' ');
   track(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw', over.reason);
   winSound(w);
   if (w >= 0) for (let i = 0; i < 160; i++) {
@@ -2450,12 +2566,12 @@ function pickerUI() {
   const bad = pickStep === 2 && (picked === PLAYER || bannedPair(PLAYER, picked));
   $('#pick-note').hidden = !bad;
   $('#pick-go').disabled = bad;
-  $('#pick-go').textContent = MODE === '2p' && pickStep === 1 ? 'NEXT' : MODE === 'cup' ? 'START' : 'PLAY';
+  $('#pick-go').textContent = MODE === '2p' && pickStep === 1 ? 'NEXT' : 'PLAY';
   if (typeof nameLine === 'function') nameLine();
   if (typeof trophyLine === 'function') trophyLine();
   $('#pick-player').hidden = $('#pick-player').hidden || pickStep === 2;
 }
-for (const b of document.querySelectorAll('#mode-seg button')) b.addEventListener('click', () => { audio(); MODE = b.dataset.mode; try { localStorage.setItem('cc-mode', MODE); } catch (e) {} pickerUI(); });
+for (const b of document.querySelectorAll('#mode-seg button')) b.addEventListener('click', () => { audio(); MODE = b.dataset.mode; try { localStorage.setItem('cc-mode2', MODE); } catch (e) {} pickerUI(); });
 for (const b of document.querySelectorAll('#level-seg button')) b.addEventListener('click', () => { audio(); LEVEL = b.dataset.level; try { localStorage.setItem('cc-level', LEVEL); } catch (e) {} pickerUI(); });
 $('#pick-prev').addEventListener('click', () => { audio(); move(-1); });
 $('#pick-next').addEventListener('click', () => { audio(); move(1); });
@@ -2540,6 +2656,8 @@ $('#pick-player').addEventListener('click', () => { audio(); showNameScreen(true
 /* ------------------------------ trophées + accessoires de la balle-drapeau (02/11) ------------------------------ */
 // Gagnés contre l'ordi seulement. Progrès gardé dans le navigateur, et sur le serveur avec le pseudo.
 // Accessoires fixes, sans animation (Bazil).
+// Trophées = des exploits (Bazil 03/11) : ils ne donnent plus de skin, ils donnent des pièces (selon la rareté).
+// Les skins s'achètent dans la boutique (SKINS). acc = l'image du trophée seulement.
 const TROPHIES = [
   {id: 'rookie', name: 'Rookie', desc: 'Win 25 matches', acc: 'eyes', goal: s => [s.wins, 25]},
   {id: 'hattrick', name: 'Hat Trick', desc: 'Win 5 in a row on Medium or Hard', acc: 'shades', goal: s => [s.bestMH, 5]},
@@ -2547,29 +2665,56 @@ const TROPHIES = [
   {id: 'flawless', name: 'Flawless', desc: 'Win on Hard without losing a ball', acc: 'bowtie', goal: s => [s.flawless, 1]},
   {id: 'land', name: 'Land Grabber', desc: 'Win on Hard with 90% of the arena', acc: 'tophat', goal: s => [s.land90, 1]},
   {id: 'devil', name: 'Devil', rarity: 'RARE', desc: 'Win 25 matches on Hard', acc: 'horns', goal: s => [s.winsHard, 25]},
-  {id: 'fire', name: 'On Fire', rarity: 'VERY RARE', desc: 'Win 10 in a row on Hard', acc: 'flame', goal: s => [s.bestHard, 10]},
-  {id: 'diamond', name: 'Diamond', rarity: 'LEGENDARY', desc: 'Win 100 matches on Hard', acc: 'diamond', goal: s => [s.winsHard, 100]},
-  {id: 'champion', name: 'World Champion', rarity: 'EPIC', desc: 'Win the World Cup', acc: 'cup', goal: s => [s.cups, 1]},
   {id: 'loyal', name: 'Loyal Fan', rarity: 'RARE', desc: 'Play 7 days in a row', acc: 'star', goal: s => [s.bestStreak, 7]},
-  {id: 'insider', name: 'Golden Crown', rarity: 'EXCLUSIVE', desc: 'Leave your e-mail after a win to get the app first', acc: 'crown', goal: s => [s.insider, 1]},
+  {id: 'champion', name: 'World Champion', rarity: 'RARE', desc: 'Win the World Cup', acc: 'cup', goal: s => [s.cups, 1]},
+  {id: 'fire', name: 'On Fire', rarity: 'VERY RARE', desc: 'Win 10 in a row on Hard', acc: 'flame', goal: s => [s.bestHard, 10]},
+  {id: 'triple', name: 'Triple Champion', rarity: 'VERY RARE', desc: 'Win the World Cup 3 times', acc: 'cup', goal: s => [s.cups, 3]},
+  {id: 'diamond', name: 'Diamond', rarity: 'LEGENDARY', desc: 'Win 100 matches on Hard', acc: 'diamond', goal: s => [s.winsHard, 100]},
+  {id: 'legend', name: 'Legend', rarity: 'LEGENDARY', desc: 'Win the World Cup 10 times', acc: 'cup', goal: s => [s.cups, 10]},
+  {id: 'insider', name: 'Golden Crown', rarity: 'EXCLUSIVE', desc: 'Leave your e-mail to get the app first', acc: 'crown', goal: s => [s.insider, 1]},
 ];
+const TROPHY_COINS = {'': 50, RARE: 150, 'VERY RARE': 300, LEGENDARY: 600, EXCLUSIVE: 100};
+// boutique : skins (pour toujours) et boosts (pour 1 match, 1 à la fois)
+const SKINS = [
+  {acc: 'eyes', name: 'Googly eyes', price: 100}, {acc: 'shades', name: 'Shades', price: 200}, {acc: 'bowtie', name: 'Bow tie', price: 200},
+  {acc: 'tophat', name: 'Top hat', price: 300}, {acc: 'bolt', name: 'Lightning', price: 300}, {acc: 'horns', name: 'Devil horns', price: 400},
+  {acc: 'flame', name: 'Flame', price: 500}, {acc: 'star', name: 'Gold star', price: 500}, {acc: 'diamond', name: 'Diamond', price: 800},
+  {acc: 'cup', name: 'Gold cup', price: 1000}, {acc: 'crown', name: 'Golden crown', price: 0, email: true},
+];
+const BOOSTS = [{kind: 'bonus', name: '+1 Ball', price: 150}, {kind: 'block', name: 'Block', price: 250}, {kind: 'shield', name: 'Shield', price: 600}];
+const WIN_COINS = {easy: 2, medium: 4, hard: 6}, CUP_COINS = 200;
 const TRO = (() => {
-  const ZERO = {wins: 0, winsHard: 0, breaks: 0, streakMH: 0, bestMH: 0, streakHard: 0, bestHard: 0, flawless: 0, land90: 0, insider: 0, cups: 0, bestStreak: 0, equip: ''};
+  const ZERO = {wins: 0, winsHard: 0, breaks: 0, streakMH: 0, bestMH: 0, streakHard: 0, bestHard: 0, flawless: 0, land90: 0, insider: 0, cups: 0, bestStreak: 0, coins: 0, owned: '', equip: ''};
   let st = {...ZERO};
   try { st = {...ZERO, ...JSON.parse(localStorage.getItem('cc-trophies') || '{}')}; } catch (e) {}
+  // 03/11 : les skins déjà gagnés avec les anciens trophées restent au joueur
+  if (!st.shop) {
+    const old = [['wins', 25, 'eyes'], ['bestMH', 5, 'shades'], ['breaks', 100, 'bolt'], ['flawless', 1, 'bowtie'], ['land90', 1, 'tophat'], ['winsHard', 25, 'horns'], ['bestHard', 10, 'flame'], ['winsHard', 100, 'diamond'], ['cups', 1, 'cup'], ['bestStreak', 7, 'star']];
+    st.owned = [...new Set([...(st.owned ? st.owned.split(',') : []), ...old.filter(([k, g]) => st[k] >= g).map(o => o[2])])].join(',');
+    st.shop = 1; try { localStorage.setItem('cc-trophies', JSON.stringify(st)); } catch (e) {}
+  }
   const save = () => { try { localStorage.setItem('cc-trophies', JSON.stringify(st)); } catch (e) {} if (RANK.claimed()) RANK.saveProgress(st); };
   const done = t => { const [v, g] = t.goal(st); return v >= g; };
   const unlocked = () => TROPHIES.filter(done);
+  const owns = acc => acc === 'crown' ? !!st.insider : (st.owned || '').split(',').includes(acc);
+  // trophées gagnés depuis « before » : chacun donne ses pièces
+  const pay = before => { const fresh = unlocked().filter(t => !before.has(t.id)); for (const t of fresh) st.coins += TROPHY_COINS[t.rarity || ''] || 0; return fresh; };
+  const snap = () => new Set(unlocked().map(t => t.id));
   return {
     get: () => st, unlocked, done,
     equip: acc => { st.equip = acc; save(); },
-    giveCrown: () => { st.insider = 1; st.equip = 'crown'; save(); },
-    addCup: () => { st.cups++; st.equip = 'cup'; save(); },
-    setStreak: n => { if (n > st.bestStreak) { const was = TRO.done(TROPHIES.find(t => t.id === 'loyal')); st.bestStreak = n; if (!was && n >= 7) st.equip = 'star'; save(); } },
-    equipped: () => (unlocked().some(t => t.acc === st.equip) ? st.equip : ''),
+    owns, coins: () => st.coins,
+    addCoins: n => { st.coins += n; save(); },
+    buySkin(sk) { if (owns(sk.acc) || st.coins < sk.price || sk.email) return false; st.coins -= sk.price; st.owned = [...(st.owned ? st.owned.split(',') : []), sk.acc].join(','); st.equip = sk.acc; save(); return true; },
+    spend(n) { if (st.coins < n) return false; st.coins -= n; save(); return true; },
+    giveCrown: () => { const b = snap(); st.insider = 1; st.equip = 'crown'; pay(b); save(); },
+    addCup: () => { const b = snap(); st.cups++; st.coins += CUP_COINS; const f = pay(b); save(); return f; },
+    setStreak: n => { if (n > st.bestStreak) { const b = snap(); st.bestStreak = n; pay(b); save(); } },
+    equipped: () => (st.equip && owns(st.equip) ? st.equip : ''),
     // fin d'une partie contre l'ordi : 'win' | 'loss' | 'draw' | 'abandon' ; renvoie les trophées gagnés à l'instant
     result(kind, level, info) {
-      const before = new Set(unlocked().map(t => t.id));
+      const before = snap();
+      if (kind === 'win') { st.coins += WIN_COINS[level] || 2; st.lastGain = WIN_COINS[level] || 2; } else st.lastGain = 0;
       st.breaks += info.breaks || 0;
       if (kind === 'win') {
         st.wins++;
@@ -2580,8 +2725,7 @@ const TRO = (() => {
           if (info.pct >= 0.9) st.land90 = 1;
         }
       } else { st.streakMH = 0; st.streakHard = 0; }      // une défaite, un nul ou un abandon arrête les séries
-      const fresh = unlocked().filter(t => !before.has(t.id));
-      if (fresh.length && !TRO.equipped()) st.equip = fresh[fresh.length - 1].acc;   // 1er accessoire : on le met tout de suite
+      const fresh = pay(before);
       save();
       return fresh;
     },
@@ -2589,6 +2733,7 @@ const TRO = (() => {
     merge(o) {
       for (const k of Object.keys(ZERO)) if (k !== 'equip' && typeof o[k] === 'number') st[k] = Math.max(st[k], o[k]);
       if (!st.equip && o.equip) st.equip = o.equip;
+      if (o.owned) st.owned = [...new Set([...(st.owned ? st.owned.split(',') : []), ...String(o.owned).split(',')])].filter(Boolean).join(',');
       save();
     },
   };
@@ -2665,6 +2810,16 @@ function drawAcc(c, kind, x, y, r) {
 }
 
 // écran des trophées
+// image d'un trophée : coupe dorée (argent si pas encore gagné) avec l'accessoire en badge
+function drawTrophyIcon(c, t) {
+  c.save(); c.translate(72, 72); c.lineJoin = 'round';
+  c.fillStyle = INK; c.beginPath(); c.arc(5, 5, 54, 0, Math.PI * 2); c.fill();
+  c.fillStyle = {RARE: '#B7A6F2', 'VERY RARE': '#8EB8F5', LEGENDARY: '#FFB984', EXCLUSIVE: '#F4907F'}[t.rarity] || '#93DDB8';
+  c.strokeStyle = INK; c.lineWidth = 6; c.beginPath(); c.arc(0, 0, 54, 0, Math.PI * 2); c.fill(); c.stroke();
+  c.restore();
+  const [ox, oy] = {eyes: [0, -5], shades: [0, -5], bolt: [16, -18], bowtie: [0, 28], tophat: [0, -33], horns: [0, -27], flame: [0, -34], crown: [0, -29], diamond: [0, -32], cup: [0, -31], star: [0, -34]}[t.acc] || [0, 0];
+  drawAcc(c, t.acc, 72 - ox * 1.6, 72 - oy * 1.6, 38);   // l'accessoire centré dans le badge
+}
 function showTrophies() {
   const list = $('#tr-list'), st = TRO.get(), eq = TRO.equipped();
   list.replaceChildren();
@@ -2672,21 +2827,20 @@ function showTrophies() {
   const flag = flagOf(PLAYER, undefined, 256);
   for (const t of TROPHIES) {
     const ok = TRO.done(t), [v, g] = t.goal(st), li = document.createElement('li'), bt = document.createElement('button');
-    bt.type = 'button'; bt.className = 'tr' + (ok ? '' : ' locked') + (ok && eq === t.acc ? ' on' : '');
+    bt.type = 'button'; bt.className = 'tr' + (ok ? ' done' : ' locked');
     const cv2 = document.createElement('canvas'); cv2.width = cv2.height = 144;
-    const c = cv2.getContext('2d'); c.drawImage(flag, 36, 40, 72, 72); drawAcc(c, t.acc, 72, 76, 36);
+    const c = cv2.getContext('2d'); drawTrophyIcon(c, t);
     const txt = document.createElement('div'), b = document.createElement('b'), sm = document.createElement('small'), bar = document.createElement('div'), stx = document.createElement('span');
     b.textContent = t.name; if (t.rarity) b.append(Object.assign(document.createElement('span'), {className: 'rar', textContent: t.rarity}));
     sm.textContent = t.desc; bar.className = 'bar'; bar.append(Object.assign(document.createElement('i'), {style: `width:${Math.min(100, v / g * 100)}%`}));
-    stx.className = 'st'; stx.textContent = ok ? (eq === t.acc ? '✓ Wearing it · tap to take off' : 'Unlocked · tap to wear') : `${Math.min(v, g)} / ${g}`;
+    stx.className = 'st'; stx.innerHTML = (ok ? '✓ Unlocked · ' : `${Math.min(v, g)} / ${g} · `) + COIN_SVG + ' ' + (TROPHY_COINS[t.rarity || ''] || 0);
     txt.append(b, sm, bar, stx); bt.append(cv2, txt);
-    bt.addEventListener('click', () => { if (!ok) { tone(196, 0.08, 0.1, 'square'); return; } audio(); TRO.equip(eq === t.acc ? '' : t.acc); tone(660, 0.07, 0.1); showTrophies(); });
     li.append(bt); list.append(li);
   }
   $('#trophies').hidden = false;
 }
 $('#pick-trophies').addEventListener('click', () => { audio(); showTrophies(); });
-$('#tr-back').addEventListener('click', () => { $('#trophies').hidden = true; trophyLine(); });
+$('#tr-back').addEventListener('click', () => { $('#trophies').hidden = true; trophyLine(); coinLine(); });
 function trophyLine() { $('#pt-txt').textContent = `Trophies ${TRO.unlocked().length}/${TROPHIES.length}`; $('#pick-trophies').hidden = !vsCpu(); }
 
 /* ------------------------------ e-mail en fin de partie : couronne dorée + l'appli en avant-première (02/11) ------------------------------ */
@@ -2720,16 +2874,21 @@ $('#mail-no').addEventListener('click', () => { $('#mail-box').hidden = true; if
 $('#cup-go').addEventListener('click', () => {
   audio(); const c = CUP.get();
   if (c.champion || c.out != null) { CUP.ensure(PLAYER); showCup(); return; }
-  $('#cup').hidden = true; document.body.classList.remove('picking');
-  newMatch(); resize();
-  if (!obDone) showOnboard();
+  const z = $('#bk-zoom'), box = $('#bk');                       // zoom sur le match, puis on joue
+  z.style.transformOrigin = `${box.dataset.tx}% ${box.dataset.ty}%`; z.style.transform = 'scale(3.2)'; z.style.opacity = '0';
+  [523, 659, 784].forEach((f, i) => tone(f, 0.1, 0.15, 'triangle', i * 0.08));
+  setTimeout(() => {
+    $('#cup').hidden = true; document.body.classList.remove('picking');
+    newMatch(); resize();
+    if (!obDone) showOnboard();
+  }, 650);
 });
 $('#cup-change').addEventListener('click', () => { audio(); $('#cup').hidden = true; showPicker(false); });
 
 /* ------------------------------ récompense du jour + série de jours (Bazil 03/11) ------------------------------ */
 // À la 1re ouverture de la journée : 7 cases, on prend celle du jour. Rater un jour = la série repart à 1.
 // Récompense = un power-up au début du prochain match contre l'ordi ; jour 7 = étoile dorée (trophée Loyal Fan).
-const DAY_REWARDS = ['shield', 'bonus', 'block', 'shield', 'bonus', 'block', 'star'];
+const DAY_REWARDS = [10, 15, 20, 25, 30, 40, 100];   // pièces (Bazil 03/11 : des pièces, plus de power-ups)
 const DAILY = (() => {
   let d = {last: '', streak: 0}, boost = null;
   try { d = {...d, ...JSON.parse(localStorage.getItem('cc-daily') || '{}')}; boost = localStorage.getItem('cc-boost'); } catch (e) {}
@@ -2742,30 +2901,26 @@ const DAILY = (() => {
     next: () => d.last === day(-1) ? {n: d.streak + 1, lost: false} : {n: 1, lost: d.streak > 1 && d.last !== day()},
     claim() {
       const {n} = DAILY.next(), r = DAY_REWARDS[(n - 1) % 7];
-      d = {last: day(), streak: n}; boost = r === 'star' ? 'shield' : r; save(); TRO.setStreak(n);
+      d = {last: day(), streak: n}; save(); TRO.addCoins(r); TRO.setStreak(n);
       if (typeof window.gtag === 'function') window.gtag('event', 'daily_claim', {streak: n});
       return r;
     },
     streak: () => (d.last === day() || d.last === day(-1) ? d.streak : 0),
     takeBoost() { const b = boost; boost = null; save(); return b; },
+    peekBoost: () => boost,
+    setBoost(k) { boost = k; save(); },
   };
 })();
-const REW_LABEL = {shield: 'Shield', bonus: '+1 Ball', block: 'Block', star: 'Gold star'};
-function rewardIcon(r) {
-  const c = document.createElement('canvas'); c.width = c.height = 96; const g = c.getContext('2d');
-  if (r === 'star') { g.translate(48, 48); g.scale(2.6, 2.6); g.translate(0, 34); drawAcc(g, 'star', 0, 0, 24); }
-  else drawPower(g, r, 46, 46, 34);
-  return c.toDataURL();
-}
+
 function showDaily() {
   const {n, lost} = DAILY.next(), today = (n - 1) % 7, start = n - 1 - today, grid = $('#dl-grid');
   $('#dl-streak').textContent = `Day ${n} in a row`;
-  $('#dl-note').textContent = lost ? 'You missed a day: your streak starts again.' : n >= 7 ? 'Come back every day to keep your streak!' : `Day 7: a gold star for your flag ball!`;
+  $('#dl-note').textContent = lost ? 'You missed a day: your streak starts again.' : 'Come back every day: day 7 gives 100 coins!';
   grid.replaceChildren();
   DAY_REWARDS.forEach((r, i) => {
     const li = document.createElement('li'), im = new Image(), t = document.createElement('b'), l = document.createElement('span');
-    li.dataset.st = i < today ? 'done' : i === today ? 'today' : 'todo'; if (r === 'star') li.className = 'big';
-    t.textContent = 'Day ' + (start + i + 1); im.src = rewardIcon(r); im.alt = ''; l.textContent = REW_LABEL[r];
+    li.dataset.st = i < today ? 'done' : i === today ? 'today' : 'todo'; if (i === 6) li.className = 'big';
+    t.textContent = 'Day ' + (start + i + 1); im.src = COIN_URL; im.alt = ''; l.textContent = r + ' coins';
     li.append(t, im, l); grid.append(li);
   });
   $('#dl-go').textContent = 'CLAIM'; $('#dl-go').dataset.done = '';
@@ -2777,10 +2932,58 @@ $('#dl-go').addEventListener('click', () => {
   const r = DAILY.claim();
   [1, 1.25, 1.5, 2].forEach((m, i) => tone(523 * m, 0.12, 0.2, 'triangle', i * 0.07));
   const li = $('#dl-grid li[data-st="today"]'); if (li) li.dataset.st = 'claimed';
-  $('#dl-note').textContent = r === 'star' ? 'Gold star unlocked! Your next match also starts with a Shield.' : `Your next match starts with a ${REW_LABEL[r]}!`;
+  $('#dl-note').textContent = `+${r} coins! Spend them in the shop.`; coinLine();
   $('#dl-go').textContent = 'PLAY'; $('#dl-go').dataset.done = '1';
 });
-function streakLine() { const n = DAILY.streak(), b = $('#pick-streak'); b.hidden = !n; $('#ps-txt').textContent = n + (n > 1 ? ' days' : ' day'); }
+// boutique : pièces, skins, boosts (Bazil 03/11)
+const COIN_SVG = '<svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="#2B3550"/><circle cx="15" cy="15" r="13" fill="#FFC94A" stroke="#2B3550" stroke-width="3"/><circle cx="15" cy="15" r="8" fill="none" stroke="#E0A12A" stroke-width="2.5"/></svg>';
+const COIN_URL = 'data:image/svg+xml,' + encodeURIComponent(COIN_SVG.replace('<svg ', '<svg xmlns="http://www.w3.org/2000/svg" '));
+function coinLine() { const n = TRO.coins(); for (const el of document.querySelectorAll('.coin-n')) el.textContent = n.toLocaleString('en-US'); }
+let shopTab = 'skins';
+function skinPreview(acc) {
+  const c = document.createElement('canvas'); c.width = c.height = 144; const g = c.getContext('2d');
+  g.drawImage(flagOf(PLAYER, undefined, 256), 36, 44, 72, 72); drawAcc(g, acc, 72, 80, 36); return c;
+}
+function showShop(tab) {
+  if (tab) shopTab = tab;
+  const list = $('#shop-list'), eq = TRO.equipped(), boost = DAILY.peekBoost();
+  for (const b of document.querySelectorAll('#shop-tabs button')) b.setAttribute('aria-selected', String(b.dataset.tab === shopTab));
+  list.replaceChildren(); coinLine();
+  const card = (img, name, act, cls, onClick) => {
+    const li = document.createElement('li'), bt = document.createElement('button'), n = document.createElement('b'), a = document.createElement('span');
+    bt.type = 'button'; bt.className = 'sh ' + cls; n.textContent = name; a.className = 'sh-act'; a.innerHTML = act;
+    bt.append(img, n, a); bt.addEventListener('click', onClick); li.append(bt); list.append(li);
+  };
+  const price = p => `${COIN_SVG}<span>${p.toLocaleString('en-US')}</span>`;
+  if (shopTab === 'skins') for (const sk of SKINS) {
+    const own = TRO.owns(sk.acc), on = eq === sk.acc;
+    card(skinPreview(sk.acc), sk.name, on ? 'WEARING' : own ? 'WEAR' : sk.email ? 'E-mail only' : price(sk.price), on ? 'on' : own ? 'own' : TRO.coins() >= sk.price && !sk.email ? 'buy' : 'lock', () => {
+      audio();
+      if (on) { TRO.equip(''); tone(440, 0.06, 0.08); }
+      else if (own) { TRO.equip(sk.acc); tone(660, 0.07, 0.1); }
+      else if (TRO.buySkin(sk)) { [1, 1.25, 1.5, 2].forEach((m, i) => tone(523 * m, 0.12, 0.18, 'triangle', i * 0.06)); if (typeof window.gtag === 'function') window.gtag('event', 'shop_skin', {skin: sk.acc}); }
+      else { tone(196, 0.1, 0.15, 'square'); $('#shop-note').textContent = sk.email ? 'Leave your e-mail after a match to get it.' : 'Not enough coins yet. Win matches and come back every day!'; return; }
+      $('#shop-note').textContent = ''; showShop();
+    });
+  } else for (const bo of BOOSTS) {
+    const c = document.createElement('canvas'); c.width = c.height = 144; drawPower(c.getContext('2d'), bo.kind, 72, 72, 46);
+    const ready = boost === bo.kind;
+    card(c, bo.name, ready ? 'READY' : price(bo.price), ready ? 'on' : !boost && TRO.coins() >= bo.price ? 'buy' : 'lock', () => {
+      audio();
+      if (ready) return;
+      if (boost) { tone(196, 0.1, 0.15, 'square'); $('#shop-note').textContent = 'One boost per match: play your next match first.'; return; }
+      if (!TRO.spend(bo.price)) { tone(196, 0.1, 0.15, 'square'); $('#shop-note').textContent = 'Not enough coins yet. Win matches and come back every day!'; return; }
+      DAILY.setBoost(bo.kind); [1, 1.25, 1.5].forEach((m, i) => tone(523 * m, 0.12, 0.18, 'triangle', i * 0.06));
+      if (typeof window.gtag === 'function') window.gtag('event', 'shop_boost', {boost: bo.kind});
+      $('#shop-note').textContent = `${bo.name} ready! Your next match against the CPU starts with it.`; showShop();
+    });
+  }
+  $('#shop').hidden = false;
+}
+for (const b of document.querySelectorAll('#shop-tabs button')) b.addEventListener('click', () => { audio(); $('#shop-note').textContent = ''; showShop(b.dataset.tab); });
+$('#shop-back').addEventListener('click', () => { audio(); $('#shop').hidden = true; coinLine(); });
+$('#pick-shop').addEventListener('click', () => { audio(); $('#shop-note').textContent = ''; showShop(); });
+function streakLine() { const n = DAILY.streak(), b = $('#pick-streak'); b.hidden = !n; $('#ps-txt').textContent = n + (n > 1 ? ' days' : ' day'); coinLine(); }
 $('#pick-streak').addEventListener('click', () => { audio(); if (DAILY.due()) showDaily(); });
 
 /* ------------------------------ onboarding : 5 cartes avec les pictos (1re fois seulement) ------------------------------ */
