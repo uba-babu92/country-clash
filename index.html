@@ -322,7 +322,7 @@ html.inapp body { overflow: hidden; }
   --g-bg: #8EB8F5; --g-fg: #2B3550; --g-muted: #4A5470; --g-accent: #FFD45C; --g-empty: #FFF6EA; --g-line: #2B3550; }
 body { font-family: var(--text); color: var(--ink); }
 :focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
-.stk, .icon-btn, #menu, .team, .pick-arrow, .seg, #pick-go, #pick-back, #again, #ns-go, #ns-in, #ob-next, #iw-go, #iw-copy, #tr-back, .tr, #mail-go, .iw-steps li, #pick-player, #pick-trophies {
+.stk, .icon-btn, #menu, .team, .pick-arrow, .seg, #pick-go, #pick-back, #again, #ns-go, #ns-in, #ob-next, #iw-go, #iw-copy, #tr-back, .tr, #mail-go, .iw-steps li, #pick-player, #pick-trophies, #pick-streak {
   border: 3px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); }
 .stk:active, .icon-btn:active, #menu:active, .pick-arrow:active, #tr-back:active, #pick-back:active, #pick-player:active, #pick-trophies:active { box-shadow: 1px 1px 0 var(--ink); transform: translate(2px, 2px); }
 .pick-arrow:active { transform: translateY(-50%) translate(2px, 2px); }
@@ -430,7 +430,7 @@ body { font-family: var(--text); color: var(--ink); }
 #pick-go:disabled { background: #C9D3E6; color: #5D6782; box-shadow: 0 6px 0 var(--ink); }
 #pick-note { color: var(--ink); background: var(--salmon); border: 2px solid var(--ink); border-radius: 999px; padding: 2px 12px; font: 700 14px var(--text); }
 .pick-extras { gap: 10px; }
-#pick-player, #pick-trophies { background: var(--cream); color: var(--ink); border-radius: 999px; height: 42px; padding: 0 16px; font: 800 14px var(--text); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
+#pick-player, #pick-trophies, #pick-streak { background: var(--cream); color: var(--ink); border-radius: 999px; height: 42px; padding: 0 16px; font: 800 14px var(--text); text-decoration: none; display: inline-flex; align-items: center; gap: 8px; }
 #pick-player b { color: var(--ink); }
 #pick-trophies svg, #pick-player svg { width: 18px; height: 18px; flex: none; }
 #pick-back { background: var(--cream); color: var(--ink); border-radius: 14px; font: 800 14px var(--text); }
@@ -517,6 +517,26 @@ body { font-family: var(--text); color: var(--ink); }
 #cup-go { width: min(100%, 380px); height: 64px; border: 3px solid var(--ink); border-radius: 22px; background: var(--salmon); color: var(--ink); font: 700 24px var(--display); letter-spacing: .05em; box-shadow: 0 6px 0 var(--ink); }
 #cup-go:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
 #cup .linkish { color: var(--ink); font: 700 14px var(--text); }
+
+/* ---------- récompense du jour (03/11) ---------- */
+#daily { position: fixed; inset: 0; z-index: 24; background: color-mix(in srgb, var(--sky) 85%, transparent); display: grid; place-items: center; padding: 16px; box-sizing: border-box; overflow-y: auto; }
+.dl-card { width: min(100%, 380px); background: var(--cream); border: 3px solid var(--ink); border-radius: 24px; box-shadow: 6px 6px 0 var(--ink); padding: 18px 16px 20px; display: flex; flex-direction: column; align-items: center; gap: 10px; color: var(--ink); text-align: center; animation: pop .45s cubic-bezier(.2, 1.4, .4, 1); }
+.dl-k { margin: 0; font: 800 12px var(--text); letter-spacing: .1em; }
+#dl-streak { margin: 0; font: 700 30px var(--display); color: var(--salmon); -webkit-text-stroke: .06em var(--ink); paint-order: stroke fill; text-shadow: .05em .05em 0 var(--ink); }
+#dl-grid { list-style: none; margin: 4px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; width: 100%; }
+#dl-grid li { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; border: 3px solid var(--ink); border-radius: 14px; background: #FFFDF8; }
+#dl-grid li.big { grid-column: span 2; background: var(--butter); }
+#dl-grid li b { font: 800 11px var(--text); }
+#dl-grid li img { width: 46px; height: 46px; }
+#dl-grid li span { font: 700 11px var(--text); }
+#dl-grid li[data-st="done"], #dl-grid li[data-st="claimed"] { background: var(--mint); }
+#dl-grid li[data-st="done"] img { opacity: .45; }
+#dl-grid li[data-st="today"] { outline: 4px solid var(--salmon); outline-offset: 2px; box-shadow: 3px 3px 0 var(--ink); }
+#dl-grid li[data-st="todo"] { opacity: .8; }
+#dl-note { margin: 0; font: 700 14px/1.4 var(--text); }
+#dl-go { width: 100%; height: 60px; border: 3px solid var(--ink); border-radius: 20px; background: var(--butter); color: var(--ink); font: 700 26px var(--display); letter-spacing: .06em; box-shadow: 0 6px 0 var(--ink); }
+#dl-go:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
+#pick-streak svg { width: 20px; height: 20px; }
 /* ---------- stats ---------- */
 #stats { max-width: 1040px; margin: 0 auto; box-sizing: border-box; padding-block: 28px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -617,7 +637,7 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
     <button type="button" data-level="easy">EASY</button><button type="button" data-level="medium">MEDIUM</button><button type="button" data-level="hard">HARD</button>
   </div>
   <button id="pick-go" type="button">PLAY</button>
-  <div class="pick-extras"><button id="pick-player" class="linkish" type="button" hidden></button><button id="pick-trophies" class="linkish" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v3M9 17h6v3H9z"/></svg><span id="pt-txt">Trophies</span></button></div>
+  <div class="pick-extras"><button id="pick-streak" class="linkish" type="button" hidden aria-label="Daily streak"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-6 1-9z" fill="#FF9640" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg><span id="ps-txt"></span></button><button id="pick-player" class="linkish" type="button" hidden></button><button id="pick-trophies" class="linkish" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v3M9 17h6v3H9z"/></svg><span id="pt-txt">Trophies</span></button></div>
 </section>
 
 <section id="cup" hidden aria-label="World Cup">
@@ -640,6 +660,16 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
   </form>
   <p class="ns-note" id="ns-note">2–16 letters or numbers · no email, no account.<br>Each win scores points for your country.</p>
   <button id="ns-skip" class="linkish" type="button" hidden>← Back</button>
+</section>
+
+<section id="daily" hidden aria-label="Daily reward">
+  <div class="dl-card">
+    <p class="dl-k">DAILY REWARD</p>
+    <h2 id="dl-streak">Day 1 in a row</h2>
+    <ol id="dl-grid"></ol>
+    <p id="dl-note"></p>
+    <button id="dl-go" type="button">CLAIM</button>
+  </div>
 </section>
 
 <section id="trophies" hidden aria-label="Trophies">
@@ -1663,6 +1693,10 @@ function newMatch() {
   T = {...THEMES[themeName]}; if (white) T.EMPTY = T.EMPTY_W;
   flags = [flagOf(PLAYER), flagOf(CPU)];
   G = newGame([PLAYER, CPU], arena); G.powerups = true;   // power-ups dans tous les modes (Bazil 03/11)
+  const boost = vsCpu() ? DAILY.takeBoost() : null;      // récompense du jour : le match commence avec un power-up
+  if (boost === 'shield') G.shield[0] = true;
+  else if (boost === 'block') G.place[0] = true;
+  else if (boost === 'bonus') { const h = alive(G, 0)[0]; G.balls.push({team: 0, x: h.x + 70, y: h.y + 70, vx: 0, vy: 0, path: null, dead: false, temp: 1}); }
   fx = {pops: [], shards: [], confetti: [], rings: [], words: []};
   gridDirty = true; flashUntil = 0; turnWait = 0; nextLeft = null; handoff = false; $('#pass').hidden = true;
   $('#again').style.setProperty('--p', 0); $('#next-in').textContent = '';
@@ -1682,6 +1716,7 @@ function newMatch() {
   for (const s of [0, 1]) delete $('#balls' + s).dataset.n;
   play = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), startedAt: Date.now(), arena, theme: themeName, country: PLAYER, opponent: CPU, mode: MODE, level: MODE === '2p' ? '' : aiLevel()};
   cpuAim = null;
+  if (boost) { fx.words.push({text: PU[boost].label + ' READY!', col: PU[boost].col, x: WORLD / 2, y: WORLD / 2, t: clock}); beginTurn(); }
   hud();
 }
 
@@ -2515,10 +2550,11 @@ const TROPHIES = [
   {id: 'fire', name: 'On Fire', rarity: 'VERY RARE', desc: 'Win 10 in a row on Hard', acc: 'flame', goal: s => [s.bestHard, 10]},
   {id: 'diamond', name: 'Diamond', rarity: 'LEGENDARY', desc: 'Win 100 matches on Hard', acc: 'diamond', goal: s => [s.winsHard, 100]},
   {id: 'champion', name: 'World Champion', rarity: 'EPIC', desc: 'Win the World Cup', acc: 'cup', goal: s => [s.cups, 1]},
+  {id: 'loyal', name: 'Loyal Fan', rarity: 'RARE', desc: 'Play 7 days in a row', acc: 'star', goal: s => [s.bestStreak, 7]},
   {id: 'insider', name: 'Golden Crown', rarity: 'EXCLUSIVE', desc: 'Leave your e-mail after a win to get the app first', acc: 'crown', goal: s => [s.insider, 1]},
 ];
 const TRO = (() => {
-  const ZERO = {wins: 0, winsHard: 0, breaks: 0, streakMH: 0, bestMH: 0, streakHard: 0, bestHard: 0, flawless: 0, land90: 0, insider: 0, cups: 0, equip: ''};
+  const ZERO = {wins: 0, winsHard: 0, breaks: 0, streakMH: 0, bestMH: 0, streakHard: 0, bestHard: 0, flawless: 0, land90: 0, insider: 0, cups: 0, bestStreak: 0, equip: ''};
   let st = {...ZERO};
   try { st = {...ZERO, ...JSON.parse(localStorage.getItem('cc-trophies') || '{}')}; } catch (e) {}
   const save = () => { try { localStorage.setItem('cc-trophies', JSON.stringify(st)); } catch (e) {} if (RANK.claimed()) RANK.saveProgress(st); };
@@ -2529,6 +2565,7 @@ const TRO = (() => {
     equip: acc => { st.equip = acc; save(); },
     giveCrown: () => { st.insider = 1; st.equip = 'crown'; save(); },
     addCup: () => { st.cups++; st.equip = 'cup'; save(); },
+    setStreak: n => { if (n > st.bestStreak) { const was = TRO.done(TROPHIES.find(t => t.id === 'loyal')); st.bestStreak = n; if (!was && n >= 7) st.equip = 'star'; save(); } },
     equipped: () => (unlocked().some(t => t.acc === st.equip) ? st.equip : ''),
     // fin d'une partie contre l'ordi : 'win' | 'loss' | 'draw' | 'abandon' ; renvoie les trophées gagnés à l'instant
     result(kind, level, info) {
@@ -2613,6 +2650,10 @@ function drawAcc(c, kind, x, y, r) {
     c.fillStyle = '#FFC400'; c.strokeStyle = blk; c.lineWidth = 2.2;
     c.beginPath(); c.moveTo(-11, -44); c.lineTo(11, -44); c.quadraticCurveTo(11, -28, 2, -26); c.lineTo(2, -22); c.lineTo(7, -22); c.lineTo(7, -18); c.lineTo(-7, -18); c.lineTo(-7, -22); c.lineTo(-2, -22); c.lineTo(-2, -26); c.quadraticCurveTo(-11, -28, -11, -44); c.closePath(); c.fill(); c.stroke();
     c.beginPath(); c.moveTo(-11, -40); c.quadraticCurveTo(-18, -40, -16, -33); c.quadraticCurveTo(-14, -30, -9, -31); c.moveTo(11, -40); c.quadraticCurveTo(18, -40, 16, -33); c.quadraticCurveTo(14, -30, 9, -31); c.stroke();
+  } else if (kind === 'star') {     // étoile dorée (série de 7 jours)
+    c.fillStyle = '#FFC400'; c.strokeStyle = blk; c.lineWidth = 2.2; c.beginPath();
+    for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? 6 : 14; c.lineTo(Math.cos(a) * rr, -34 + Math.sin(a) * rr); }
+    c.closePath(); c.fill(); c.stroke();
   } else if (kind === 'diamond') {
     c.fillStyle = '#7FE3FF'; c.strokeStyle = blk; c.lineWidth = 2.2;
     path([[-12, -36], [-6, -42], [6, -42], [12, -36], [0, -22]]); c.fill(); c.stroke();
@@ -2685,6 +2726,63 @@ $('#cup-go').addEventListener('click', () => {
 });
 $('#cup-change').addEventListener('click', () => { audio(); $('#cup').hidden = true; showPicker(false); });
 
+/* ------------------------------ récompense du jour + série de jours (Bazil 03/11) ------------------------------ */
+// À la 1re ouverture de la journée : 7 cases, on prend celle du jour. Rater un jour = la série repart à 1.
+// Récompense = un power-up au début du prochain match contre l'ordi ; jour 7 = étoile dorée (trophée Loyal Fan).
+const DAY_REWARDS = ['shield', 'bonus', 'block', 'shield', 'bonus', 'block', 'star'];
+const DAILY = (() => {
+  let d = {last: '', streak: 0}, boost = null;
+  try { d = {...d, ...JSON.parse(localStorage.getItem('cc-daily') || '{}')}; boost = localStorage.getItem('cc-boost'); } catch (e) {}
+  const save = () => { try { localStorage.setItem('cc-daily', JSON.stringify(d)); if (boost) localStorage.setItem('cc-boost', boost); else localStorage.removeItem('cc-boost'); } catch (e) {} };
+  const day = (off = 0) => { const t = new Date(Date.now() + off * 864e5); return `${t.getFullYear()}-${t.getMonth() + 1}-${t.getDate()}`; };
+  return {
+    get: () => d,
+    due: () => d.last !== day(),
+    // série du jour si on la prend maintenant, et si elle a été cassée
+    next: () => d.last === day(-1) ? {n: d.streak + 1, lost: false} : {n: 1, lost: d.streak > 1 && d.last !== day()},
+    claim() {
+      const {n} = DAILY.next(), r = DAY_REWARDS[(n - 1) % 7];
+      d = {last: day(), streak: n}; boost = r === 'star' ? 'shield' : r; save(); TRO.setStreak(n);
+      if (typeof window.gtag === 'function') window.gtag('event', 'daily_claim', {streak: n});
+      return r;
+    },
+    streak: () => (d.last === day() || d.last === day(-1) ? d.streak : 0),
+    takeBoost() { const b = boost; boost = null; save(); return b; },
+  };
+})();
+const REW_LABEL = {shield: 'Shield', bonus: '+1 Ball', block: 'Block', star: 'Gold star'};
+function rewardIcon(r) {
+  const c = document.createElement('canvas'); c.width = c.height = 96; const g = c.getContext('2d');
+  if (r === 'star') { g.translate(48, 48); g.scale(2.6, 2.6); g.translate(0, 34); drawAcc(g, 'star', 0, 0, 24); }
+  else drawPower(g, r, 46, 46, 34);
+  return c.toDataURL();
+}
+function showDaily() {
+  const {n, lost} = DAILY.next(), today = (n - 1) % 7, start = n - 1 - today, grid = $('#dl-grid');
+  $('#dl-streak').textContent = `Day ${n} in a row`;
+  $('#dl-note').textContent = lost ? 'You missed a day: your streak starts again.' : n >= 7 ? 'Come back every day to keep your streak!' : `Day 7: a gold star for your flag ball!`;
+  grid.replaceChildren();
+  DAY_REWARDS.forEach((r, i) => {
+    const li = document.createElement('li'), im = new Image(), t = document.createElement('b'), l = document.createElement('span');
+    li.dataset.st = i < today ? 'done' : i === today ? 'today' : 'todo'; if (r === 'star') li.className = 'big';
+    t.textContent = 'Day ' + (start + i + 1); im.src = rewardIcon(r); im.alt = ''; l.textContent = REW_LABEL[r];
+    li.append(t, im, l); grid.append(li);
+  });
+  $('#dl-go').textContent = 'CLAIM'; $('#dl-go').dataset.done = '';
+  $('#daily').hidden = false;
+}
+$('#dl-go').addEventListener('click', () => {
+  audio();
+  if ($('#dl-go').dataset.done) { $('#daily').hidden = true; streakLine(); return; }
+  const r = DAILY.claim();
+  [1, 1.25, 1.5, 2].forEach((m, i) => tone(523 * m, 0.12, 0.2, 'triangle', i * 0.07));
+  const li = $('#dl-grid li[data-st="today"]'); if (li) li.dataset.st = 'claimed';
+  $('#dl-note').textContent = r === 'star' ? 'Gold star unlocked! Your next match also starts with a Shield.' : `Your next match starts with a ${REW_LABEL[r]}!`;
+  $('#dl-go').textContent = 'PLAY'; $('#dl-go').dataset.done = '1';
+});
+function streakLine() { const n = DAILY.streak(), b = $('#pick-streak'); b.hidden = !n; $('#ps-txt').textContent = n + (n > 1 ? ' days' : ' day'); }
+$('#pick-streak').addEventListener('click', () => { audio(); if (DAILY.due()) showDaily(); });
+
 /* ------------------------------ onboarding : 5 cartes avec les pictos (1re fois seulement) ------------------------------ */
 let obDone = false; try { obDone = localStorage.getItem('cc-onboard') === '1'; } catch (e) {}
 let obIdx = 0;
@@ -2719,7 +2817,7 @@ newMatch();
 resize();
 // l'accueil s'ouvre à chaque visite, sur le dernier pays choisi : sinon un autre navigateur (Instagram, TikTok, Safari…)
 // lançait direct la partie avec un ancien pays gardé chez lui (bug « je choisis la France, j'ai la Tunisie », 02/11)
-if (location.hash !== '#stats') showPicker();
+if (location.hash !== '#stats') { showPicker(); streakLine(); if (DAILY.due() && !document.documentElement.classList.contains('inapp')) setTimeout(showDaily, 400); }
 else if (location.hash !== '#stats' && needName()) showNameScreen();
 requestAnimationFrame(frame);
 
