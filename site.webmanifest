@@ -3,8 +3,8 @@
  "short_name": "Country Clash",
  "start_url": "/",
  "display": "standalone",
- "background_color": "#1f2326",
- "theme_color": "#1f2326",
+ "background_color": "#FFD45C",
+ "theme_color": "#8EB8F5",
  "icons": [
   {
    "src": "/icon-192.png",
