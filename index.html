@@ -488,6 +488,35 @@ body { font-family: var(--text); color: var(--ink); }
 #iw-go { background: var(--butter); color: var(--ink); border-radius: 20px; font: 700 22px var(--display); box-shadow: 0 6px 0 var(--ink); }
 #iw-copy { background: var(--cream); color: var(--ink); border-radius: 20px; font: 800 16px var(--text); }
 
+
+/* ---------- World Cup + power-ups (03/11) ---------- */
+#mode-seg button { padding: 0 12px; }
+@media (max-width: 380px) { #mode-seg button { padding: 0 9px; font-size: 12px; } }
+.fxb { font: 800 10px var(--text); letter-spacing: .04em; color: var(--ink); min-height: 0; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fxb:empty { display: none; }
+.fxb:not(:empty) { background: var(--butter); border: 2px solid var(--ink); border-radius: 999px; padding: 1px 6px; align-self: flex-start; }
+.team.right .fxb:not(:empty) { align-self: flex-end; }
+#cup { position: fixed; inset: 0; z-index: 22; background: var(--butter); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: clamp(8px, 1.8vh, 16px); overflow-y: auto; box-sizing: border-box; text-align: center;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) calc(16px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+#cup > * { flex: none; }
+.cup-trophy { width: 64px; height: 64px; filter: drop-shadow(4px 4px 0 var(--ink)); }
+.cup-logo { font-size: clamp(38px, 10vw, 60px); margin: 0; }
+#cup-sub { margin: 0; font: 700 16px var(--text); }
+#cup-flag { width: 76px; height: 76px; filter: drop-shadow(4px 4px 0 var(--ink)); }
+#cup-path { list-style: none; margin: 0; padding: 0; width: min(100%, 380px); display: flex; flex-direction: column; gap: 8px; }
+#cup-path li { display: grid; grid-template-columns: 1fr 32px auto 54px; align-items: center; gap: 10px; padding: 8px 12px; background: var(--cream); border: 3px solid var(--ink); border-radius: 16px; box-shadow: 3px 3px 0 var(--ink); text-align: left; }
+#cup-path li span { font: 800 11px var(--text); letter-spacing: .05em; }
+#cup-path li img { width: 32px; height: 32px; }
+#cup-path li b { font: 700 18px var(--display); white-space: nowrap; }
+#cup-path li em { font: 800 11px var(--text); font-style: normal; text-align: center; border-radius: 999px; padding: 2px 0; }
+#cup-path li[data-st="won"] { background: var(--mint); } #cup-path li[data-st="won"] em { background: var(--cream); border: 2px solid var(--ink); }
+#cup-path li[data-st="next"] { background: var(--cream); outline: 4px solid var(--salmon); outline-offset: 2px; } #cup-path li[data-st="next"] em { background: var(--salmon); border: 2px solid var(--ink); }
+#cup-path li[data-st="lost"] { background: #E6E1F5; } #cup-path li[data-st="lost"] em { background: #F25C54; border: 2px solid var(--ink); color: var(--cream); }
+#cup-path li[data-st="todo"] { opacity: .75; }
+#cup-go { width: min(100%, 380px); height: 64px; border: 3px solid var(--ink); border-radius: 22px; background: var(--salmon); color: var(--ink); font: 700 24px var(--display); letter-spacing: .05em; box-shadow: 0 6px 0 var(--ink); }
+#cup-go:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--ink); }
+#cup .linkish { color: var(--ink); font: 700 14px var(--text); }
 /* ---------- stats ---------- */
 #stats { max-width: 1040px; margin: 0 auto; box-sizing: border-box; padding-block: 28px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -531,9 +560,9 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
 <main id="game">
   <div class="topbar"><button id="logo" type="button" aria-label="Back to country selection"><span><i>C</i><i>o</i><i>u</i><i>n</i><i>t</i><i>r</i><i>y</i></span> <span><i>C</i><i>l</i><i>a</i><i>s</i><i>h</i></span></button><div class="topright"><span id="mode-tag">VS CPU · MEDIUM</span><button id="menu" type="button" aria-label="Menu: country, mode and level">MENU</button></div></div>
   <header class="top">
-    <div class="team"><img id="f0" alt="Turkey flag"><div class="txt"><span class="pct" id="p0">0%</span><span class="name" id="n0">TURKEY · YOU</span><span class="balls" id="balls0"></span></div></div>
+    <div class="team"><img id="f0" alt="Turkey flag"><div class="txt"><span class="pct" id="p0">0%</span><span class="name" id="n0">TURKEY · YOU</span><span class="balls" id="balls0"></span><span class="fxb" id="fx0"></span></div></div>
     <div class="mid"><div id="turn" aria-label="Time left">1:00</div><div id="status" aria-live="polite">YOUR TURN</div><div id="turnbar" hidden aria-hidden="true"><i></i></div></div>
-    <div class="team right"><img id="f1" alt="USA flag"><div class="txt"><span class="pct" id="p1">0%</span><span class="name" id="n1">USA · CPU</span><span class="balls" id="balls1"></span></div></div>
+    <div class="team right"><img id="f1" alt="USA flag"><div class="txt"><span class="pct" id="p1">0%</span><span class="name" id="n1">USA · CPU</span><span class="balls" id="balls1"></span><span class="fxb" id="fx1"></span></div></div>
   </header>
   <div class="bar" aria-hidden="true"><i id="bar0"></i><i id="bar-empty"></i><i id="bar1"></i></div>
   <div id="stage">
@@ -582,13 +611,23 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
   <p id="pick-name" aria-live="polite">Turkey</p>
   <p id="pick-note" hidden>Pick another country</p>
   <div class="seg" id="mode-seg" role="group" aria-label="Mode">
-    <button type="button" data-mode="cpu">VS CPU</button><button type="button" data-mode="2p">2 PLAYERS</button>
+    <button type="button" data-mode="cpu">VS CPU</button><button type="button" data-mode="2p">2 PLAYERS</button><button type="button" data-mode="cup">WORLD CUP</button>
   </div>
   <div class="seg small" id="level-seg" role="group" aria-label="Level">
     <button type="button" data-level="easy">EASY</button><button type="button" data-level="medium">MEDIUM</button><button type="button" data-level="hard">HARD</button>
   </div>
   <button id="pick-go" type="button">PLAY</button>
   <div class="pick-extras"><button id="pick-player" class="linkish" type="button" hidden></button><button id="pick-trophies" class="linkish" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v3M9 17h6v3H9z"/></svg><span id="pt-txt">Trophies</span></button></div>
+</section>
+
+<section id="cup" hidden aria-label="World Cup">
+  <svg class="cup-trophy" viewBox="0 0 64 64" aria-hidden="true"><path d="M18 8h28c0 18-4 24-11 26v8h7v6H22v-6h7v-8c-7-2-11-8-11-26z" fill="#FFC400" stroke="#2B3550" stroke-width="3" stroke-linejoin="round"/><path d="M18 12h-7c0 8 4 12 9 12M46 12h7c0 8-4 12-9 12" fill="none" stroke="#2B3550" stroke-width="3" stroke-linecap="round"/><rect x="18" y="48" width="28" height="8" rx="2" fill="#B7A6F2" stroke="#2B3550" stroke-width="3"/></svg>
+  <h1 class="logo cup-logo"><span><i>W</i><i>o</i><i>r</i><i>l</i><i>d</i></span> <span><i>C</i><i>u</i><i>p</i></span></h1>
+  <p id="cup-sub"></p>
+  <img id="cup-flag" alt="">
+  <ol id="cup-path" aria-label="Your path to the cup"></ol>
+  <button id="cup-go" type="button">PLAY</button>
+  <button id="cup-change" class="linkish" type="button">Change country</button>
 </section>
 
 <section id="name-screen" hidden aria-label="Your name for the ranking">
@@ -640,6 +679,13 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
         <path class="red" d="M6 6 L120 6 L70 134 L6 134 Z" opacity=".9"/><path class="blue" d="M150 6 L194 6 L194 70 Z" opacity=".9"/>
         <text x="132" y="112" class="clock">0:00</text></svg>
       <h2>Most space wins</h2><p>When the clock hits 0:00, the biggest territory wins.</p>
+    </div>
+    <div class="ob-slide">
+      <svg viewBox="0 0 200 140" aria-hidden="true"><rect class="ar" x="6" y="6" width="188" height="128" rx="2"/>
+        <circle cx="70" cy="70" r="18" fill="#93DDB8" stroke="#2B3550" stroke-width="3"/><text x="70" y="77" text-anchor="middle" class="clock" style="font-size:18px">+1</text>
+        <circle cx="132" cy="48" r="14" fill="#8EB8F5" stroke="#2B3550" stroke-width="3"/><circle cx="140" cy="100" r="14" fill="#F25C54" stroke="#2B3550" stroke-width="3"/><circle cx="140" cy="102" r="6" fill="#2B3550"/>
+        <line class="aim" x1="22" y1="118" x2="52" y2="86"/><circle class="red ball" cx="20" cy="120" r="9"/></svg>
+      <h2>Grab power-ups</h2><p>Roll over a bubble: extra ball, shield, block… but watch out for traps and bombs!</p>
     </div>
   </div>
   <div id="ob-dots" aria-hidden="true"></div>
@@ -921,6 +967,7 @@ function newGame(teams, arena) {
     else G.cells++;
   }
   G.owner = new Int8Array(NC).fill(-1);
+  G.pu = null; G.puWait = 2; G.slow = [0, 0]; G.shield = [false, false]; G.place = [false, false]; G.powerups = false; G.puSeq = 0;
   G.flashAt = new Float32Array(NC).fill(-9);
   const q = G.round ? 0.78 : 1;
   const homes = [[[0.2, 0.2], [0.45, 0.13], [0.13, 0.45]], [[0.8, 0.8], [0.55, 0.87], [0.87, 0.55]]];
@@ -935,6 +982,8 @@ const alive = (G, s) => G.balls.filter(b => !b.dead && b.team === s);
 
 // tir : la balle part dans la direction (dx, dy), force entre 0 et 1
 function shoot(G, ball, dx, dy, power) {
+  if (G.slow && G.slow[ball.team] > 0) { power *= SLOW_POWER; G.slow[ball.team]--; }   // piège ralenti : tir moins fort
+  if (G.shield && G.shield[ball.team]) { ball.shield = true; G.shield[ball.team] = false; }   // bouclier : ce tir-là
   const l = Math.hypot(dx, dy) || 1, sp = MAX_SPEED * Math.max(0.08, Math.min(1, power));
   ball.vx = dx / l * sp; ball.vy = dy / l * sp;
   if (ball.path) ball.path.push([ball.x, ball.y]);   // le trait ouvert repart d'ici (coin)
@@ -1146,9 +1195,14 @@ function step(G) {
     G.events.push({t: G.t, kind: 'clack'});
     any = true;
   }
-  // une balle adverse sur un trait : la balle qui l'a tracé meurt
+  // power-up : la première balle qui passe dessus le prend
+  if (G.pu) for (const b of live) {
+    if (b.dead || (!b.vx && !b.vy) || Math.hypot(b.x - G.pu.x, b.y - G.pu.y) > R + PU_R) continue;
+    takePower(G, b); break;
+  }
+  // une balle adverse sur un trait : la balle qui l'a tracé meurt (sauf si elle a le bouclier)
   for (const a of live) for (const b of live) {
-    if (a.team === b.team || a.dead || b.dead || !a.path) continue;
+    if (a.team === b.team || a.dead || b.dead || !a.path || a.shield) continue;
     if (!a.vx && !a.vy && !b.vx && !b.vy) continue;   // rien ne bouge : rien de nouveau
     if (trailDist(b.x, b.y, a) < R) kill(G, a, b);
   }
@@ -1167,6 +1221,7 @@ function judge(G) {
 }
 function endShot(G) {
   G.moving = false;
+  turnEnd(G, G.side);
   if (G.side === 1) G.turn++;
   G.side = 1 - G.side;
   G.over = judge(G);
@@ -1176,10 +1231,102 @@ function endShot(G) {
 
 const pct = (G, s) => G.cells ? G.area[s] / G.cells : 0;
 
+/* ------------------------------ power-ups (Bazil 03/11) ------------------------------ */
+// Un seul sur la carte à la fois ; il apparaît tous les 3 à 5 tours et disparaît au bout de 8 tirs s'il n'est pas pris.
+// La balle qui passe dessus le prend pour son équipe (même poussée par une autre balle).
+const PU_R = 36;                 // rayon du power-up
+const PU_LIFE = 8;               // tirs avant qu'il disparaisse
+const SLOW_POWER = 0.55;         // piège ralenti : les 2 prochains tirs à 55 % de la force
+const BLOCK_H = 24;              // petit obstacle posé : carré de 48
+const POWERS = [                 // plus il est fort, plus il est rare
+  {kind: 'bonus', w: 30}, {kind: 'slow', w: 25}, {kind: 'block', w: 17}, {kind: 'deflect', w: 15}, {kind: 'shield', w: 8}, {kind: 'bomb', w: 5}];
+function pickPower() {
+  let r = Math.random() * POWERS.reduce((a, p) => a + p.w, 0);
+  for (const p of POWERS) if ((r -= p.w) < 0) return p.kind;
+  return 'bonus';
+}
+// distance d'un point au bord de l'arène (positif = dedans)
+function wallGap(G, x, y) {
+  const Z = G.Z;
+  return G.round ? Z.r - Math.hypot(x - Z.cx, y - Z.cy) : Math.min(x - Z.x0, Z.x1 - x, y - Z.y0, Z.y1 - y);
+}
+function obsGap(o, x, y) {
+  if (o.type === 'rect') return Math.hypot(Math.max(o.x0 - x, 0, x - o.x1), Math.max(o.y0 - y, 0, y - o.y1));
+  return Math.hypot(x - o.x, y - o.y) - o.r;
+}
+function freeSpot(G, x, y, wall, obs, ball) {
+  if (wallGap(G, x, y) < wall) return false;
+  if (G.obs.some(o => obsGap(o, x, y) < obs)) return false;
+  return !G.balls.some(b => !b.dead && Math.hypot(b.x - x, b.y - y) < ball);
+}
+function spawnPower(G) {
+  for (let i = 0; i < 60; i++) {
+    const x = G.Z.cx + (Math.random() - 0.5) * BOX.size * 0.8, y = G.Z.cy + (Math.random() - 0.5) * BOX.size * 0.8;
+    if (!freeSpot(G, x, y, 70, 50, 3 * R)) continue;
+    G.pu = {kind: pickPower(), x, y, left: PU_LIFE, seed: Math.random(), id: ++G.puSeq};
+    G.events.push({t: G.t, kind: 'pu-spawn', p: G.pu.kind, x, y});
+    return;
+  }
+}
+// fin du tour de l'équipe s : le bouclier s'éteint, la balle bonus disparaît, les power-ups apparaissent / s'en vont
+function turnEnd(G, s) {
+  for (const b of G.balls) if (b.team === s) b.shield = false;
+  for (const b of G.balls) if (!b.dead && b.temp && b.team === s && --b.temp <= 0) {
+    b.dead = true; b.gone = true; b.path = null; b.vx = b.vy = 0;
+    G.events.push({t: G.t, kind: 'bonus-gone', team: s, x: b.x, y: b.y});
+    if (!alive(G, s).length) { for (let k = 0; k < NC; k++) if (G.owner[k] === s) G.owner[k] = -1; G.area[s] = 0; }
+  }
+  if (!G.powerups || G.timeUp) return;
+  if (G.pu) { if (--G.pu.left <= 0) { G.events.push({t: G.t, kind: 'pu-gone', x: G.pu.x, y: G.pu.y}); G.pu = null; G.puWait = 2; } }
+  else if (--G.puWait <= 0) { spawnPower(G); G.puWait = 3 + Math.floor(Math.random() * 3); }
+}
+function takePower(G, b) {
+  const p = G.pu, t = b.team;
+  G.pu = null; G.puWait = 3 + Math.floor(Math.random() * 3);
+  G.events.push({t: G.t, kind: 'power', p: p.kind, team: t, x: p.x, y: p.y});
+  if (p.kind === 'bonus') {          // une balle en plus, le temps d'un tir de son équipe, puis elle disparaît
+    G.balls.push({team: t, x: p.x, y: p.y, vx: 0, vy: 0, path: null, dead: false, temp: t === G.side ? 2 : 1});
+  } else if (p.kind === 'slow') G.slow[t] = 2;
+  else if (p.kind === 'shield') G.shield[t] = true;
+  else if (p.kind === 'block') G.place[t] = true;
+  else if (p.kind === 'bomb') { if (!b.shield) kill(G, b, null); }
+  else if (p.kind === 'deflect') {   // part dans une autre direction, même vitesse (angle tiré du power-up : la prévision reste juste)
+    const a = (Math.PI / 3 + p.seed * Math.PI / 2) * (p.seed < 0.5 ? 1 : -1), c = Math.cos(a), sn = Math.sin(a);
+    [b.vx, b.vy] = [b.vx * c - b.vy * sn, b.vx * sn + b.vy * c];
+    if (b.path) b.path.push([b.x, b.y]);
+  }
+}
+// petit obstacle posé par un joueur : jamais près d'un mur, d'un autre obstacle ou d'une balle (personne ne peut être enfermé)
+function canPlace(G, x, y) { return freeSpot(G, x, y, 150, 130, R + BLOCK_H + 40) && !(G.pu && Math.hypot(G.pu.x - x, G.pu.y - y) < 90); }
+function placeBlock(G, s, x, y) {
+  if (!G.place[s] || !canPlace(G, x, y)) return false;
+  const o = {type: 'rect', x0: x - BLOCK_H, y0: y - BLOCK_H, x1: x + BLOCK_H, y1: y + BLOCK_H, placed: s};
+  G.obs = [...G.obs, o]; G.block = G.block.slice(); G.cblock = null; G.place[s] = false;
+  for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+    const cx = BOX.x0 + (i + 0.5) * CELL, cy = BOX.y0 + (j + 0.5) * CELL, k = j * N + i;
+    if (G.block[k] || cx < o.x0 || cx > o.x1 || cy < o.y0 || cy > o.y1) continue;
+    G.block[k] = 2; G.cells--;
+    if (G.owner[k] >= 0) { G.area[G.owner[k]]--; G.owner[k] = -1; }
+  }
+  G.events.push({t: G.t, kind: 'placed', team: s, x, y});
+  return true;
+}
+// l'ordi pose son obstacle : près des balles adverses (pour les gêner), à un endroit permis
+function aiPlace(G, s) {
+  const foes = alive(G, 1 - s);
+  for (let i = 0; i < 200; i++) {
+    const f = foes[i % Math.max(1, foes.length)], d = 130 + Math.random() * 120, a = Math.random() * Math.PI * 2;
+    const x = f ? f.x + Math.cos(a) * d : G.Z.cx, y = f ? f.y + Math.sin(a) * d : G.Z.cy;
+    if (placeBlock(G, s, x, y)) return true;
+  }
+  for (let i = 0; i < 400; i++) if (placeBlock(G, s, G.Z.cx + (Math.random() - 0.5) * BOX.size, G.Z.cy + (Math.random() - 0.5) * BOX.size)) return true;
+  G.place[s] = false; return false;
+}
+
 /* ------------------------------ l'ordi ------------------------------ */
 
 function cloneGame(G) {
-  return {...G, events: [], kills: [...G.kills], shots: [...G.shots], area: [...G.area],
+  return {...G, events: [], kills: [...G.kills], shots: [...G.shots], area: [...G.area], slow: [...G.slow], shield: [...G.shield], place: [...G.place],
     owner: G.owner.slice(), flashAt: G.flashAt,   // flashAt n'est que pour le dessin : partagé
     balls: G.balls.map(b => ({...b, path: b.path ? b.path.map(p => [...p]) : null}))};
 }
@@ -1205,6 +1352,7 @@ function evaluate(S, s, before, trailW = 30) {
   if (!alive(S, s).length) v -= 1e6;
   for (const b of alive(S, s)) { const l = trailLen(b); v -= trailW * l + (l > 4 * R ? trailW * 100 : 0); }   // trait ouvert = risque : finir avec un tout petit trait
   for (const b of alive(S, o)) v += 1.5 * trailLen(b);   // trait adverse ouvert = cible
+  for (const e of S.events) if (e.kind === 'power') v += (e.team === s ? 1 : -1) * ({bonus: 4000, shield: 2500, block: 1500, slow: -3000, deflect: 0, bomb: 0}[e.p] || 0);
   return v;
 }
 // 3 niveaux (Bazil, 30/10) : combien de tirs l'ordi essaie, s'il protège ses traits, s'il prend le meilleur, s'il vise juste
@@ -1330,9 +1478,11 @@ const RANK = (() => {
 let PLAYER = 'Turkey', CPU = 'United States', NAMES = ['TURKEY', 'USA'];
 // mode : 'cpu' (contre l'ordi) ou '2p' (2 joueurs sur le même écran) ; niveau de l'ordi : easy / medium / hard (Bazil, 30/10)
 let MODE = 'cpu', LEVEL = 'medium', PLAYER2 = null;
-try { MODE = localStorage.getItem('cc-mode') === '2p' ? '2p' : 'cpu'; LEVEL = ['easy', 'medium', 'hard'].includes(localStorage.getItem('cc-level')) ? localStorage.getItem('cc-level') : 'medium'; PLAYER2 = localStorage.getItem('cc-p2'); } catch (e) {}
+try { MODE = ['2p', 'cup'].includes(localStorage.getItem('cc-mode')) ? localStorage.getItem('cc-mode') : 'cpu'; LEVEL = ['easy', 'medium', 'hard'].includes(localStorage.getItem('cc-level')) ? localStorage.getItem('cc-level') : 'medium'; PLAYER2 = localStorage.getItem('cc-p2'); } catch (e) {}
 if (PLAYER2 && !COUNTRIES.some(c => c.name === PLAYER2)) PLAYER2 = null;   // pays retiré depuis
 const human = s => MODE === '2p' || s === 0;   // qui joue avec le doigt ?
+const vsCpu = () => MODE !== '2p';               // contre l'ordi : VS CPU ou World Cup (classement, trophées, pseudo)
+const aiLevel = () => MODE === 'cup' ? CUP_LEVELS[Math.min(3, CUP.get().round)] : LEVEL;
 const BANNED = [['India', 'Pakistan'], ['Morocco', 'Algeria'], ['Turkey', 'Greece'], ['Russia', 'Ukraine']];   // comme gen.js
 const short = n => ({'United States': 'USA'}[n] || n).toUpperCase();
 const famOf = hex => {             // famille de couleur d'une couleur de drapeau (comme gen.js)
@@ -1356,6 +1506,53 @@ function pickOpponent(me) {
   for (let i = 0; i < pool.length; i++) if ((r -= w[i]) < 0) return pool[i].name;
   return pool[0].name;
 }
+/* ------------------------------ World Cup (Bazil 03/11) ------------------------------ */
+// 4 matchs contre l'ordi : huitièmes, quarts, demi, finale ; l'ordi devient plus fort à chaque tour ; une défaite = éliminé.
+const ROUND_NAMES = ['ROUND OF 16', 'QUARTER-FINAL', 'SEMI-FINAL', 'FINAL'], CUP_LEVELS = ['easy', 'medium', 'medium', 'hard'];
+const CUP_BIG = ['Brazil', 'Argentina', 'France', 'Germany', 'Spain', 'England', 'Italy', 'Portugal'];   // la finale : contre un grand
+const CUP = (() => {
+  let c = null; try { c = JSON.parse(localStorage.getItem('cc-cup') || 'null'); } catch (e) {}
+  const save = () => { try { localStorage.setItem('cc-cup', JSON.stringify(c)); } catch (e) {} };
+  function drawOpps(me) {
+    const ok = n => n !== me && !BANNED.some(([x, y]) => (x === me && y === n) || (y === me && x === n));
+    const pool = COUNTRIES.map(x => x.name).filter(ok), big = CUP_BIG.filter(ok);
+    const fin = big[Math.floor(Math.random() * big.length)] || pool[0], rest = pool.filter(n => n !== fin).sort(() => Math.random() - 0.5);
+    return [rest[0], rest[1], rest[2], fin];
+  }
+  return {
+    get: () => c || {round: 0, opps: [], country: ''},
+    ensure(me) { if (!c || c.country !== me || c.out != null || c.champion) { c = {country: me, opps: drawOpps(me), round: 0, out: null, champion: false}; save(); } },
+    opponent() { if (!c || c.country !== PLAYER) this.ensure(PLAYER); return c.opps[Math.min(3, c.round)]; },
+    // fin d'un match de la Coupe → texte sous le résultat + bouton
+    result(w) {
+      const r = c.round;
+      if (w === 0) {
+        c.round++;
+        if (c.round >= 4) { c.champion = true; TRO.addCup(); save(); if (typeof window.gtag === 'function') window.gtag('event', 'cup_won'); return {sub: 'WORLD CHAMPION! The cup is yours.', btn: 'NEW CUP'}; }
+        save(); return {sub: `${ROUND_NAMES[c.round][0] + ROUND_NAMES[c.round].slice(1).toLowerCase()} next: ${label(c.opps[c.round])}`, btn: 'NEXT MATCH'};
+      }
+      if (w === 1) { c.out = r; save(); if (typeof window.gtag === 'function') window.gtag('event', 'cup_out', {round: r}); return {sub: `Out in the ${ROUND_NAMES[r].toLowerCase()}. Try again!`, btn: 'TRY AGAIN'}; }
+      return {sub: 'Draw! Replay the match.', btn: 'REPLAY'};
+    },
+  };
+})();
+function showCup() {
+  const c = CUP.get(), list = $('#cup-path');
+  $('#cup-flag').src = flagOf(PLAYER, undefined, 256).toDataURL();
+  $('#cup-sub').textContent = c.champion ? 'World Champion! Play a new cup?' : c.out != null ? 'Eliminated. Try again!' : 'Win 4 matches in a row to lift the cup.';
+  list.replaceChildren();
+  ROUND_NAMES.forEach((rn, i) => {
+    const st = c.champion || i < c.round ? 'won' : i === c.round ? (c.out === i ? 'lost' : 'next') : 'todo';
+    const li = document.createElement('li'), r = document.createElement('span'), im = new Image(), nm = document.createElement('b'), tag = document.createElement('em');
+    li.dataset.st = st; r.textContent = rn; im.src = flagOf(c.opps[i], undefined, 96).toDataURL(); im.alt = '';
+    nm.textContent = label(c.opps[i]); tag.textContent = {won: 'WON', next: 'NEXT', lost: 'OUT', todo: ''}[st];
+    li.append(r, im, nm, tag); list.append(li);
+  });
+  $('#cup-go').textContent = c.champion ? 'NEW CUP' : c.out != null ? 'TRY AGAIN' : 'PLAY ' + ROUND_NAMES[c.round];
+  $('#cup').hidden = false; document.body.classList.add('picking');
+}
+function cupNext() { nextLeft = null; showCup(); }   // le tableau montre d'abord le résultat (champion, éliminé) ; le bouton relance une coupe
+
 // couleurs de terrain : celle du drapeau ; si les deux se ressemblent, l'ordi prend une autre couleur de son drapeau
 function teamColors(a, b) {
   const ca = COUNTRIES.find(c => c.name === a), cb = COUNTRIES.find(c => c.name === b);
@@ -1457,16 +1654,16 @@ function pick(list, not) { const l = list.filter(x => x !== not); return l[Math.
 function newMatch() {
   if (play && play.started && state !== 'over') { trophyResult('abandon'); track('abandon'); }
   matchBreaks = 0;
-  CPU = MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
-  $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : 'VS CPU · ' + LEVEL.toUpperCase();
+  CPU = MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : MODE === 'cup' ? CUP.opponent() : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
+  $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : MODE === 'cup' ? 'WORLD CUP · ' + ROUND_NAMES[Math.min(3, CUP.get().round)] : 'VS CPU · ' + LEVEL.toUpperCase();
   const fams = teamColors(PLAYER, CPU); TEAM_COL = fams.map(f => FAM[f]);
   const white = fams.includes('white');            // une équipe blanche : arène vide en couleur, pas en crème
   themeName = pick(Object.keys(THEMES), lastTheme); lastTheme = themeName;
   const arena = pick(ARENAS, lastArena); lastArena = arena;
   T = {...THEMES[themeName]}; if (white) T.EMPTY = T.EMPTY_W;
   flags = [flagOf(PLAYER), flagOf(CPU)];
-  G = newGame([PLAYER, CPU], arena);
-  fx = {pops: [], shards: [], confetti: [], rings: []};
+  G = newGame([PLAYER, CPU], arena); G.powerups = true;   // power-ups dans tous les modes (Bazil 03/11)
+  fx = {pops: [], shards: [], confetti: [], rings: [], words: []};
   gridDirty = true; flashUntil = 0; turnWait = 0; nextLeft = null; handoff = false; $('#pass').hidden = true;
   $('#again').style.setProperty('--p', 0); $('#next-in').textContent = '';
   state = 'aim'; aim = null; ai = null; slow = null; timeLeft = GAME_TIME; timerOn = false; lastTick = 99;
@@ -1483,7 +1680,7 @@ function newMatch() {
   }
   $('#end').hidden = true;
   for (const s of [0, 1]) delete $('#balls' + s).dataset.n;
-  play = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), startedAt: Date.now(), arena, theme: themeName, country: PLAYER, opponent: CPU, mode: MODE, level: MODE === '2p' ? '' : LEVEL};
+  play = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), startedAt: Date.now(), arena, theme: themeName, country: PLAYER, opponent: CPU, mode: MODE, level: MODE === '2p' ? '' : aiLevel()};
   cpuAim = null;
   hud();
 }
@@ -1497,8 +1694,14 @@ function hud() {
     const box = $('#balls' + s), n = alive(G, s).length;
     if (box.dataset.n !== String(n)) {
       box.dataset.n = n; box.replaceChildren();
-      for (let i = 0; i < BALLS; i++) { const im = new Image(); im.src = flags[s].toDataURL(); im.alt = ''; if (i >= n) im.className = 'gone'; box.append(im); }
+      for (let i = 0; i < Math.max(BALLS, n); i++) { const im = new Image(); im.src = flags[s].toDataURL(); im.alt = ''; if (i >= n) im.className = 'gone'; box.append(im); }
     }
+  }
+  for (const s of [0, 1]) {   // effets en cours (power-ups)
+    const t = [G.slow[s] ? 'SLOW ×' + G.slow[s] : '', G.shield[s] || G.balls.some(b => b.team === s && b.shield && !b.dead) ? 'SHIELD' : '', G.place[s] ? 'BLOCK' : '',
+      G.balls.some(b => b.team === s && b.temp && !b.dead) ? '+1 BALL' : ''].filter(Boolean);
+    const el = $('#fx' + s), txt = t.join(' · ');
+    if (el.textContent !== txt) el.textContent = txt;
   }
   const sec = Math.ceil(timeLeft), tm = $('#turn');
   tm.textContent = `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, '0')}`;
@@ -1506,10 +1709,11 @@ function hud() {
   const st = $('#status');
   if (state === 'over') st.textContent = '';
   else if (clock < slowMsgUntil) {}
+  else if (state === 'place' && !handoff) { st.textContent = 'PLACE BLOCK'; st.dataset.side = 0; }
   else if (MODE === '2p' && !G.moving) { st.textContent = NAMES[G.side] + "'S TURN"; st.dataset.side = 0; }
   else if (G.side === 0 && !G.moving) { st.textContent = 'YOUR TURN'; st.dataset.side = 0; }
   else if (G.side === 1 && !G.moving) { st.textContent = 'THINKING…'; st.dataset.side = 1; }
-  const myTurn = timerOn && human(G.side) && !G.moving && state === 'aim' && !G.over && !handoff;
+  const myTurn = timerOn && human(G.side) && !G.moving && (state === 'aim' || state === 'place') && !G.over && !handoff;
   $('#turnbar').hidden = !myTurn;
   if (myTurn) $('#turnbar i').style.transform = `scaleX(${Math.max(0, 1 - turnWait / TURN_LIMIT)})`;
   $('#hint').classList.toggle('rules', tutoDone);   // après le 1er tir : la règle du jeu au lieu des commandes
@@ -1525,6 +1729,12 @@ function toWorld(e) {
 }
 cv.addEventListener('pointerdown', e => {
   audio();
+  if (state === 'place' && human(G.side) && !G.moving && !handoff) {    // power-up « bloc » : on le pose où on touche
+    const [px, py] = toWorld(e);
+    if (placeBlock(G, G.side, px, py)) { state = 'aim'; turnWait = 0; sounds(G.events); G.events = []; hud(); }
+    else { word('TOO CLOSE!', INK, px, py); tone(196, 0.1, 0.15, 'square'); nudge(); }
+    e.preventDefault(); return;
+  }
   if (state !== 'aim' || !human(G.side) || G.moving || handoff) return;
   const [x, y] = toWorld(e);
   let best = null, bd = R * (isPhone ? 3.2 : 2.2);
@@ -1551,7 +1761,7 @@ cv.addEventListener('pointerup', release);
 cv.addEventListener('pointercancel', () => { aim = null; });
 function nudge() { const h = $('#hint'); h.classList.remove('shake'); void h.offsetWidth; h.classList.add('shake'); }
 
-$('#again').addEventListener('click', () => { audio(); newMatch(); });
+$('#again').addEventListener('click', () => { audio(); if (MODE === 'cup') cupNext(); else newMatch(); });
 // fin de partie : comme Netflix, la partie suivante se lance toute seule après 5 s
 const NEXT_IN = 5, NEXT_IN_RANK = 9, NEXT_IN_MAIL = 15;   // avec le classement : un peu plus de temps pour lire ; avec la demande d'e-mail : le temps de l'écrire (Bazil 02/11)
 let nextLeft = null, nextTotal = NEXT_IN;
@@ -1583,6 +1793,18 @@ function sounds(events) {
     if (ev.kind === 'clack') tone(900, 0.08, 0.06, 'square');
     if (ev.kind === 'shoot') noise(0.18, 0.25, 900);
     if (ev.kind === 'cut' || ev.kind === 'dead') { gridDirty = true; flashUntil = G.t + 0.4; }
+    if (ev.kind === 'pu-spawn') { [880, 1175].forEach((f, i) => tone(f, 0.08, 0.12, 'triangle', i * 0.07)); fx.rings.push({x: ev.x, y: ev.y, t: clock, team: -1}); }
+    if (ev.kind === 'pu-gone' || ev.kind === 'bonus-gone') { fx.pops.push({x: ev.x, y: ev.y, t: clock}); tone(330, 0.07, 0.12, 'triangle'); }
+    if (ev.kind === 'placed') { gridDirty = true; tone(150, 0.16, 0.2, 'square'); tone(110, 0.12, 0.25, 'triangle', 0.05); }
+    if (ev.kind === 'power') {
+      const P = PU[ev.p], good = ev.p === 'bonus' || ev.p === 'shield' || ev.p === 'block';
+      word(P.word, ev.p === 'bomb' || ev.p === 'slow' ? '#F25C54' : TEAM_COL[ev.team], ev.x, ev.y - 40);
+      if (good) [1, 1.25, 1.5, 2].forEach((m, i) => tone(523 * m, 0.12, 0.18, 'triangle', i * 0.06));
+      else if (ev.p === 'deflect') [700, 520, 900].forEach((f, i) => tone(f, 0.1, 0.1, 'sine', i * 0.05));
+      else if (ev.p === 'slow') [392, 330, 262, 196].forEach((f, i) => tone(f, 0.12, 0.2, 'square', i * 0.09));
+      fx.rings.push({x: ev.x, y: ev.y, t: clock, team: ev.team});
+      if (ev.p === 'block' && !human(ev.team)) {}   // l'ordi le pose au début de son tour
+    }
     if (ev.kind === 'cut') {
       const m = Math.min(2, 1 + ev.gained / 30000);
       [1, 1.25, 1.5].forEach((x, i) => tone(NOTES[ev.team] * x * m, 0.17, 0.4, 'triangle', i * 0.05));
@@ -1687,13 +1909,13 @@ let acc = 0, prev = null;
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = prev ? Math.min(0.05, (now - prev) / 1000) : 0; prev = now;
-  if (!$('#picker').hidden || !$('#onboard').hidden || !$('#name-screen').hidden) return;   // menu ouvert : la partie est en pause
+  if (!$('#picker').hidden || !$('#onboard').hidden || !$('#name-screen').hidden || !$('#cup').hidden) return;   // menu ouvert : la partie est en pause
   clock += dt;
   if (nextLeft !== null && $('#picker').hidden && $('#onboard').hidden) {   // compte à rebours de fin (rAF s'arrête tout seul si l'onglet est caché)
     nextLeft -= dt;
     $('#again').style.setProperty('--p', Math.min(1, 1 - nextLeft / nextTotal));
     $('#next-in').textContent = 'Next match in ' + Math.max(1, Math.ceil(nextLeft)) + '…';
-    if (nextLeft <= 0) { nextLeft = null; newMatch(); }
+    if (nextLeft <= 0) { nextLeft = null; if (MODE === 'cup') cupNext(); else newMatch(); }
   }
   const cam = camNow();
   if (timerOn && state !== 'over' && !G.timeUp && !handoff) {
@@ -1706,7 +1928,7 @@ function frame(now) {
     }
     hud();
   }
-  if (timerOn && human(G.side) && !G.moving && state === 'aim' && !G.over && !G.timeUp && !handoff) {
+  if (timerOn && human(G.side) && !G.moving && (state === 'aim' || state === 'place') && !G.over && !G.timeUp && !handoff) {
     turnWait += dt;
     if (turnWait >= TURN_LIMIT) passTurn();
   }
@@ -1721,10 +1943,14 @@ function frame(now) {
   draw();
 }
 function passTurn() {
-  aim = null; turnWait = 0; if (G.side === 1) G.turn++; G.side = 1 - G.side;
+  if (state === 'place') { aiPlace(G, G.side); state = 'aim'; }   // pas posé à temps : il se pose tout seul
+  aim = null; turnWait = 0; turnEnd(G, G.side); sounds(G.events); G.events = [];
+  if (G.side === 1) G.turn++; G.side = 1 - G.side;
+  G.over = judge(G); if (G.over) return finish(G.over);
   tone(196, 0.12, 0.18, 'square'); tone(147, 0.12, 0.25, 'square', 0.12);
   const st = $('#status'); st.textContent = 'TOO SLOW!'; st.dataset.side = 'slow'; slowMsgUntil = clock + 1.2;
   if (MODE === '2p') startHandoff();
+  beginTurn();
   hud();
 }
 // 2 joueurs : écran « passe le téléphone » entre 2 tours ; le chrono de la partie et celui du tour sont en pause
@@ -1740,13 +1966,21 @@ function afterShot() {
   slow = null; turnWait = 0;
   G.t += 0.4; gridDirty = true;                    // les flashs de la dernière coupe vont jusqu'au bout
   const over = endShot(G);
+  sounds(G.events); G.events = [];
   if (play) track('turn');
   if (over) return finish(over);
   if (MODE === '2p' && timerOn && !G.timeUp) startHandoff();
+  beginTurn();
   hud();
 }
+// début d'un tour : power-up « bloc » à poser (le joueur touche l'arène ; l'ordi le pose tout seul)
+function beginTurn() {
+  if (G.over || !G.place[G.side] || G.timeUp) return;
+  if (human(G.side)) { state = 'place'; turnWait = 0; }
+  else { aiPlace(G, G.side); sounds(G.events); G.events = []; }
+}
 function cpuTurn(dt) {
-  if (!ai) ai = {it: aiPlan(G, 1, LEVEL), res: null, wait: 0};
+  if (!ai) ai = {it: aiPlan(G, 1, aiLevel()), res: null, wait: 0};
   ai.wait += dt;
   if (!ai.res) { const r = ai.it.next(); if (r.done) ai.res = r.value; }   // un morceau du calcul par image
   if (!ai.res || ai.wait < 0.7) return;
@@ -1762,10 +1996,11 @@ let cpuAim = null;
 function finish(over) {
   if (state === 'over') return;
   state = 'over'; G.over = over; cpuAim = null;
-  const w = over.winner, play0 = {mode: MODE, level: LEVEL, country: PLAYER};   // réglages de la partie (le menu peut les changer après)
+  const w = over.winner, play0 = {mode: MODE, level: aiLevel(), country: PLAYER};   // réglages de la partie (le menu peut les changer après)
   const fresh = trophyResult(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw');
   $('#trophy-new').hidden = !fresh.length;
   maybeAskMail();
+  const cupMsg = MODE === 'cup' ? CUP.result(w) : null;   // World Cup : on avance, on est éliminé, ou on rejoue
   if (fresh.length) $('#trophy-new').textContent = '🏆 ' + fresh.map(t => `${t.name} unlocked!`).join(' ') + ' New accessory in Trophies.';
   track(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw', over.reason);
   winSound(w);
@@ -1783,11 +2018,14 @@ function finish(over) {
     $('#end-title').textContent = w < 0 ? 'DRAW' : NAMES[w] + ' WINS';
     const them = CPU === 'United States' ? 'the USA' : CPU;
     $('#end-sub').textContent = MODE === '2p' ? (w < 0 ? 'Nobody wins this time.' : `Player ${w + 1} wins!`)
+      : cupMsg ? cupMsg.sub
       : w === 0 ? `You beat ${them}!` : w === 1 ? `${them[0].toUpperCase() + them.slice(1)} beat you. Try again!` : 'Nobody wins this time.';
+    $('#again .lbl').textContent = cupMsg ? cupMsg.btn : 'PLAY AGAIN';
     $('#end-why').textContent = {eliminated: 'All balls destroyed', time: `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%`}[over.reason];
     e.hidden = false; $('#again').focus({preventScroll: true});
     nextLeft = nextTotal = $('#mail-box').hidden ? NEXT_IN : NEXT_IN_MAIL;
     rankEnd(w, play0);
+    if (!$('#mail-box').hidden) e.classList.add('ranked');   // carte haute (e-mail) : en plein écran, sinon elle déborde de l'arène
   }, 1100);
   hud();
 }
@@ -1799,7 +2037,7 @@ const label = n => n === 'United States' ? 'USA' : n;
 function rankEnd(w, p) {
   const card = $('#end .card'), G0 = G;
   $('#rank-box').hidden = true; card.classList.remove('ranked'); $('#end').classList.remove('ranked');
-  const counts = p.mode === 'cpu' && w === 0;
+  const counts = p.mode !== '2p' && w === 0;
   if (counts && RANK.name()) submitWin(p, G0); else showRanking(p, G0, null, counts ? 'noname' : null);
 }
 function submitWin(p, G0) {
@@ -1888,7 +2126,7 @@ function draw() {
   const line = T.LINE || T.FG;
   ctx.lineWidth = 7; ctx.strokeStyle = INK; arenaPath(ctx, 3); ctx.stroke();
   for (const o of G.obs) {
-    ctx.fillStyle = T.OBST; ctx.beginPath();
+    ctx.fillStyle = o.placed !== undefined ? lighten(TEAM_COL[o.placed], 0.35) : T.OBST; ctx.beginPath();
     if (o.type === 'rect') ctx.rect(o.x0, o.y0, o.x1 - o.x0, o.y1 - o.y0); else ctx.arc(o.x, o.y, o.r, 0, Math.PI * 2);
     ctx.fill(); ctx.stroke();
   }
@@ -1902,7 +2140,7 @@ function draw() {
   // effets
   for (const r of fx.rings) {
     const a = clock - r.t; if (a > 0.6) continue;
-    ctx.globalAlpha = 1 - a / 0.6; ctx.strokeStyle = TEAM_COL[r.team]; ctx.lineWidth = 8;
+    ctx.globalAlpha = 1 - a / 0.6; ctx.strokeStyle = r.team < 0 ? INK : TEAM_COL[r.team]; ctx.lineWidth = r.team < 0 ? 5 : 8;
     ctx.beginPath(); ctx.arc(r.x, r.y, 20 + a * 260, 0, Math.PI * 2); ctx.stroke();
   }
   for (const p of fx.pops) {
@@ -1917,6 +2155,7 @@ function draw() {
     ctx.beginPath(); ctx.moveTo(x - Math.cos(r) * h, y - Math.sin(r) * h); ctx.lineTo(x + Math.cos(r) * h, y + Math.sin(r) * h); ctx.stroke();
   }
   ctx.globalAlpha = 1;
+  if (G.pu) drawPower(ctx, G.pu.kind, G.pu.x, G.pu.y, PU_R, G.pu.left <= 2 && Math.sin(clock * 12) < 0 ? 0.35 : 1, true);
   // visée (toi ou l'ordi) : dessinée AVANT les balles, la flèche part de derrière le drapeau (Bazil 02/11)
   if (aim) drawAim(aim.ball, aim.ball.x - aim.x, aim.ball.y - aim.y, Math.min(1, Math.hypot(aim.ball.x - aim.x, aim.ball.y - aim.y) / MAX_PULL), true);
   if (cpuAim) { const k2 = Math.min(1, (clock - cpuAim.t) / 0.45); drawAim(cpuAim.ball, Math.cos(cpuAim.ang), Math.sin(cpuAim.ang), cpuAim.p * k2, false); }
@@ -1928,10 +2167,28 @@ function draw() {
       ctx.beginPath(); ctx.arc(b.x, b.y, R + 9, 0, Math.PI * 2); ctx.stroke(); ctx.globalAlpha = 1;
     }
     ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(b.x + R * 0.22, b.y + R * 0.22, R, 0, Math.PI * 2); ctx.fill();   // ombre dure, style autocollant
+    if (b.shield) { ctx.fillStyle = '#8EB8F5'; ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(b.x, b.y, R + 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); }   // bouclier
+    if (b.temp) { ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.setLineDash([7, 7]); ctx.beginPath(); ctx.arc(b.x, b.y, R + 8, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); }   // balle bonus
     ctx.drawImage(flags[b.team], b.x - R, b.y - R, R * 2, R * 2);
-    if (b.team === 0 && MODE === 'cpu') drawAcc(ctx, TRO.equipped(), b.x, b.y, R);   // accessoire du trophée
+    if (b.team === 0 && vsCpu()) drawAcc(ctx, TRO.equipped(), b.x, b.y, R);
+    if (b.temp) { ctx.font = '700 22px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 6; ctx.strokeStyle = INK; ctx.strokeText('+1', b.x + R, b.y - R + 4); ctx.fillStyle = '#93DDB8'; ctx.fillText('+1', b.x + R, b.y - R + 4); }   // accessoire du trophée
   }
   if (!tutoDone && state === 'aim' && G.side === 0 && !G.moving && !aim) drawTuto();
+  // mots qui sautent (power-ups)
+  for (const w of fx.words) {
+    const a = clock - w.t; if (a > 1.3) continue;
+    const k = Math.min(1, a / 0.15), y = w.y - a * 50;
+    ctx.globalAlpha = a > 1 ? 1 - (a - 1) / 0.3 : 1;
+    ctx.font = `700 ${Math.round(48 * (0.6 + 0.4 * k))}px Fredoka, sans-serif`; ctx.textAlign = 'center'; ctx.lineJoin = 'round';
+    const x = Math.max(160, Math.min(WORLD - 160, w.x));
+    ctx.lineWidth = 11; ctx.strokeStyle = INK; ctx.strokeText(w.text, x + 4, y + 4); ctx.strokeText(w.text, x, y);
+    ctx.fillStyle = w.col; ctx.fillText(w.text, x, y); ctx.globalAlpha = 1;
+  }
+  if (state === 'place' && human(G.side) && !handoff) {   // pose du bloc : la consigne dans l'arène
+    ctx.font = '700 46px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.lineJoin = 'round';
+    const y = 120 + Math.sin(clock * 4) * 6;
+    ctx.lineWidth = 11; ctx.strokeStyle = INK; ctx.strokeText('TAP TO PLACE YOUR BLOCK', WORLD / 2, y); ctx.fillStyle = '#FFD45C'; ctx.fillText('TAP TO PLACE YOUR BLOCK', WORLD / 2, y);
+  }
   // confettis
   for (const c of fx.confetti) {
     const a = clock - c.t; if (a > 3) continue;
@@ -1997,6 +2254,47 @@ function drawAim(b, dx, dy, p, pull) {
   rrect(ctx, cx - w / 2 + 5, cy - h / 2 + 5, w, h, 16); ctx.fillStyle = INK; ctx.fill();
   rrect(ctx, cx - w / 2, cy - h / 2, w, h, 16); ctx.fillStyle = CREAM; ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke();
   ctx.fillStyle = INK; ctx.fillText(txt, cx, cy + 2); ctx.textBaseline = 'alphabetic';
+}
+
+/* ------------------------------ power-ups : apparence (Bazil 03/11) ------------------------------ */
+const PU = {
+  bonus: {col: '#93DDB8', label: '+1 BALL', word: '+1 BALL!'},
+  slow: {col: '#F4907F', label: 'SLOW TRAP', word: 'SLOWED!'},
+  block: {col: '#FFD45C', label: 'BLOCK', word: 'BLOCK!'},
+  deflect: {col: '#B7A6F2', label: 'DEFLECT', word: 'DEFLECTED!'},
+  shield: {col: '#8EB8F5', label: 'SHIELD', word: 'SHIELD!'},
+  bomb: {col: '#F25C54', label: 'BOMB', word: 'BOOM!'},
+};
+function word(text, col, x, y) { fx.words.push({text, col, x, y, t: clock}); }
+// pastille ronde avec son icône (+ son nom en dessous sur la carte)
+function drawPower(c, kind, x, y, r, alpha = 1, label = false) {
+  const P = PU[kind], k = 1 + 0.07 * Math.sin(clock * 4);
+  c.save(); c.globalAlpha *= alpha; c.translate(x, y); c.scale(k * r / 26, k * r / 26); r = 26;   // icônes dessinées pour un rayon de 26
+  c.lineJoin = 'round'; c.lineCap = 'round';
+  c.fillStyle = INK; c.beginPath(); c.arc(5, 5, r, 0, Math.PI * 2); c.fill();
+  c.fillStyle = P.col; c.strokeStyle = INK; c.lineWidth = 5; c.beginPath(); c.arc(0, 0, r, 0, Math.PI * 2); c.fill(); c.stroke();
+  c.lineWidth = 4; c.fillStyle = CREAM;
+  if (kind === 'bonus') { c.font = '700 26px Fredoka, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = INK; c.fillText('+1', 0, 2); }
+  else if (kind === 'slow') {     // sablier
+    c.beginPath(); c.moveTo(-10, -13); c.lineTo(10, -13); c.lineTo(-10, 13); c.lineTo(10, 13); c.closePath(); c.fill(); c.stroke();
+  } else if (kind === 'block') { c.beginPath(); c.rect(-10, -10, 20, 20); c.fill(); c.stroke(); }
+  else if (kind === 'deflect') {  // flèche qui tourne
+    c.beginPath(); c.arc(0, 2, 11, Math.PI * 1.05, Math.PI * 1.95); c.stroke();
+    c.beginPath(); c.moveTo(13, -9); c.lineTo(11, 3); c.lineTo(2, -3); c.closePath(); c.fillStyle = INK; c.fill();
+  } else if (kind === 'shield') {
+    c.beginPath(); c.moveTo(0, -14); c.lineTo(12, -9); c.quadraticCurveTo(12, 8, 0, 15); c.quadraticCurveTo(-12, 8, -12, -9); c.closePath(); c.fill(); c.stroke();
+  } else if (kind === 'bomb') {
+    c.fillStyle = INK; c.beginPath(); c.arc(-2, 3, 11, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = INK; c.beginPath(); c.moveTo(4, -6); c.quadraticCurveTo(9, -14, 14, -12); c.stroke();
+    c.fillStyle = '#FFD45C'; c.beginPath(); c.arc(15, -13, 4, 0, Math.PI * 2); c.fill();
+  }
+  c.restore();
+  if (label) {
+    c.save(); c.globalAlpha *= alpha; c.font = '800 23px Inter, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    const w = c.measureText(P.label).width + 18, ly = y + PU_R + 26;
+    rrect(c, x - w / 2, ly - 15, w, 30, 10); c.fillStyle = CREAM; c.fill(); c.lineWidth = 3; c.strokeStyle = INK; c.stroke();
+    c.fillStyle = INK; c.fillText(P.label, x, ly + 1); c.restore();
+  }
 }
 
 /* ------------------------------ stats (db) ------------------------------ */
@@ -2111,13 +2409,13 @@ const bannedPair = (a, b) => BANNED.some(([x, y]) => (x === a && y === b) || (y 
 function pickerUI() {
   for (const b of $('#mode-seg').children) b.setAttribute('aria-pressed', String(b.dataset.mode === MODE));
   for (const b of $('#level-seg').children) b.setAttribute('aria-pressed', String(b.dataset.level === LEVEL));
-  $('#level-seg').hidden = MODE === '2p' || pickStep === 2;
+  $('#level-seg').hidden = MODE !== 'cpu' || pickStep === 2;
   $('#mode-seg').hidden = pickStep === 2;
-  $('.pick-eyebrow').textContent = MODE !== '2p' ? 'CHOOSE YOUR COUNTRY' : pickStep === 1 ? 'PLAYER 1 · CHOOSE YOUR COUNTRY' : 'PLAYER 2 · CHOOSE YOUR COUNTRY';
+  $('.pick-eyebrow').textContent = MODE === 'cup' ? 'WORLD CUP · CHOOSE YOUR COUNTRY' : MODE !== '2p' ? 'CHOOSE YOUR COUNTRY' : pickStep === 1 ? 'PLAYER 1 · CHOOSE YOUR COUNTRY' : 'PLAYER 2 · CHOOSE YOUR COUNTRY';
   const bad = pickStep === 2 && (picked === PLAYER || bannedPair(PLAYER, picked));
   $('#pick-note').hidden = !bad;
   $('#pick-go').disabled = bad;
-  $('#pick-go').textContent = MODE === '2p' && pickStep === 1 ? 'NEXT' : 'PLAY';
+  $('#pick-go').textContent = MODE === '2p' && pickStep === 1 ? 'NEXT' : MODE === 'cup' ? 'START' : 'PLAY';
   if (typeof nameLine === 'function') nameLine();
   if (typeof trophyLine === 'function') trophyLine();
   $('#pick-player').hidden = $('#pick-player').hidden || pickStep === 2;
@@ -2146,6 +2444,7 @@ $('#pick-go').addEventListener('click', () => {
   else { PLAYER = saved = picked; try { localStorage.setItem('cc-country', picked); } catch (e) {} }
   if (typeof window.gtag === 'function') window.gtag('event', 'country_picked', {country: picked, mode: MODE, level: MODE === '2p' ? '' : LEVEL});
   $('#picker').hidden = true; document.body.classList.remove('picking');
+  if (MODE === 'cup') { CUP.ensure(PLAYER); showCup(); if (needName()) showNameScreen(); return; }   // World Cup : d'abord le tableau
   newMatch(); resize();
   if (needName()) showNameScreen(); else if (!obDone) showOnboard();
 });
@@ -2153,7 +2452,7 @@ $('#pick-go').addEventListener('click', () => {
 /* ------------------------------ pseudo pour le classement : juste après le choix du pays (Bazil, 30/10) ------------------------------ */
 // VS CPU : pseudo obligatoire (Bazil 02/11 : tout le monde classé), demandé une seule fois, puis gardé dans le navigateur.
 // Plus de code visible : un code caché (RANK.pin) protège le pseudo pour que personne d'autre ne le prenne.
-const needName = () => MODE === 'cpu' && !RANK.name();
+const needName = () => vsCpu() && !RANK.name();
 function showNameScreen(edit) {
   $('#ns-flag').src = flagOf(PLAYER, undefined, 256).toDataURL();
   $('#ns-in').value = RANK.name() || ''; $('#ns-err').textContent = '';
@@ -2198,7 +2497,7 @@ $('#ns-skip').addEventListener('click', closeNameScreen);
 // dans l'accueil : « Name: Bazil ✎ » pour changer (ou ajouter) son pseudo
 function nameLine() {
   const n = RANK.name(), b = $('#pick-player');
-  b.hidden = MODE !== 'cpu';
+  b.hidden = !vsCpu();
   b.replaceChildren(n ? 'Name: ' : 'Add your name for the ranking ', Object.assign(document.createElement('b'), {textContent: n || ''}), ' ✎');
 }
 $('#pick-player').addEventListener('click', () => { audio(); showNameScreen(true); });
@@ -2215,10 +2514,11 @@ const TROPHIES = [
   {id: 'devil', name: 'Devil', rarity: 'RARE', desc: 'Win 25 matches on Hard', acc: 'horns', goal: s => [s.winsHard, 25]},
   {id: 'fire', name: 'On Fire', rarity: 'VERY RARE', desc: 'Win 10 in a row on Hard', acc: 'flame', goal: s => [s.bestHard, 10]},
   {id: 'diamond', name: 'Diamond', rarity: 'LEGENDARY', desc: 'Win 100 matches on Hard', acc: 'diamond', goal: s => [s.winsHard, 100]},
+  {id: 'champion', name: 'World Champion', rarity: 'EPIC', desc: 'Win the World Cup', acc: 'cup', goal: s => [s.cups, 1]},
   {id: 'insider', name: 'Golden Crown', rarity: 'EXCLUSIVE', desc: 'Leave your e-mail after a win to get the app first', acc: 'crown', goal: s => [s.insider, 1]},
 ];
 const TRO = (() => {
-  const ZERO = {wins: 0, winsHard: 0, breaks: 0, streakMH: 0, bestMH: 0, streakHard: 0, bestHard: 0, flawless: 0, land90: 0, insider: 0, equip: ''};
+  const ZERO = {wins: 0, winsHard: 0, breaks: 0, streakMH: 0, bestMH: 0, streakHard: 0, bestHard: 0, flawless: 0, land90: 0, insider: 0, cups: 0, equip: ''};
   let st = {...ZERO};
   try { st = {...ZERO, ...JSON.parse(localStorage.getItem('cc-trophies') || '{}')}; } catch (e) {}
   const save = () => { try { localStorage.setItem('cc-trophies', JSON.stringify(st)); } catch (e) {} if (RANK.claimed()) RANK.saveProgress(st); };
@@ -2228,6 +2528,7 @@ const TRO = (() => {
     get: () => st, unlocked, done,
     equip: acc => { st.equip = acc; save(); },
     giveCrown: () => { st.insider = 1; st.equip = 'crown'; save(); },
+    addCup: () => { st.cups++; st.equip = 'cup'; save(); },
     equipped: () => (unlocked().some(t => t.acc === st.equip) ? st.equip : ''),
     // fin d'une partie contre l'ordi : 'win' | 'loss' | 'draw' | 'abandon' ; renvoie les trophées gagnés à l'instant
     result(kind, level, info) {
@@ -2257,8 +2558,8 @@ const TRO = (() => {
 })();
 let matchBreaks = 0;
 function trophyResult(kind) {
-  if (MODE !== 'cpu' || !play || !play.started) return [];
-  const fresh = TRO.result(kind, LEVEL, {breaks: matchBreaks, lost: BALLS - alive(G, 0).length, pct: pct(G, 0)});
+  if (!vsCpu() || !play || !play.started) return [];
+  const fresh = TRO.result(kind, aiLevel(), {breaks: matchBreaks, lost: BALLS - alive(G, 0).length, pct: pct(G, 0)});
   matchBreaks = 0;
   return fresh;
 }
@@ -2308,6 +2609,10 @@ function drawAcc(c, kind, x, y, r) {
     path([[-15, -18], [-17, -36], [-8, -27], [0, -40], [8, -27], [17, -36], [15, -18]]); c.fill(); c.stroke();
     c.fillStyle = '#E0241B'; c.beginPath(); c.arc(0, -24, 2.6, 0, Math.PI * 2); c.fill();
     c.fillStyle = '#fff'; for (const [px, py] of [[-17, -36], [0, -40], [17, -36]]) { c.beginPath(); c.arc(px, py, 2.2, 0, Math.PI * 2); c.fill(); c.stroke(); }
+  } else if (kind === 'cup') {      // petite coupe du monde dorée
+    c.fillStyle = '#FFC400'; c.strokeStyle = blk; c.lineWidth = 2.2;
+    c.beginPath(); c.moveTo(-11, -44); c.lineTo(11, -44); c.quadraticCurveTo(11, -28, 2, -26); c.lineTo(2, -22); c.lineTo(7, -22); c.lineTo(7, -18); c.lineTo(-7, -18); c.lineTo(-7, -22); c.lineTo(-2, -22); c.lineTo(-2, -26); c.quadraticCurveTo(-11, -28, -11, -44); c.closePath(); c.fill(); c.stroke();
+    c.beginPath(); c.moveTo(-11, -40); c.quadraticCurveTo(-18, -40, -16, -33); c.quadraticCurveTo(-14, -30, -9, -31); c.moveTo(11, -40); c.quadraticCurveTo(18, -40, 16, -33); c.quadraticCurveTo(14, -30, 9, -31); c.stroke();
   } else if (kind === 'diamond') {
     c.fillStyle = '#7FE3FF'; c.strokeStyle = blk; c.lineWidth = 2.2;
     path([[-12, -36], [-6, -42], [6, -42], [12, -36], [0, -22]]); c.fill(); c.stroke();
@@ -2341,7 +2646,7 @@ function showTrophies() {
 }
 $('#pick-trophies').addEventListener('click', () => { audio(); showTrophies(); });
 $('#tr-back').addEventListener('click', () => { $('#trophies').hidden = true; trophyLine(); });
-function trophyLine() { $('#pt-txt').textContent = `Trophies ${TRO.unlocked().length}/${TROPHIES.length}`; $('#pick-trophies').hidden = MODE !== 'cpu'; }
+function trophyLine() { $('#pt-txt').textContent = `Trophies ${TRO.unlocked().length}/${TROPHIES.length}`; $('#pick-trophies').hidden = !vsCpu(); }
 
 /* ------------------------------ e-mail en fin de partie : couronne dorée + l'appli en avant-première (02/11) ------------------------------ */
 // Jamais au début, jamais pendant la partie : à CHAQUE fin de partie (Bazil 02/11), tant qu'il n'a pas donné son e-mail,
@@ -2370,6 +2675,15 @@ $('#mail-form').addEventListener('submit', async e => {
   if (typeof window.gtag === 'function') window.gtag('event', 'email_given');
 });
 $('#mail-no').addEventListener('click', () => { $('#mail-box').hidden = true; if (typeof window.gtag === 'function') window.gtag('event', 'email_not_now'); });
+
+$('#cup-go').addEventListener('click', () => {
+  audio(); const c = CUP.get();
+  if (c.champion || c.out != null) { CUP.ensure(PLAYER); showCup(); return; }
+  $('#cup').hidden = true; document.body.classList.remove('picking');
+  newMatch(); resize();
+  if (!obDone) showOnboard();
+});
+$('#cup-change').addEventListener('click', () => { audio(); $('#cup').hidden = true; showPicker(false); });
 
 /* ------------------------------ onboarding : 5 cartes avec les pictos (1re fois seulement) ------------------------------ */
 let obDone = false; try { obDone = localStorage.getItem('cc-onboard') === '1'; } catch (e) {}
