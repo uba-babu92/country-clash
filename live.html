@@ -557,7 +557,7 @@ function turnEnd(G, s) {
     G.events.push({t: G.t, kind: 'bonus-gone', team: s, x: b.x, y: b.y});
     if (!alive(G, s).length) { for (let k = 0; k < NC; k++) if (G.owner[k] === s) G.owner[k] = -1; G.area[s] = 0; }
   }
-  if (!G.powerups || G.timeUp) return;
+  if (!G.powerups || G.timeUp || G.noSpawn) return;   // en ligne, seul l'hôte fait apparaître les power-ups
   if (G.pu) { if (--G.pu.left <= 0) { G.events.push({t: G.t, kind: 'pu-gone', x: G.pu.x, y: G.pu.y}); G.pu = null; G.puWait = 2; } }
   else if (--G.puWait <= 0) { spawnPower(G); G.puWait = 3 + Math.floor(Math.random() * 3); }
 }
@@ -591,7 +591,12 @@ function nearestPlace(G, x, y) {
 }
 function placeBlock(G, s, x, y) {
   if (!G.place[s] || !canPlace(G, x, y)) return false;
-  const o = {type: 'rect', x0: x - BLOCK_H, y0: y - BLOCK_H, x1: x + BLOCK_H, y1: y + BLOCK_H, placed: s};
+  forceBlock(G, s, x, y);
+  return true;
+}
+// pose sans vérifier (en ligne : on recopie le bloc posé par l'autre joueur)
+function forceBlock(G, s, x, y) {
+  const o = {type: 'rect', x0: x - BLOCK_H, y0: y - BLOCK_H, x1: x + BLOCK_H, y1: y + BLOCK_H, placed: s, cx: x, cy: y};
   G.obs = [...G.obs, o]; G.block = G.block.slice(); G.cblock = null; G.place[s] = false;
   for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
     const cx = BOX.x0 + (i + 0.5) * CELL, cy = BOX.y0 + (j + 0.5) * CELL, k = j * N + i;
@@ -600,7 +605,6 @@ function placeBlock(G, s, x, y) {
     if (G.owner[k] >= 0) { G.area[G.owner[k]]--; G.owner[k] = -1; }
   }
   G.events.push({t: G.t, kind: 'placed', team: s, x, y});
-  return true;
 }
 // l'ordi pose son obstacle : près des balles adverses (pour les gêner), à un endroit permis
 function aiPlace(G, s) {

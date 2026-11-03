@@ -7,6 +7,7 @@
 gtag('consent', 'default', {ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'granted'});
 gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
 <meta name="google-adsense-account" content="ca-pub-3184513018818503">
+<script>try{if(localStorage.getItem('cc-noads')==='1')(window.adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1}catch(e){}</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3184513018818503" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Ranking · Country Clash</title>
@@ -233,7 +234,7 @@ svg .arr { stroke: var(--ink); } svg .ball { stroke: var(--ink); stroke-width: 3
   <p>We may remove names or points that break these rules or that are offensive. To report a name, write to us from the <a href="contact.html">contact page</a>.</p>
 
   <footer>
-    <span><a href="live.html" style="color:inherit;text-decoration:none">©</a> 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a>
+    <span><a href="live.html" style="color:inherit;text-decoration:none">©</a> 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a><a href="terms.html">Terms of sale</a>
   </footer>
 </div>
 <script>// Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, Bazil) :
@@ -457,6 +458,7 @@ const RANK = (() => {
 
   return {
     POINTS, nameProblem, playerId,
+    SB: {url: URL.replace('/rest/v1/rpc/', ''), key: KEY},   // pour le mode en ligne (Supabase Realtime)
     // pseudo unique + code secret à 4 chiffres (02/11) → {ok, player, status, stats} ou {ok:false, reason}
     // code à 4 chiffres créé tout seul (le joueur ne le tape que pour reprendre son pseudo sur un autre téléphone)
     pin() { let c = store('cc-pin'); if (!/^\d{4}$/.test(c || '')) { c = String(Math.floor(Math.random() * 10000)).padStart(4, '0'); store('cc-pin', c); } return c; },
@@ -466,6 +468,7 @@ const RANK = (() => {
     adopt: id => { if (/^[0-9a-f-]{36}$/.test(id)) store('cc-pid', id); },   // sur un autre navigateur : on reprend le numéro du joueur
     claimed: () => store('cc-claimed') === store('cc-name') && !!store('cc-name'),
     setClaimed: () => store('cc-claimed', store('cc-name')),
+    claimPurchases: () => rpc('claim_purchases', {p_player: playerId()}),   // achats payés pas encore donnés au jeu (03/11)
     saveProgress: stats => rpc('save_progress', {p_player: playerId(), p_stats: stats}).catch(() => null),
     name: () => store('cc-name'),
     forget: () => { try { localStorage.removeItem('cc-name'); localStorage.removeItem('cc-claimed'); } catch (e) {} },

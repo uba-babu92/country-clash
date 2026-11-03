@@ -7,6 +7,7 @@
 gtag('consent', 'default', {ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'granted'});
 gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
 <meta name="google-adsense-account" content="ca-pub-3184513018818503">
+<script>try{if(localStorage.getItem('cc-noads')==='1')(window.adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1}catch(e){}</script>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3184513018818503" crossorigin="anonymous"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Country Clash · Free Flag Ball Game Online</title>
@@ -587,6 +588,42 @@ html, body { overflow-x: hidden; }
 #cup-sub { font: 700 16px var(--text); margin: 4px 0 0; }
 @media (prefers-reduced-motion: reduce) { #bk-zoom { transition: none; } .bk-f.next, .bk-f.pop { animation: none; } }
 .foot.nohint { justify-content: center; }
+
+/* ---------- achats (03/11) ---------- */
+.sh { position: relative; }
+#shop-list li:has(> .sh.starter) { grid-column: 1 / -1; }
+.sh.starter { background: var(--butter); }
+.sh-sub { font: 700 12px var(--text); display: inline-flex; align-items: center; gap: 4px; }
+.sh-sub svg { width: 16px; height: 16px; }
+.sh-tag { position: absolute; top: -10px; right: -6px; font: 800 11px var(--text); font-style: normal; background: var(--salmon); color: var(--ink); border: 2px solid var(--ink); border-radius: 999px; padding: 2px 8px; transform: rotate(6deg); }
+#toast { position: fixed; top: calc(14px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%); z-index: 200; display: flex; align-items: center; gap: 8px;
+  background: var(--butter); color: var(--ink); border: 3px solid var(--ink); border-radius: 999px; box-shadow: 4px 4px 0 var(--ink); padding: 8px 18px; font: 700 18px var(--display); white-space: nowrap; animation: pop .45s cubic-bezier(.2, 1.4, .4, 1); }
+#toast svg { width: 24px; height: 24px; }
+#toast[hidden] { display: none; }
+#shop .tr-note a { color: var(--ink); }
+
+/* ---------- en ligne (03/11) ---------- */
+#mode-seg button { padding: 0 10px; font-size: 13px; }
+@media (max-width: 380px) { #mode-seg button { padding: 0 7px; font-size: 11px; } }
+#mm { position: fixed; inset: 0; z-index: 23; background: var(--lilac); color: var(--ink); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; text-align: center;
+  padding: calc(16px + env(safe-area-inset-top, 0px)) 16px calc(16px + env(safe-area-inset-bottom, 0px)); box-sizing: border-box; }
+.mm-k { margin: 0; font: 800 13px var(--text); letter-spacing: .12em; }
+#mm-title { margin: 0; font: 700 clamp(26px, 7vw, 34px)/1.1 var(--display); }
+.mm-vs { display: flex; align-items: center; gap: 18px; }
+.mm-vs img { width: 104px; height: 104px; border-radius: 50%; box-shadow: 5px 5px 0 var(--ink); }
+#mm-spin { animation: mmspin 1.2s linear infinite; }
+@keyframes mmspin { to { transform: rotate(360deg); } }
+.mm-x { font: 700 28px var(--display); background: var(--butter); border: 3px solid var(--ink); border-radius: 999px; padding: 2px 12px; box-shadow: 3px 3px 0 var(--ink); }
+#mm-found { animation: pop .45s cubic-bezier(.2, 1.4, .4, 1); }
+.mm-card { display: none; align-items: center; gap: 10px; background: var(--cream); border: 3px solid var(--ink); border-radius: 18px; box-shadow: 4px 4px 0 var(--ink); padding: 8px 16px; }
+#mm-found:not([hidden]) ~ * { }
+#mm:has(#mm-found:not([hidden])) .mm-card { display: flex; }
+#mm-skin { width: 56px; height: 56px; }
+#mm-name { font: 700 22px var(--display); }
+.mm-tro { display: inline-flex; align-items: center; gap: 4px; font: 700 18px var(--display); background: var(--butter); border: 2px solid var(--ink); border-radius: 999px; padding: 1px 10px; }
+.mm-tro svg { width: 18px; height: 18px; }
+#mm-time { margin: 0; font: 700 14px var(--text); opacity: .7; }
+#mm .linkish { color: var(--ink); }
 /* ---------- stats ---------- */
 #stats { max-width: 1040px; margin: 0 auto; box-sizing: border-box; padding-block: 28px 48px;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
@@ -682,13 +719,29 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
   <p id="pick-name" aria-live="polite">Turkey</p>
   <p id="pick-note" hidden>Pick another country</p>
   <div class="seg" id="mode-seg" role="group" aria-label="Mode">
-    <button type="button" data-mode="cup">WORLD CUP</button><button type="button" data-mode="cpu">VS CPU</button><button type="button" data-mode="2p">2 PLAYERS</button>
+    <button type="button" data-mode="cup">WORLD CUP</button><button type="button" data-mode="online">ONLINE</button><button type="button" data-mode="cpu">VS CPU</button><button type="button" data-mode="2p">2P</button>
   </div>
   <div class="seg small" id="level-seg" role="group" aria-label="Level">
     <button type="button" data-level="easy">EASY</button><button type="button" data-level="medium">MEDIUM</button><button type="button" data-level="hard">HARD</button>
   </div>
   <button id="pick-go" type="button">PLAY</button>
   <div class="pick-extras"><button id="pick-shop" class="linkish" type="button"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="#2B3550"/><circle cx="15" cy="15" r="13" fill="#FFC94A" stroke="#2B3550" stroke-width="3"/><circle cx="15" cy="15" r="8" fill="none" stroke="#E0A12A" stroke-width="2.5"/></svg><span class="coin-n">0</span><span>Shop</span></button><button id="pick-streak" class="linkish" type="button" hidden aria-label="Daily streak"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-6 1-9z" fill="#FF9640" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/></svg><span id="ps-txt"></span></button><button id="pick-player" class="linkish" type="button" hidden></button><button id="pick-trophies" class="linkish" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v3M9 17h6v3H9z"/></svg><span id="pt-txt">Trophies</span></button></div>
+</section>
+
+<section id="mm" hidden aria-label="Online match">
+  <p class="mm-k">ONLINE</p>
+  <h2 id="mm-title">Searching for a player…</h2>
+  <div class="mm-vs">
+    <img id="mm-me" alt="You">
+    <span class="mm-x">VS</span>
+    <img id="mm-spin" alt="">
+    <div id="mm-found" hidden>
+      <img id="mm-flag" alt="">
+    </div>
+  </div>
+  <div class="mm-card" id="mm-card"><canvas id="mm-skin" width="144" height="144" hidden></canvas><b id="mm-name"></b><span class="mm-tro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3M12 14v3M9 17h6v3H9z"/></svg><span id="mm-tro">0</span></span></div>
+  <p id="mm-time">0s</p>
+  <button id="mm-cancel" class="linkish" type="button">Cancel</button>
 </section>
 
 <section id="cup" hidden aria-label="World Cup">
@@ -728,10 +781,12 @@ td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; } td.empt
   </div>
 </section>
 
+<div id="toast" hidden role="status"></div>
+
 <section id="shop" hidden aria-label="Shop">
   <div class="tr-head"><button id="shop-back" type="button">← Back</button><h2>Shop</h2><span class="sh-coins"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="17" cy="17" r="13" fill="#2B3550"/><circle cx="15" cy="15" r="13" fill="#FFC94A" stroke="#2B3550" stroke-width="3"/><circle cx="15" cy="15" r="8" fill="none" stroke="#E0A12A" stroke-width="2.5"/></svg><span class="coin-n">0</span></span></div>
-  <div class="tabs" id="shop-tabs" role="tablist"><button type="button" role="tab" data-tab="skins">Skins</button><button type="button" role="tab" data-tab="boosts">Boosts</button></div>
-  <p class="tr-note">Win coins every day and with every win. Skins are yours forever. A boost lasts one match against the CPU (one at a time).</p>
+  <div class="tabs" id="shop-tabs" role="tablist"><button type="button" role="tab" data-tab="skins">Skins</button><button type="button" role="tab" data-tab="boosts">Boosts</button><button type="button" role="tab" data-tab="coins">Coins</button></div>
+  <p class="tr-note">Win coins every day and with every win, or get more in the Coins tab. Skins are yours forever. A boost lasts one match against the CPU (one at a time). <a href="terms.html">Terms of sale</a></p>
   <p id="shop-note" aria-live="polite"></p>
   <ul id="shop-list"></ul>
 </section>
@@ -1370,7 +1425,7 @@ function turnEnd(G, s) {
     G.events.push({t: G.t, kind: 'bonus-gone', team: s, x: b.x, y: b.y});
     if (!alive(G, s).length) { for (let k = 0; k < NC; k++) if (G.owner[k] === s) G.owner[k] = -1; G.area[s] = 0; }
   }
-  if (!G.powerups || G.timeUp) return;
+  if (!G.powerups || G.timeUp || G.noSpawn) return;   // en ligne, seul l'hôte fait apparaître les power-ups
   if (G.pu) { if (--G.pu.left <= 0) { G.events.push({t: G.t, kind: 'pu-gone', x: G.pu.x, y: G.pu.y}); G.pu = null; G.puWait = 2; } }
   else if (--G.puWait <= 0) { spawnPower(G); G.puWait = 3 + Math.floor(Math.random() * 3); }
 }
@@ -1404,7 +1459,12 @@ function nearestPlace(G, x, y) {
 }
 function placeBlock(G, s, x, y) {
   if (!G.place[s] || !canPlace(G, x, y)) return false;
-  const o = {type: 'rect', x0: x - BLOCK_H, y0: y - BLOCK_H, x1: x + BLOCK_H, y1: y + BLOCK_H, placed: s};
+  forceBlock(G, s, x, y);
+  return true;
+}
+// pose sans vérifier (en ligne : on recopie le bloc posé par l'autre joueur)
+function forceBlock(G, s, x, y) {
+  const o = {type: 'rect', x0: x - BLOCK_H, y0: y - BLOCK_H, x1: x + BLOCK_H, y1: y + BLOCK_H, placed: s, cx: x, cy: y};
   G.obs = [...G.obs, o]; G.block = G.block.slice(); G.cblock = null; G.place[s] = false;
   for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
     const cx = BOX.x0 + (i + 0.5) * CELL, cy = BOX.y0 + (j + 0.5) * CELL, k = j * N + i;
@@ -1413,7 +1473,6 @@ function placeBlock(G, s, x, y) {
     if (G.owner[k] >= 0) { G.area[G.owner[k]]--; G.owner[k] = -1; }
   }
   G.events.push({t: G.t, kind: 'placed', team: s, x, y});
-  return true;
 }
 // l'ordi pose son obstacle : près des balles adverses (pour les gêner), à un endroit permis
 function aiPlace(G, s) {
@@ -1546,6 +1605,7 @@ const RANK = (() => {
 
   return {
     POINTS, nameProblem, playerId,
+    SB: {url: URL.replace('/rest/v1/rpc/', ''), key: KEY},   // pour le mode en ligne (Supabase Realtime)
     // pseudo unique + code secret à 4 chiffres (02/11) → {ok, player, status, stats} ou {ok:false, reason}
     // code à 4 chiffres créé tout seul (le joueur ne le tape que pour reprendre son pseudo sur un autre téléphone)
     pin() { let c = store('cc-pin'); if (!/^\d{4}$/.test(c || '')) { c = String(Math.floor(Math.random() * 10000)).padStart(4, '0'); store('cc-pin', c); } return c; },
@@ -1555,6 +1615,7 @@ const RANK = (() => {
     adopt: id => { if (/^[0-9a-f-]{36}$/.test(id)) store('cc-pid', id); },   // sur un autre navigateur : on reprend le numéro du joueur
     claimed: () => store('cc-claimed') === store('cc-name') && !!store('cc-name'),
     setClaimed: () => store('cc-claimed', store('cc-name')),
+    claimPurchases: () => rpc('claim_purchases', {p_player: playerId()}),   // achats payés pas encore donnés au jeu (03/11)
     saveProgress: stats => rpc('save_progress', {p_player: playerId(), p_stats: stats}).catch(() => null),
     name: () => store('cc-name'),
     forget: () => { try { localStorage.removeItem('cc-name'); localStorage.removeItem('cc-claimed'); } catch (e) {} },
@@ -1583,11 +1644,11 @@ let PLAYER = 'Turkey', CPU = 'United States', NAMES = ['TURKEY', 'USA'];
 // mode : 'cpu' (contre l'ordi) ou '2p' (2 joueurs sur le même écran) ; niveau de l'ordi : easy / medium / hard (Bazil, 30/10)
 let MODE = 'cpu', LEVEL = 'medium', PLAYER2 = null;
 try { MODE = localStorage.getItem('cc-mode2') || 'cup';   // 03/11 : World Cup par défaut pour tout le monde (cc-mode2 = choix fait depuis)
-  if (!['2p', 'cup', 'cpu'].includes(MODE)) MODE = 'cup'; LEVEL = ['easy', 'medium', 'hard'].includes(localStorage.getItem('cc-level')) ? localStorage.getItem('cc-level') : 'medium'; PLAYER2 = localStorage.getItem('cc-p2'); } catch (e) {}
+  if (!['2p', 'cup', 'cpu', 'online'].includes(MODE)) MODE = 'cup'; LEVEL = ['easy', 'medium', 'hard'].includes(localStorage.getItem('cc-level')) ? localStorage.getItem('cc-level') : 'medium'; PLAYER2 = localStorage.getItem('cc-p2'); } catch (e) {}
 if (PLAYER2 && !COUNTRIES.some(c => c.name === PLAYER2)) PLAYER2 = null;   // pays retiré depuis
 const human = s => MODE === '2p' || s === 0;   // qui joue avec le doigt ?
 const vsCpu = () => MODE !== '2p';               // contre l'ordi : VS CPU ou World Cup (classement, trophées, pseudo)
-const aiLevel = () => MODE === 'cup' ? CUP_LEVELS[Math.min(3, CUP.get().round)] : LEVEL;
+const aiLevel = () => MODE === 'cup' ? CUP_LEVELS[Math.min(3, CUP.get().round)] : MODE === 'online' ? (NET.bot ? NET.bot.level : 'medium') : LEVEL;
 const BANNED = [['India', 'Pakistan'], ['Morocco', 'Algeria'], ['Turkey', 'Greece'], ['Russia', 'Ukraine']];   // comme gen.js
 const short = n => ({'United States': 'USA'}[n] || n).toUpperCase();
 const famOf = hex => {             // famille de couleur d'une couleur de drapeau (comme gen.js)
@@ -1812,17 +1873,20 @@ function pick(list, not) { const l = list.filter(x => x !== not); return l[Math.
 
 function newMatch() {
   if (play && play.started && state !== 'over') { if (play.mode === 'cup') CUP.forfeit(); trophyResult('abandon'); track('abandon'); }
+  if (MODE !== 'online' || !NET.opp) netStop();   // une partie hors ligne : on quitte le salon en ligne
   matchBreaks = 0;
-  CPU = MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : MODE === 'cup' ? CUP.opponent() : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
-  $('#mode-tag').textContent = MODE === '2p' ? '2 PLAYERS' : MODE === 'cup' ? 'CUP · ' + ROUND_NAMES[Math.min(3, CUP.get().round)] : 'VS CPU · ' + LEVEL.toUpperCase();
+  CPU = MODE === 'online' && NET.opp ? NET.opp.country : MODE === '2p' && PLAYER2 && PLAYER2 !== PLAYER ? PLAYER2 : MODE === 'cup' ? CUP.opponent() : pickOpponent(PLAYER); NAMES = [short(PLAYER), short(CPU)];
+  if (MODE === 'online' && NET.opp) NAMES[1] = NET.opp.name;
+  $('#mode-tag').textContent = MODE === 'online' ? 'ONLINE' : MODE === '2p' ? '2 PLAYERS' : MODE === 'cup' ? 'CUP · ' + ROUND_NAMES[Math.min(3, CUP.get().round)] : 'VS CPU · ' + LEVEL.toUpperCase();
   const fams = teamColors(PLAYER, CPU); TEAM_COL = fams.map(f => FAM[f]);
   const white = fams.includes('white');            // une équipe blanche : arène vide en couleur, pas en crème
   themeName = pick(Object.keys(THEMES), lastTheme); lastTheme = themeName;
-  const arena = pick(ARENAS, lastArena); lastArena = arena;
+  const arena = MODE === 'online' && NET.arena ? NET.arena : pick(ARENAS, lastArena); lastArena = arena;
   T = {...THEMES[themeName]}; if (white) T.EMPTY = T.EMPTY_W;
   flags = [flagOf(PLAYER), flagOf(CPU)];
   G = newGame([PLAYER, CPU], arena); G.powerups = true;   // power-ups dans tous les modes (Bazil 03/11)
-  const boost = vsCpu() ? DAILY.takeBoost() : null;      // récompense du jour : le match commence avec un power-up
+  if (NET.live) { G.noSpawn = !NET.host; G.side = NET.host ? 0 : 1; }   // en ligne : l'hôte commence et fait apparaître les power-ups
+  const boost = vsCpu() && MODE !== 'online' ? DAILY.takeBoost() : null;   // pas de boost acheté en ligne (match équitable)      // récompense du jour : le match commence avec un power-up
   if (boost === 'shield') G.shield[0] = true;
   else if (boost === 'block') G.place[0] = true;
   else if (boost === 'bonus') { const h = alive(G, 0)[0]; G.balls.push({team: 0, x: h.x + 70, y: h.y + 70, vx: 0, vy: 0, path: null, dead: false, temp: 1}); }
@@ -1837,12 +1901,12 @@ function newMatch() {
   $('#f0').src = flags[0].toDataURL(); $('#f1').src = flags[1].toDataURL();
   $('#change-flag').src = flags[0].toDataURL();
   $('#f0').alt = PLAYER + ' flag'; $('#f1').alt = CPU + ' flag';
-  for (const [i, tag] of MODE === '2p' ? [[0, 'P1'], [1, 'P2']] : [[0, 'YOU'], [1, 'CPU']]) {
+  for (const [i, tag] of MODE === '2p' ? [[0, 'P1'], [1, 'P2']] : MODE === 'online' ? [[0, 'YOU'], [1, '']] : [[0, 'YOU'], [1, 'CPU']]) {
     const el = $('#n' + i), t = document.createElement('small'); t.textContent = tag;
-    el.replaceChildren(NAMES[i], ' ', t); el.title = (i ? CPU : PLAYER) + ' · ' + tag;
+    el.replaceChildren(NAMES[i], ' ', t); el.title = (i ? CPU : PLAYER) + (tag ? ' · ' + tag : '');
   }
   $('#end').hidden = true;
-  $('#new').hidden = MODE === 'cup';   // World Cup : on ne relance pas un match (Bazil 03/11)
+  $('#new').hidden = MODE === 'cup' || MODE === 'online';   // World Cup et en ligne : on ne relance pas un match (Bazil 03/11)
   for (const s of [0, 1]) delete $('#balls' + s).dataset.n;
   play = {id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7), startedAt: Date.now(), arena, theme: themeName, country: PLAYER, opponent: CPU, mode: MODE, level: MODE === '2p' ? '' : aiLevel()};
   cpuAim = null;
@@ -1877,7 +1941,8 @@ function hud() {
   else if (state === 'place' && !handoff) { st.textContent = 'PLACE BLOCK'; st.dataset.side = 0; }
   else if (MODE === '2p' && !G.moving) { st.textContent = NAMES[G.side] + "'S TURN"; st.dataset.side = 0; }
   else if (G.side === 0 && !G.moving) { st.textContent = 'YOUR TURN'; st.dataset.side = 0; }
-  else if (G.side === 1 && !G.moving) { st.textContent = 'THINKING…'; st.dataset.side = 1; }
+  else if (state === 'sync') { st.textContent = 'SYNCING…'; st.dataset.side = 1; }
+  else if (G.side === 1 && !G.moving) { st.textContent = MODE === 'online' ? 'THEIR TURN' : 'THINKING…'; st.dataset.side = 1; }
   const myTurn = timerOn && human(G.side) && !G.moving && (state === 'aim' || state === 'place') && !G.over && !handoff;
   $('#turnbar').hidden = !myTurn;
   if (myTurn) $('#turnbar i').style.transform = `scaleX(${Math.max(0, 1 - turnWait / TURN_LIMIT)})`;
@@ -1897,7 +1962,7 @@ cv.addEventListener('pointerdown', e => {
   audio();
   if (state === 'place' && human(G.side) && !G.moving && !handoff) {    // power-up « bloc » : on le pose où on touche
     const [tx, ty] = toWorld(e), spot = nearestPlace(G, tx, ty);   // endroit interdit : on le pose à l'endroit permis le plus proche
-    if (spot && placeBlock(G, G.side, spot[0], spot[1])) { state = 'aim'; turnWait = 0; sounds(G.events); G.events = []; hud(); }
+    if (spot && placeBlock(G, G.side, spot[0], spot[1])) { netSend('place', {x: gx(spot[0], spot[1])[0], y: gx(spot[0], spot[1])[1]}); state = 'aim'; turnWait = 0; sounds(G.events); G.events = []; hud(); }
     else { aiPlace(G, G.side); state = 'aim'; turnWait = 0; sounds(G.events); G.events = []; hud(); }
     e.preventDefault(); return;
   }
@@ -1919,6 +1984,7 @@ const release = e => {
   if (play && !play.started) { play.started = true; play.startedAt = Date.now(); track('start'); }   // la partie compte au 1er tir
   timerOn = true;                                 // le chrono part au 1er tir (le tuto ne mange pas de temps)
   if (!tutoDone) { tutoDone = true; try { localStorage.setItem('cc-tuto', '1'); } catch (e) {} }
+  if (NET.live) { const [gdx, gdy] = gv(dx, dy); netSend('shot', {bi: gi(G.balls.indexOf(b)), dx: gdx, dy: gdy, p: d / MAX_PULL}); }
   launch(b, dx, dy, d / MAX_PULL);
   play.shots = (play.shots || 0) + 1;
   hud();
@@ -1927,7 +1993,7 @@ cv.addEventListener('pointerup', release);
 cv.addEventListener('pointercancel', () => { aim = null; });
 function nudge() { const h = $('#hint'); h.classList.remove('shake'); void h.offsetWidth; h.classList.add('shake'); }
 
-$('#again').addEventListener('click', () => { audio(); if (MODE === 'cup') cupNext(); else newMatch(); });
+$('#again').addEventListener('click', () => { audio(); if (MODE === 'cup') cupNext(); else if (MODE === 'online') findMatch(); else newMatch(); });
 // fin de partie : comme Netflix, la partie suivante se lance toute seule après 5 s
 const NEXT_IN = 5, NEXT_IN_RANK = 9, NEXT_IN_MAIL = 15;   // avec le classement : un peu plus de temps pour lire ; avec la demande d'e-mail : le temps de l'écrire (Bazil 02/11)
 let nextLeft = null, nextTotal = NEXT_IN;
@@ -2075,13 +2141,13 @@ let acc = 0, prev = null;
 function frame(now) {
   requestAnimationFrame(frame);
   const dt = prev ? Math.min(0.05, (now - prev) / 1000) : 0; prev = now;
-  if (!$('#picker').hidden || !$('#onboard').hidden || !$('#name-screen').hidden || !$('#cup').hidden) return;   // menu ouvert : la partie est en pause
+  if (!$('#picker').hidden || !$('#onboard').hidden || !$('#name-screen').hidden || !$('#cup').hidden || !$('#mm').hidden) return;   // menu ouvert : la partie est en pause
   clock += dt;
   if (nextLeft !== null && $('#picker').hidden && $('#onboard').hidden) {   // compte à rebours de fin (rAF s'arrête tout seul si l'onglet est caché)
     nextLeft -= dt;
     $('#again').style.setProperty('--p', Math.min(1, 1 - nextLeft / nextTotal));
     $('#next-in').textContent = 'Next match in ' + Math.max(1, Math.ceil(nextLeft)) + '…';
-    if (nextLeft <= 0) { nextLeft = null; if (MODE === 'cup') cupNext(); else newMatch(); }
+    if (nextLeft <= 0) { nextLeft = null; if (MODE === 'cup') cupNext(); else if (MODE === 'online') findMatch(); else newMatch(); }
   }
   const cam = camNow();
   if (timerOn && state !== 'over' && state !== 'place' && !G.timeUp && !handoff) {   // pose du bloc : le chrono attend
@@ -2090,7 +2156,7 @@ function frame(now) {
     if (sec <= 5 && sec < lastTick && sec > 0) { lastTick = sec; tone(880, 0.1, 0.08, 'square'); }
     if (timeLeft === 0) {                          // chrono fini : on laisse finir le tir en cours, puis le plus de terrain gagne
       G.timeUp = true; aim = null; ai = null;
-      if (!G.moving) { G.moving = false; G.over = judge(G); finish(G.over); }
+      if (!G.moving && !(NET.live && !NET.host)) { G.moving = false; G.over = judge(G); finish(G.over); }   // en ligne : c'est l'hôte qui décide
     }
     hud();
   }
@@ -2105,10 +2171,12 @@ function frame(now) {
     sounds(G.events); G.events = [];
     if (still) { acc = 0; afterShot(); }
     hud();
-  } else if (state === 'aim' && !human(G.side) && !G.over && !G.timeUp) cpuTurn(dt);
+  } else if (state === 'aim' && !human(G.side) && !G.over && !G.timeUp && !NET.live) cpuTurn(dt);
+  if (state === 'sync' && clock - NET.syncAt > 6) { state = 'aim'; beginTurn(); hud(); }   // l'état de l'hôte n'arrive pas : on continue
   draw();
 }
-function passTurn() {
+function passTurn(remote) {
+  if (NET.live && !remote) netSend('pass', {});
   if (state === 'place') { aiPlace(G, G.side); state = 'aim'; }   // pas posé à temps : il se pose tout seul
   aim = null; turnWait = 0; turnEnd(G, G.side); sounds(G.events); G.events = [];
   if (G.side === 1) G.turn++; G.side = 1 - G.side;
@@ -2134,6 +2202,10 @@ function afterShot() {
   const over = endShot(G);
   sounds(G.events); G.events = [];
   if (play) track('turn');
+  if (NET.live) {                                   // en ligne : l'hôte envoie l'état exact, l'autre attend de le recevoir
+    if (NET.host) netSend('snap', snapshot());
+    else { G.over = null; state = 'sync'; NET.syncAt = clock; if (NET.pendingSnap) applySnap(NET.pendingSnap); hud(); return; }
+  }
   if (over) return finish(over);
   if (MODE === '2p' && timerOn && !G.timeUp) startHandoff();
   beginTurn();
@@ -2143,13 +2215,14 @@ function afterShot() {
 function beginTurn() {
   if (G.over || !G.place[G.side] || G.timeUp) return;
   if (human(G.side)) { state = 'place'; turnWait = 0; }
-  else { aiPlace(G, G.side); sounds(G.events); G.events = []; }
+  else if (!NET.live) { aiPlace(G, G.side); sounds(G.events); G.events = []; }
 }
 function cpuTurn(dt) {
   if (!ai) ai = {it: aiPlan(G, 1, aiLevel()), res: null, wait: 0};
   ai.wait += dt;
   if (!ai.res) { const r = ai.it.next(); if (r.done) ai.res = r.value; }   // un morceau du calcul par image
-  if (!ai.res || ai.wait < 0.7) return;
+  if (!ai.res || ai.wait < (MODE === 'online' && NET.bot ? NET.bot.think : 0.7)) return;
+  if (MODE === 'online' && NET.bot) NET.bot.think = 1.2 + Math.random() * 3.4;
   const c = ai.res, b = G.balls[c.bi], a = c.ang + (Math.random() - 0.5) * 0.03;
   ai = null;
   cpuAim = {ball: b, ang: a, p: c.p, t: clock};
@@ -2163,7 +2236,9 @@ function finish(over) {
   if (state === 'over') return;
   state = 'over'; G.over = over; cpuAim = null;
   if (play && play.started && !firstDone) { firstDone = true; try { localStorage.setItem('cc-first', '1'); } catch (e) {} }
-  const w = over.winner, play0 = {mode: MODE, level: aiLevel(), country: PLAYER};   // réglages de la partie (le menu peut les changer après)
+  if (NET.live && NET.host && over.reason !== 'left') netSend('over', {w: over.winner, reason: over.reason});   // l'hôte annonce le résultat
+  netStop(true);
+  const w = over.winner, play0 = {mode: MODE, level: MODE === 'online' ? 'medium' : aiLevel(), country: PLAYER};   // réglages de la partie (le menu peut les changer après)
   const fresh = trophyResult(w === 0 ? 'win' : w === 1 ? 'loss' : 'draw');
   $('#trophy-new').hidden = !fresh.length;
   maybeAskMail();
@@ -2189,8 +2264,8 @@ function finish(over) {
     $('#end-sub').textContent = MODE === '2p' ? (w < 0 ? 'Nobody wins this time.' : `Player ${w + 1} wins!`)
       : cupMsg ? cupMsg.sub
       : w === 0 ? `You beat ${them}!` : w === 1 ? `${them[0].toUpperCase() + them.slice(1)} beat you. Try again!` : 'Nobody wins this time.';
-    $('#again .lbl').textContent = cupMsg ? cupMsg.btn : 'PLAY AGAIN';
-    $('#end-why').textContent = {eliminated: 'All balls destroyed', time: `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%`}[over.reason];
+    $('#again .lbl').textContent = cupMsg ? cupMsg.btn : MODE === 'online' ? 'PLAY ONLINE' : 'PLAY AGAIN';
+    $('#end-why').textContent = {left: 'Your opponent left the match', eliminated: 'All balls destroyed', time: `Time's up · ${Math.round(pct(G, 0) * 100)}% vs ${Math.round(pct(G, 1) * 100)}%`}[over.reason];
     e.hidden = false; $('#again').focus({preventScroll: true});
     nextLeft = nextTotal = $('#mail-box').hidden ? NEXT_IN : NEXT_IN_MAIL;
     rankEnd(w, play0);
@@ -2340,6 +2415,7 @@ function draw() {
     if (b.temp) { ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.setLineDash([7, 7]); ctx.beginPath(); ctx.arc(b.x, b.y, R + 8, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]); }   // balle bonus
     ctx.drawImage(flags[b.team], b.x - R, b.y - R, R * 2, R * 2);
     if (b.team === 0 && vsCpu()) drawAcc(ctx, TRO.equipped(), b.x, b.y, R);
+    if (b.team === 1 && MODE === 'online' && NET.opp && NET.opp.skin) drawAcc(ctx, NET.opp.skin, b.x, b.y, R);
     if (b.temp) { ctx.font = '700 22px Fredoka, sans-serif'; ctx.textAlign = 'center'; ctx.lineWidth = 6; ctx.strokeStyle = INK; ctx.strokeText('+1', b.x + R, b.y - R + 4); ctx.fillStyle = '#93DDB8'; ctx.fillText('+1', b.x + R, b.y - R + 4); }   // accessoire du trophée
   }
   if (!tutoDone && state === 'aim' && G.side === 0 && !G.moving && !aim) drawTuto();
@@ -2423,6 +2499,145 @@ function drawAim(b, dx, dy, p, pull) {
   rrect(ctx, cx - w / 2 + 5, cy - h / 2 + 5, w, h, 16); ctx.fillStyle = INK; ctx.fill();
   rrect(ctx, cx - w / 2, cy - h / 2, w, h, 16); ctx.fillStyle = CREAM; ctx.fill(); ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke();
   ctx.fillStyle = INK; ctx.fillText(txt, cx, cy + 2); ctx.textBaseline = 'alphabetic';
+}
+
+/* ------------------------------ mode en ligne (Bazil 03/11) ------------------------------ */
+// Recherche d'un vrai joueur (Supabase Realtime) pendant 8 à 15 s ; sinon un joueur ordinateur avec un pseudo, un pays, un skin.
+// Vrai match : chaque tir est envoyé (balle, direction, force) et rejoué des deux côtés ; l'hôte renvoie l'état exact après chaque tir.
+// L'invité voit l'arène tournée d'un demi-tour (ses balles en haut à gauche, comme toujours) : gx/gv/gi passent d'un repère à l'autre.
+const NET = {live: false, host: false, opp: null, bot: null, arena: null, sb: null, mm: null, room: null, me: null, pendingSnap: null, timer: 0};
+const gx = (x, y) => NET.live && !NET.host ? [WORLD - x, WORLD - y] : [x, y];      // repère commun (celui de l'hôte) ↔ le mien
+const gv = (dx, dy) => NET.live && !NET.host ? [-dx, -dy] : [dx, dy];
+const gi = i => NET.live && !NET.host && i < 6 ? (i + 3) % 6 : i;                  // n° de balle (mes 3 balles d'abord)
+const gt = t => NET.live && !NET.host ? 1 - t : t;                                   // équipe
+function loadSB() {
+  if (window.supabase && window.supabase.createClient) return Promise.resolve(window.supabase);
+  return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js';
+    s.onload = () => ok(window.supabase); s.onerror = ko; document.head.append(s); setTimeout(() => ko(new Error('timeout')), 6000); });
+}
+// pseudos des joueurs ordinateur : comme de vrais pseudos trouvés en ligne
+const BOT_WORDS = ['King', 'Pro', 'Boss', 'Wolf', 'Ninja', 'Lion', 'Eagle', 'Tiger', 'Legend', 'Shadow', 'Ghost', 'Storm', 'Falcon', 'Viper', 'Titan', 'Rocket', 'Sniper', 'Beast', 'Ace', 'Phantom'];
+const BOT_NICK = {Turkey: 'Turkish', Brazil: 'Brazuca', Morocco: 'Moroccan', Mexico: 'Mexa', India: 'Desi', Philippines: 'Pinoy', Algeria: 'Algerino', Tunisia: 'Tunsi', Poland: 'Polska', Indonesia: 'Indo',
+  Argentina: 'Argento', Egypt: 'Masri', Pakistan: 'Paki', Bangladesh: 'Bangla', Greece: 'Hellas', France: 'Frenchy', Germany: 'German', Spain: 'Spanish', Italy: 'Italiano', Portugal: 'Tuga', 'United States': 'USA', England: 'English'};
+function botName(country) {
+  const r = Math.random, w = BOT_WORDS[Math.floor(r() * BOT_WORDS.length)], nick = BOT_NICK[country] || country.replace(/\s/g, '');
+  const n = () => String(Math.floor(r() * 9900) + 10);
+  const forms = [() => nick + n(), () => 'xX' + nick + w + 'Xx', () => nick + w, () => w + nick + n().slice(0, 2), () => 'The' + w + n().slice(0, 1), () => nick.toLowerCase() + '_' + w.toLowerCase(), () => w + n()];
+  let s = forms[Math.floor(r() * forms.length)]().replace(/[^A-Za-z0-9_]/g, '');
+  return s.slice(0, 16);
+}
+function makeBot() {
+  const hot = ['Turkey', 'Brazil', 'Morocco', 'Mexico', 'Indonesia', 'Poland', 'Argentina', 'Algeria', 'Egypt', 'Philippines', 'Pakistan', 'Bangladesh', 'France', 'Germany', 'Spain', 'United States', 'England', 'Italy', 'Portugal'];
+  let country = Math.random() < 0.7 ? hot[Math.floor(Math.random() * hot.length)] : COUNTRIES[Math.floor(Math.random() * COUNTRIES.length)].name;
+  if (country === PLAYER || BANNED.some(([a, b]) => (a === PLAYER && b === country) || (b === PLAYER && a === country))) country = pickOpponent(PLAYER);
+  const x = Math.random(), level = x < 0.2 ? 'easy' : x < 0.7 ? 'medium' : 'hard';   // 20 % très nuls, 50 % moyens, 30 % très forts
+  const skin = Math.random() < 0.8 ? SKINS[Math.floor(Math.random() * SKINS.length)].acc : '';
+  const trophies = skin ? 3 + Math.floor(Math.random() * 11) : Math.floor(Math.random() * 4);
+  return {name: botName(country), country, skin, trophies, level, think: 1.5 + Math.random() * 3};
+}
+function myProfile() { return {id: RANK.playerId() + '-' + Math.random().toString(36).slice(2, 7), name: RANK.name() || 'Player', country: PLAYER, skin: TRO.equipped(), trophies: TRO.unlocked().length, ts: Date.now()}; }
+function netSend(event, payload) { if (NET.room) NET.room.send({type: 'broadcast', event, payload}); }
+function netStop(keepFlags) {
+  clearTimeout(NET.timer); clearInterval(NET.tick);
+  try { if (NET.mm) NET.mm.unsubscribe(); if (NET.room) NET.room.unsubscribe(); } catch (e) {}
+  NET.mm = NET.room = null; NET.live = false; NET.pendingSnap = null;
+  if (!keepFlags) { NET.opp = NET.bot = NET.arena = null; NET.host = false; }
+}
+// écran « recherche d'un joueur »
+function findMatch() {
+  netStop(); $('#end').hidden = true; nextLeft = null;
+  $('#picker').hidden = true; $('#mm').hidden = false; document.body.classList.add('picking');
+  $('#mm-title').textContent = 'Searching for a player…'; $('#mm-found').hidden = true; $('#mm-cancel').hidden = false; $('#mm-spin').hidden = false;
+  $('#mm-me').src = flagOf(PLAYER, undefined, 128).toDataURL();
+  const t0 = Date.now(), wait = 8000 + Math.random() * 7000;
+  NET.tick = setInterval(() => { $('#mm-time').textContent = Math.floor((Date.now() - t0) / 1000) + 's'; const n = COUNTRIES[Math.floor(Math.random() * COUNTRIES.length)].name; $('#mm-spin').src = flagOf(n, undefined, 128).toDataURL(); }, 450);
+  NET.timer = setTimeout(() => { if (!NET.live) matchFound(makeBot(), null); }, wait);   // personne : un joueur ordinateur
+  if (typeof window.gtag === 'function') window.gtag('event', 'online_search');
+  NET.me = myProfile();
+  loadSB().then(sbm => {
+    if ($('#mm').hidden || NET.live) return;
+    NET.sb = NET.sb || sbm.createClient(RANK.SB.url, RANK.SB.key, {realtime: {params: {eventsPerSecond: 20}}});
+    const me = NET.me, ch = NET.mm = NET.sb.channel('cc-mm-v1', {config: {presence: {key: me.id}, broadcast: {self: false}}});
+    const tryPair = () => {
+      if (NET.live) return;
+      const ps = Object.values(ch.presenceState()).map(a => a[0]).filter(Boolean).sort((a, b) => a.ts - b.ts || (a.id < b.id ? -1 : 1));
+      const i = ps.findIndex(p => p.id === me.id);
+      if (i < 0 || i % 2 || !ps[i + 1]) return;                // je suis l'hôte de ma paire (le plus ancien des deux)
+      const room = {room: me.id, a: me, b: ps[i + 1], arena: pick(ARENAS)};
+      ch.send({type: 'broadcast', event: 'match', payload: room});
+      startReal(room, true);
+    };
+    ch.on('presence', {event: 'sync'}, tryPair)
+      .on('broadcast', {event: 'match'}, ({payload}) => { if (payload.b && payload.b.id === me.id && !NET.live) startReal(payload, false); })
+      .subscribe(st => { if (st === 'SUBSCRIBED') ch.track(me); });
+  }).catch(() => {});
+}
+$('#mm-cancel').addEventListener('click', () => { audio(); netStop(); $('#mm').hidden = true; showPicker(false); });
+// vrai adversaire trouvé : on ouvre le salon du match
+function startReal(room, host) {
+  clearTimeout(NET.timer);
+  const opp = host ? room.b : room.a;
+  NET.host = host; NET.arena = room.arena;
+  try { NET.mm.unsubscribe(); } catch (e) {} NET.mm = null;
+  const ch = NET.room = NET.sb.channel('cc-room-' + room.room, {config: {presence: {key: NET.me.id}, broadcast: {self: false}}});
+  ch.on('broadcast', {event: 'shot'}, ({payload: m}) => netShot(m))
+    .on('broadcast', {event: 'snap'}, ({payload: m}) => { if (state === 'sync') applySnap(m); else NET.pendingSnap = m; })
+    .on('broadcast', {event: 'place'}, ({payload: m}) => { const [x, y] = gx(m.x, m.y); if (G.place[G.side]) placeBlock(G, G.side, x, y) || forceBlock(G, G.side, x, y); sounds(G.events); G.events = []; hud(); })
+    .on('broadcast', {event: 'pass'}, () => { if (state !== 'over') passTurn(true); })
+    .on('broadcast', {event: 'over'}, ({payload: m}) => { if (state !== 'over') finish({winner: m.w < 0 ? -1 : gt(m.w), reason: m.reason}); })
+    .on('presence', {event: 'leave'}, ({key}) => { if (key === opp.id && NET.live && state !== 'over') finish({winner: 0, reason: 'left'}); })
+    .subscribe(st => { if (st === 'SUBSCRIBED') ch.track(NET.me); });
+  matchFound({name: opp.name, country: opp.country, skin: opp.skin, trophies: opp.trophies}, true);
+}
+function matchFound(opp, real) {
+  clearInterval(NET.tick);
+  NET.opp = opp; NET.bot = real ? null : opp;
+  if (!real) { NET.arena = null; NET.host = false; }
+  $('#mm-title').textContent = 'Player found!'; $('#mm-cancel').hidden = true; $('#mm-spin').hidden = true;
+  $('#mm-found').hidden = false; $('#mm-flag').src = flagOf(opp.country, undefined, 128).toDataURL();
+  $('#mm-name').textContent = opp.name; $('#mm-tro').textContent = opp.trophies;
+  const c = $('#mm-skin'), g = c.getContext('2d'); g.clearRect(0, 0, c.width, c.height);
+  if (opp.skin) { g.drawImage(flagOf(opp.country, undefined, 256), 36, 44, 72, 72); drawAcc(g, opp.skin, 72, 80, 36); }
+  c.hidden = !opp.skin;
+  [523, 659, 784, 1047].forEach((f, i) => tone(f, 0.1, 0.15, 'triangle', i * 0.08));
+  if (typeof window.gtag === 'function') window.gtag('event', 'online_found', {real: !!real});
+  NET.timer = setTimeout(() => {
+    $('#mm').hidden = true; document.body.classList.remove('picking');
+    NET.live = !!real;
+    newMatch(); resize();
+    if (!obDone) showOnboard();
+  }, 1800);
+}
+// tir de l'adversaire (repère commun → le mien)
+function netShot(m) {
+  if (state === 'over' || G.moving) return;
+  const b = G.balls[gi(m.bi)]; if (!b || b.dead) return;
+  const [dx, dy] = gv(m.dx, m.dy);
+  timerOn = true; if (play) play.started = true;
+  state = 'aim'; launch(b, dx, dy, m.p); hud();
+}
+// état exact envoyé par l'hôte après chaque tir (l'invité s'y recale)
+function snapshot() {
+  return {balls: G.balls.map(b => ({x: b.x, y: b.y, d: b.dead ? 1 : 0, t: b.team, tm: b.temp || 0, s: b.shield ? 1 : 0, p: b.path})), area: G.area, slow: G.slow, shield: G.shield, place: G.place,
+    pu: G.pu, puWait: G.puWait, blocks: G.obs.filter(o => o.placed !== undefined).map(o => [o.cx, o.cy, o.placed]), side: G.side, time: timeLeft, kills: G.kills};
+}
+function applySnap(m) {
+  NET.pendingSnap = null;
+  const n = m.balls.length, L = new Array(n);
+  m.balls.forEach((q, i) => {
+    const [x, y] = gx(q.x, q.y);
+    L[gi(i)] = {team: gt(q.t), x, y, vx: 0, vy: 0, dead: !!q.d, temp: q.tm || undefined, shield: !!q.s, path: q.p ? q.p.map(([px, py]) => gx(px, py)) : null};
+  });
+  G.balls = L;
+  const sw = a => NET.host ? a : [a[1], a[0]];
+  G.area = sw(m.area); G.slow = sw(m.slow); G.shield = sw(m.shield); G.place = sw(m.place); G.kills = sw(m.kills);
+  G.pu = m.pu ? {...m.pu, x: gx(m.pu.x, m.pu.y)[0], y: gx(m.pu.x, m.pu.y)[1]} : null; G.puWait = m.puWait;
+  const mine = G.obs.filter(o => o.placed !== undefined).length;
+  m.blocks.slice(mine).forEach(([x, y, t]) => { const [lx, ly] = gx(x, y); forceBlock(G, gt(t), lx, ly); });
+  G.side = gt(m.side); timeLeft = m.time; G.moving = false; gridDirty = true;
+  for (const s of [0, 1]) delete $('#balls' + s).dataset.n;
+  state = 'aim'; turnWait = 0; aim = null;
+  G.events = []; beginTurn(); hud();
 }
 
 /* ------------------------------ power-ups : apparence (Bazil 03/11) ------------------------------ */
@@ -2580,7 +2795,7 @@ function pickerUI() {
   for (const b of $('#level-seg').children) b.setAttribute('aria-pressed', String(b.dataset.level === LEVEL));
   $('#level-seg').hidden = MODE !== 'cpu' || pickStep === 2;
   $('#mode-seg').hidden = pickStep === 2;
-  $('.pick-eyebrow').textContent = MODE === 'cup' ? 'WORLD CUP · CHOOSE YOUR COUNTRY' : MODE !== '2p' ? 'CHOOSE YOUR COUNTRY' : pickStep === 1 ? 'PLAYER 1 · CHOOSE YOUR COUNTRY' : 'PLAYER 2 · CHOOSE YOUR COUNTRY';
+  $('.pick-eyebrow').textContent = MODE === 'online' ? 'ONLINE · CHOOSE YOUR COUNTRY' : MODE === 'cup' ? 'WORLD CUP · CHOOSE YOUR COUNTRY' : MODE !== '2p' ? 'CHOOSE YOUR COUNTRY' : pickStep === 1 ? 'PLAYER 1 · CHOOSE YOUR COUNTRY' : 'PLAYER 2 · CHOOSE YOUR COUNTRY';
   const bad = pickStep === 2 && (picked === PLAYER || bannedPair(PLAYER, picked));
   $('#pick-note').hidden = !bad;
   $('#pick-go').disabled = bad;
@@ -2616,6 +2831,7 @@ $('#pick-go').addEventListener('click', () => {
   if (play && play.started && state !== 'over') {   // un match était en cours : il est abandonné (en Coupe = éliminé)
     if (play.mode === 'cup') CUP.forfeit(); trophyResult('abandon'); track('abandon'); if (play) play.started = false; state = 'over';
   }
+  if (MODE === 'online') { if (needName()) { NET.afterName = true; showNameScreen(); } else findMatch(); return; }
   if (MODE === 'cup') { const c = CUP.get(); if (!c.teams.length || c.country !== PLAYER) CUP.ensure(PLAYER); showCup(); if (needName()) showNameScreen(); return; }   // World Cup : d'abord le tableau (éliminé : on le montre, TRY AGAIN relance)
   newMatch(); resize();
   if (needName()) showNameScreen(); else if (!obDone) showOnboard();
@@ -2636,6 +2852,7 @@ function showNameScreen(edit) {
 }
 function closeNameScreen() {
   $('#name-screen').hidden = true; $('#ns-in').blur();
+  if (NET.afterName) { NET.afterName = false; if (RANK.name()) { findMatch(); return; } }
   if ($('#picker').hidden) document.body.classList.remove('picking');
   else nameLine();
   if ($('#picker').hidden && !obDone) showOnboard();
@@ -2700,12 +2917,26 @@ const SKINS = [
   {acc: 'eyes', name: 'Googly eyes', price: 100}, {acc: 'shades', name: 'Shades', price: 200}, {acc: 'bowtie', name: 'Bow tie', price: 200},
   {acc: 'tophat', name: 'Top hat', price: 300}, {acc: 'bolt', name: 'Lightning', price: 300}, {acc: 'horns', name: 'Devil horns', price: 400},
   {acc: 'flame', name: 'Flame', price: 500}, {acc: 'star', name: 'Gold star', price: 500}, {acc: 'diamond', name: 'Diamond', price: 800},
-  {acc: 'cup', name: 'Gold cup', price: 1000}, {acc: 'crown', name: 'Golden crown', price: 0, email: true},
+  {acc: 'cup', name: 'Gold cup', price: 1000}, {acc: 'crown', name: 'Golden crown', price: 0, email: true}, {acc: 'medal', name: 'Starter medal', price: 0, starter: true},
 ];
+// achats avec de l'argent (Lemon Squeezy, 03/11) : liens de paiement à coller ici quand la boutique Lemon Squeezy est prête (voir APPLI.md)
+const PAY = {
+  starter: '', coins500: '', coins1400: '', coins3000: '', coins6500: '', noads: '',
+};
+const PACKS = [
+  {kind: 'coins500', coins: 500, price: '1,99 €'},
+  {kind: 'coins1400', coins: 1400, price: '4,99 €', tag: '+12%'},
+  {kind: 'coins3000', coins: 3000, price: '9,99 €', tag: 'POPULAR'},
+  {kind: 'coins6500', coins: 6500, price: '19,99 €', tag: 'BEST VALUE'},
+];
+function payUrl(kind) {
+  const u = PAY[kind]; if (!u) return '';
+  return u + (u.includes('?') ? '&' : '?') + 'checkout[custom][player_id]=' + encodeURIComponent(RANK.playerId()) + '&checkout[custom][name]=' + encodeURIComponent(RANK.name() || '');
+}
 const BOOSTS = [{kind: 'bonus', name: '+1 Ball', price: 150}, {kind: 'block', name: 'Block', price: 250}, {kind: 'shield', name: 'Shield', price: 600}];
-const WIN_COINS = {easy: 2, medium: 4, hard: 6}, CUP_COINS = 200;
+const WIN_COINS = {easy: 2, medium: 4, hard: 6, online: 10}, CUP_COINS = 200;
 const TRO = (() => {
-  const ZERO = {wins: 0, winsHard: 0, breaks: 0, streakMH: 0, bestMH: 0, streakHard: 0, bestHard: 0, flawless: 0, land90: 0, insider: 0, cups: 0, bestStreak: 0, coins: 0, owned: '', equip: ''};
+  const ZERO = {wins: 0, winsHard: 0, breaks: 0, streakMH: 0, bestMH: 0, streakHard: 0, bestHard: 0, flawless: 0, land90: 0, insider: 0, cups: 0, bestStreak: 0, coins: 0, owned: '', starter: 0, equip: ''};
   let st = {...ZERO};
   try { st = {...ZERO, ...JSON.parse(localStorage.getItem('cc-trophies') || '{}')}; } catch (e) {}
   // 03/11 : les skins déjà gagnés avec les anciens trophées restent au joueur
@@ -2717,7 +2948,7 @@ const TRO = (() => {
   const save = () => { try { localStorage.setItem('cc-trophies', JSON.stringify(st)); } catch (e) {} if (RANK.claimed()) RANK.saveProgress(st); };
   const done = t => { const [v, g] = t.goal(st); return v >= g; };
   const unlocked = () => TROPHIES.filter(done);
-  const owns = acc => acc === 'crown' ? !!st.insider : (st.owned || '').split(',').includes(acc);
+  const owns = acc => acc === 'crown' ? !!st.insider : acc === 'medal' ? !!st.starter : (st.owned || '').split(',').includes(acc);
   // trophées gagnés depuis « before » : chacun donne ses pièces
   const pay = before => { const fresh = unlocked().filter(t => !before.has(t.id)); for (const t of fresh) st.coins += TROPHY_COINS[t.rarity || ''] || 0; return fresh; };
   const snap = () => new Set(unlocked().map(t => t.id));
@@ -2726,7 +2957,8 @@ const TRO = (() => {
     equip: acc => { st.equip = acc; save(); },
     owns, coins: () => st.coins,
     addCoins: n => { st.coins += n; save(); },
-    buySkin(sk) { if (owns(sk.acc) || st.coins < sk.price || sk.email) return false; st.coins -= sk.price; st.owned = [...(st.owned ? st.owned.split(',') : []), sk.acc].join(','); st.equip = sk.acc; save(); return true; },
+    setStarter: () => { if (!st.starter) { st.starter = 1; if (!st.equip) st.equip = 'medal'; save(); } },
+    buySkin(sk) { if (owns(sk.acc) || st.coins < sk.price || sk.email || sk.starter) return false; st.coins -= sk.price; st.owned = [...(st.owned ? st.owned.split(',') : []), sk.acc].join(','); st.equip = sk.acc; save(); return true; },
     spend(n) { if (st.coins < n) return false; st.coins -= n; save(); return true; },
     giveCrown: () => { const b = snap(); st.insider = 1; st.equip = 'crown'; pay(b); save(); },
     addCup: () => { const b = snap(); st.cups++; st.coins += CUP_COINS; const f = pay(b); save(); return f; },
@@ -2762,7 +2994,7 @@ const TRO = (() => {
 let matchBreaks = 0;
 function trophyResult(kind) {
   if (!vsCpu() || !play || !play.started) return [];
-  const fresh = TRO.result(kind, aiLevel(), {breaks: matchBreaks, lost: BALLS - alive(G, 0).length, pct: pct(G, 0)});
+  const fresh = TRO.result(kind, MODE === 'online' ? 'online' : aiLevel(), {breaks: matchBreaks, lost: BALLS - alive(G, 0).length, pct: pct(G, 0)});
   matchBreaks = 0;
   return fresh;
 }
@@ -2820,6 +3052,12 @@ function drawAcc(c, kind, x, y, r) {
     c.fillStyle = '#FFC400'; c.strokeStyle = blk; c.lineWidth = 2.2; c.beginPath();
     for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? 6 : 14; c.lineTo(Math.cos(a) * rr, -34 + Math.sin(a) * rr); }
     c.closePath(); c.fill(); c.stroke();
+  } else if (kind === 'medal') {    // médaille du starter pack : ruban + médaille dorée sous la balle
+    c.lineWidth = 2.2; c.strokeStyle = blk;
+    c.fillStyle = '#F25C54'; path([[-9, 14], [-2, 14], [2, 30], [-5, 30]]); c.fill(); c.stroke();
+    c.fillStyle = '#4F7DF0'; path([[9, 14], [2, 14], [-2, 30], [5, 30]]); c.fill(); c.stroke();
+    c.fillStyle = '#FFC400'; c.beginPath(); c.arc(0, 36, 9, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.strokeStyle = '#E0A12A'; c.lineWidth = 1.6; c.beginPath(); c.arc(0, 36, 5, 0, Math.PI * 2); c.stroke();
   } else if (kind === 'diamond') {
     c.fillStyle = '#7FE3FF'; c.strokeStyle = blk; c.lineWidth = 2.2;
     path([[-12, -36], [-6, -42], [6, -42], [12, -36], [0, -22]]); c.fill(); c.stroke();
@@ -2976,8 +3214,33 @@ function showShop(tab) {
     bt.append(img, n, a); bt.addEventListener('click', onClick); li.append(bt); list.append(li);
   };
   const price = p => `${COIN_SVG}<span>${p.toLocaleString('en-US')}</span>`;
-  if (shopTab === 'skins') for (const sk of SKINS) {
+  if (shopTab === 'coins') {
+    const ready = !!PAY.coins500;
+    const pile = n => { const c = document.createElement('canvas'); c.width = c.height = 144; const g = c.getContext('2d');
+      const k = Math.min(5, 1 + Math.floor(Math.log2(n / 250)));
+      for (let i = 0; i < k; i++) { const x = 72 + (i - (k - 1) / 2) * 16, y = 92 - i * 10; g.fillStyle = INK; g.beginPath(); g.ellipse(x + 3, y + 3, 34, 34, 0, 0, Math.PI * 2); g.fill();
+        g.fillStyle = '#FFC94A'; g.strokeStyle = INK; g.lineWidth = 5; g.beginPath(); g.ellipse(x, y, 34, 34, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+        g.strokeStyle = '#E0A12A'; g.lineWidth = 4; g.beginPath(); g.ellipse(x, y, 21, 21, 0, 0, Math.PI * 2); g.stroke(); }
+      return c; };
+    const go = kind => { audio(); const u = payUrl(kind); if (!u) { $('#shop-note').textContent = 'Payments are coming very soon!'; tone(196, 0.1, 0.15, 'square'); return; }
+      if (typeof window.gtag === 'function') window.gtag('event', 'begin_checkout', {item: kind}); location.href = u; };
+    if (!TRO.owns('medal')) {
+      const c = skinPreview('medal');
+      card(c, 'Starter pack', `<span>0,99 €</span>`, 'starter' + (ready ? ' buy' : ''), () => go('starter'));
+      list.lastChild.querySelector('b').insertAdjacentHTML('afterend', `<small class="sh-sub">${COIN_SVG} 300 + exclusive medal skin · once only</small>`);
+    }
+    for (const p of PACKS) {
+      card(pile(p.coins), p.coins.toLocaleString('en-US') + ' coins', `<span>${p.price}</span>`, ready ? 'buy' : 'lock', () => go(p.kind));
+      if (p.tag) list.lastChild.querySelector('.sh').insertAdjacentHTML('afterbegin', `<em class="sh-tag">${p.tag}</em>`);
+    }
+    if (!noAds()) { const c = document.createElement('canvas'); c.width = c.height = 144; const g = c.getContext('2d');
+      g.translate(72, 72); g.fillStyle = INK; g.beginPath(); g.arc(4, 4, 46, 0, Math.PI * 2); g.fill(); g.fillStyle = '#F25C54'; g.strokeStyle = INK; g.lineWidth = 6; g.beginPath(); g.arc(0, 0, 46, 0, Math.PI * 2); g.fill(); g.stroke();
+      g.font = '700 30px Fredoka, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = CREAM; g.fillText('ADS', 0, 2); g.strokeStyle = CREAM; g.lineWidth = 7; g.beginPath(); g.moveTo(-30, 30); g.lineTo(30, -30); g.stroke();
+      card(c, 'Remove ads', `<span>2,99 €</span>`, ready ? 'buy' : 'lock', () => go('noads')); }
+    if (!ready) $('#shop-note').textContent = 'Payments are coming very soon!';
+  } else if (shopTab === 'skins') for (const sk of SKINS) {
     const own = TRO.owns(sk.acc), on = eq === sk.acc;
+    if (sk.starter && !own) continue;
     card(skinPreview(sk.acc), sk.name, on ? 'WEARING' : own ? 'WEAR' : sk.email ? 'E-mail only' : price(sk.price), on ? 'on' : own ? 'own' : TRO.coins() >= sk.price && !sk.email ? 'buy' : 'lock', () => {
       audio();
       if (on) { TRO.equip(''); tone(440, 0.06, 0.08); }
@@ -3004,6 +3267,32 @@ function showShop(tab) {
 for (const b of document.querySelectorAll('#shop-tabs button')) b.addEventListener('click', () => { audio(); $('#shop-note').textContent = ''; showShop(b.dataset.tab); });
 $('#shop-back').addEventListener('click', () => { audio(); $('#shop').hidden = true; coinLine(); });
 $('#pick-shop').addEventListener('click', () => { audio(); $('#shop-note').textContent = ''; showShop(); });
+// après un paiement (ou à chaque ouverture) : le jeu va chercher ses pièces sur le serveur
+function noAds() { try { return localStorage.getItem('cc-noads') === '1'; } catch (e) { return false; } }
+function toast(html) { const t = $('#toast'); t.innerHTML = html; t.hidden = false; clearTimeout(toast.h); toast.h = setTimeout(() => { t.hidden = true; }, 4500); }
+async function claimPaid() {
+  let r = null; try { r = await RANK.claimPurchases(); } catch (e) { return false; }
+  if (!r) return false;
+  if (r.noads) try { localStorage.setItem('cc-noads', '1'); } catch (e) {}
+  if (r.starter) TRO.setStarter();
+  if (r.coins > 0) {
+    TRO.addCoins(r.coins); coinLine();
+    toast(`${COIN_SVG}<b>+${r.coins.toLocaleString('en-US')}</b> Thank you!`);
+    [1, 1.25, 1.5, 2].forEach((m, i) => tone(523 * m, 0.12, 0.2, 'triangle', i * 0.07));
+    if (typeof window.gtag === 'function') window.gtag('event', 'purchase_claimed', {coins: r.coins});
+    if (!$('#shop').hidden) showShop();
+    return true;
+  }
+  return false;
+}
+(function () {
+  const back = /[?&]paid=/.test(location.search);
+  if (back) { history.replaceState(null, '', location.pathname); toast('Payment received! Your coins are on the way…'); }
+  // retour de paiement : le serveur peut mettre quelques secondes à recevoir l'achat → on réessaie pendant 1 min
+  let n = 0; const tick = async () => { const got = await claimPaid(); if (back && !got && ++n < 20) setTimeout(tick, 3000); };
+  setTimeout(tick, back ? 1500 : 2500);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) claimPaid(); });
+})();
 function streakLine() { const n = DAILY.streak(), b = $('#pick-streak'); b.hidden = !n; $('#ps-txt').textContent = n + (n > 1 ? ' days' : ' day'); coinLine(); }
 $('#pick-streak').addEventListener('click', () => { audio(); if (DAILY.due()) showDaily(); });
 
