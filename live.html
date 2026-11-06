@@ -49,7 +49,7 @@ canvas { display: block; }
 </div>
 <canvas id="cv" width="1080" height="1920" hidden></canvas>
 <script>
-// Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, Bazil) :
+// Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, team) :
 // taille au choix (drapeaux nets en grand), étoile du Pakistan plus bas, emblème au centre du Mexique.
 const FAM = {red: '#F25C54', blue: '#4F7DF0', green: '#3CC774', yellow: '#FFCB2E', orange: '#FF9640', white: '#FFFDF7'};   // couleurs des terrains (un peu adoucies, 02/11)
 const COUNTRIES = [
@@ -116,7 +116,7 @@ const COUNTRIES = [
   ['UAE', 'uae', ['#00732F', '#fff', '#2B3550', '#FF0000'], 'green'],
   ['Ethiopia', 'ethiopia', ['#078930', '#FCDD09', '#DA121A', '#0F47AF'], 'yellow'],
 ].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}))
-  // pays en guerre retirés du site (Bazil, 30/10 : règles AdSense sur la guerre) ; les dessins restent au-dessus
+  // pays en guerre retirés du site (team, 30/10 : règles AdSense sur la guerre) ; les dessins restent au-dessus
   .filter(c => !['Russia', 'Ukraine', 'Somalia', 'Ethiopia'].includes(c.name));
 function star(g, x, y, r, color) {
   g.fillStyle = color; g.beginPath();
@@ -188,7 +188,7 @@ function makeFlag({name, motif, colors: c}, ring = '#2B3550', S = 160) {
     case 'philippines':
       box(0, 0, 1, 0.5, c[0]); box(0, 0.5, 1, 0.5, c[1]); g.fillStyle = c[2]; g.beginPath();
       g.moveTo(0, 0); g.lineTo(S * 0.6, S / 2); g.lineTo(0, S); g.fill(); disc(g, S * 0.2, S / 2, S * 0.09, c[3]); break;
-    case 'pakistan': box(0, 0, 0.28, 1, c[1]); box(0.28, 0, 0.72, 1, c[0]); crescent(g, S * 0.62, S * 0.52, S * 0.22, c[1], c[0], S * 0.06); star(g, S * 0.71, S * 0.45, S * 0.08, c[1]); break;   // étoile descendue (Bazil, 29/10)
+    case 'pakistan': box(0, 0, 0.28, 1, c[1]); box(0.28, 0, 0.72, 1, c[0]); crescent(g, S * 0.62, S * 0.52, S * 0.22, c[1], c[0], S * 0.06); star(g, S * 0.71, S * 0.45, S * 0.08, c[1]); break;   // étoile descendue (team, 29/10)
     case 'greece':
       for (let i = 0; i < 9; i++) box(0, i / 9, 1, 1 / 9, i % 2 ? c[1] : c[0]);
       box(0, 0, 5 / 9, 5 / 9, c[0]); box(2 / 9, 0, 1 / 9, 5 / 9, c[1]); box(0, 2 / 9, 5 / 9, 1 / 9, c[1]); break;
@@ -197,7 +197,7 @@ function makeFlag({name, motif, colors: c}, ring = '#2B3550', S = 160) {
     case 'chile': box(0, 0, 1, 0.5, c[1]); box(0, 0.5, 1, 0.5, c[2]); box(0, 0, 0.42, 0.5, c[0]); star(g, S * 0.21, S * 0.26, S * 0.1, c[1]); break;
   }
   g.restore();
-  g.strokeStyle = ring; g.lineWidth = 6 * u;   // contour bleu-gris foncé (jamais de noir, Bazil 02/11)
+  g.strokeStyle = ring; g.lineWidth = 6 * u;   // contour bleu-gris foncé (jamais de noir, team 02/11)
   g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 3 * u, 0, Math.PI * 2); g.stroke();
   return canvas;
 }
@@ -219,7 +219,7 @@ const BOX = {x0: 50, y0: 50, size: 900};  // l'arène tient toujours dans ce car
 const N = 600, CELL = BOX.size / N, NC = N * N;   // 600 × 600 cases (29/10 : bords nets, avant 300)
 const R = 24;                             // rayon d'une balle
 const BALLS = 3;
-const GAME_TIME = 60;                     // chrono de la partie (s) : à 0, le plus de terrain gagne (Bazil, 29/10)
+const GAME_TIME = 60;                     // chrono de la partie (s) : à 0, le plus de terrain gagne (team, 29/10)
 const MAX_PULL = 170;                     // tirer plus loin ne donne pas plus de force
 const MAX_SPEED = 1600;                   // px/s au maximum
 const FR_A = 220, FR_B = 0.7;             // freinage : constant + proportionnel à la vitesse
@@ -512,7 +512,7 @@ function endShot(G) {
 
 const pct = (G, s) => G.cells ? G.area[s] / G.cells : 0;
 
-/* ------------------------------ power-ups (Bazil 03/11) ------------------------------ */
+/* ------------------------------ power-ups (team 03/11) ------------------------------ */
 // Un seul sur la carte à la fois ; il apparaît tous les 3 à 5 tours et disparaît au bout de 8 tirs s'il n'est pas pris.
 // La balle qui passe dessus le prend pour son équipe (même poussée par une autre balle).
 const PU_R = 36;                 // rayon du power-up
@@ -639,19 +639,24 @@ function trailLen(b) {
   return l;
 }
 // note d'une position pour l'équipe s (plus c'est haut, mieux c'est)
-function evaluate(S, s, before, trailW = 30) {
-  const o = 1 - s;
-  let v = (S.area[s] - before.area[s]) - 0.8 * (S.area[o] - before.area[o]);
-  v += 7000 * (S.kills[s] - before.kills[s]) - 9000 * (S.kills[o] - before.kills[o]);
+function evaluate(S, s, before, trailW = 30, L = {}) {
+  const o = 1 - s, aw = L.areaW ? L.areaW(S) : 1;   // super hard : le terrain compte peu… jusqu'à la fin du temps
+  let v = aw * ((S.area[s] - before.area[s]) - 0.8 * (S.area[o] - before.area[o]));
+  v += (L.killW || 7000) * (S.kills[s] - before.kills[s]) - 9000 * (S.kills[o] - before.kills[o]);
   if (!alive(S, o).length) v += 1e6;
   if (!alive(S, s).length) v -= 1e6;
   for (const b of alive(S, s)) { const l = trailLen(b); v -= trailW * l + (l > 4 * R ? trailW * 100 : 0); }   // trait ouvert = risque : finir avec un tout petit trait
   for (const b of alive(S, o)) v += 1.5 * trailLen(b);   // trait adverse ouvert = cible
+  if (L.maxTrail) for (const b of alive(S, s)) if (trailLen(b) > L.maxTrail) v -= 50000;   // super hard : jamais un long trait
   for (const e of S.events) if (e.kind === 'power') v += (e.team === s ? 1 : -1) * ({bonus: 4000, shield: 2500, block: 1500, slow: -3000, deflect: 0, bomb: 0}[e.p] || 0);
   return v;
 }
-// 3 niveaux (Bazil, 30/10) : combien de tirs l'ordi essaie, s'il protège ses traits, s'il prend le meilleur, s'il vise juste
+// 3 niveaux (team, 30/10) : combien de tirs l'ordi essaie, s'il protège ses traits, s'il prend le meilleur, s'il vise juste
+// expert (en ligne, 7 % des joueurs ordinateur, team 03/11) : casse ton trait en priorité, ne prend le terrain qu'à la fin du temps,
+// vise parfaitement, ne laisse jamais un long trait. G.tLeft (secondes restantes) est donné par le jeu.
 const LEVELS = {
+  expert: {angles: 44, powers: [0.2, 0.32, 0.45, 0.58, 0.7, 0.85, 1], trailW: 60, top: 1, noise: 0, killW: 30000, maxTrail: 7 * R,
+    areaW: S => (S.tLeft == null || S.tLeft < 18 ? 1.6 : 0.25)},
   easy: {angles: 12, powers: [0.45, 0.8], trailW: 2, top: 14, noise: 0.22},
   medium: {angles: 20, powers: [0.3, 0.55, 0.8, 1], trailW: 12, top: 4, noise: 0.06},
   hard: {angles: 30, powers: [0.25, 0.4, 0.55, 0.7, 0.85, 1], trailW: 30, top: 1, noise: 0},
@@ -663,7 +668,7 @@ function* aiPlan(G, s, level = 'medium') {
   for (const [, bi] of mine) {
     for (let a = 0; a < L.angles; a++) for (const p of L.powers) {
       const ang = (a + Math.random() * 0.6) / L.angles * Math.PI * 2, S = simulate(G, bi, ang, p);
-      cands.push({bi, ang, p, v: evaluate(S, s, G, L.trailW)});
+      cands.push({bi, ang, p, v: evaluate(S, s, G, L.trailW, L)});
       if (p === last && a % 5 === 4) yield;   // petits morceaux : l'écran reste fluide
     }
   }

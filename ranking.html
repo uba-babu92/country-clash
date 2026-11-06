@@ -33,7 +33,7 @@ gtag('js', new Date()); gtag('config', 'G-02S2YB073X');</script>
 <style>
 /* Pages texte du site (How to play, Privacy…). Même identité que le jeu.
    Colonne de lecture unique, ~65 caractères. */
-/* Style « autocollant » (Bazil 02/11) : fond crème, contours et ombres dures bleu-gris foncé (--ink), Fredoka + Inter. Jamais de noir, pas de mode sombre. */
+/* Style « autocollant » (team 02/11) : fond crème, contours et ombres dures bleu-gris foncé (--ink), Fredoka + Inter. Jamais de noir, pas de mode sombre. */
 :root {
   --bg: #FFF6EA; --panel: #FFFDF8; --fg: #2B3550; --ink: #2B3550; --muted: #4F5976; --rule: #2B3550; --link: #2B3550; --empty: #FFF6EA;
   --red: #F25C54; --blue: #4F7DF0; --yellow: #FFD45C; --sky: #8EB8F5; --mint: #93DDB8; --lilac: #B7A6F2; --salmon: #F4907F;
@@ -231,13 +231,13 @@ svg .arr { stroke: var(--ink); } svg .ball { stroke: var(--ink); stroke-width: 3
     <li><strong>15 seconds at least between two wins.</strong> A real match always takes longer than that.</li>
     <li>Points can only be added by the game itself, never by hand.</li>
   </ul>
-  <p>We may remove names or points that break these rules or that are offensive. To report a name, write to us from the <a href="contact.html">contact page</a>.</p>
+  <p>We may remove names or points that break these rules or that are offensive. To report a name, write to <strong>country.clash.online@gmail.com</strong>.</p>
 
   <footer>
-    <span><a href="live.html" style="color:inherit;text-decoration:none">©</a> 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a><a href="terms.html">Terms of sale</a>
+    <span><a href="live.html" style="color:inherit;text-decoration:none">©</a> 2026 Country Clash</span><a href="index.html">Play</a><a href="ranking.html">Ranking</a><a href="how-to-play.html">How to play</a><a href="articles.html">Articles</a><a href="about.html">About</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy policy</a><a href="terms.html">Terms of sale</a><a href="legal.html">Legal notice</a>
   </footer>
 </div>
-<script>// Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, Bazil) :
+<script>// Drapeaux ronds de l'appli : copie de live/flags.js (lui-même copie de gen.js), avec en plus (29/10, team) :
 // taille au choix (drapeaux nets en grand), étoile du Pakistan plus bas, emblème au centre du Mexique.
 const FAM = {red: '#F25C54', blue: '#4F7DF0', green: '#3CC774', yellow: '#FFCB2E', orange: '#FF9640', white: '#FFFDF7'};   // couleurs des terrains (un peu adoucies, 02/11)
 const COUNTRIES = [
@@ -304,7 +304,7 @@ const COUNTRIES = [
   ['UAE', 'uae', ['#00732F', '#fff', '#2B3550', '#FF0000'], 'green'],
   ['Ethiopia', 'ethiopia', ['#078930', '#FCDD09', '#DA121A', '#0F47AF'], 'yellow'],
 ].map(([name, motif, colors, bar]) => ({name, motif, colors, bar}))
-  // pays en guerre retirés du site (Bazil, 30/10 : règles AdSense sur la guerre) ; les dessins restent au-dessus
+  // pays en guerre retirés du site (team, 30/10 : règles AdSense sur la guerre) ; les dessins restent au-dessus
   .filter(c => !['Russia', 'Ukraine', 'Somalia', 'Ethiopia'].includes(c.name));
 function star(g, x, y, r, color) {
   g.fillStyle = color; g.beginPath();
@@ -376,7 +376,7 @@ function makeFlag({name, motif, colors: c}, ring = '#2B3550', S = 160) {
     case 'philippines':
       box(0, 0, 1, 0.5, c[0]); box(0, 0.5, 1, 0.5, c[1]); g.fillStyle = c[2]; g.beginPath();
       g.moveTo(0, 0); g.lineTo(S * 0.6, S / 2); g.lineTo(0, S); g.fill(); disc(g, S * 0.2, S / 2, S * 0.09, c[3]); break;
-    case 'pakistan': box(0, 0, 0.28, 1, c[1]); box(0.28, 0, 0.72, 1, c[0]); crescent(g, S * 0.62, S * 0.52, S * 0.22, c[1], c[0], S * 0.06); star(g, S * 0.71, S * 0.45, S * 0.08, c[1]); break;   // étoile descendue (Bazil, 29/10)
+    case 'pakistan': box(0, 0, 0.28, 1, c[1]); box(0.28, 0, 0.72, 1, c[0]); crescent(g, S * 0.62, S * 0.52, S * 0.22, c[1], c[0], S * 0.06); star(g, S * 0.71, S * 0.45, S * 0.08, c[1]); break;   // étoile descendue (team, 29/10)
     case 'greece':
       for (let i = 0; i < 9; i++) box(0, i / 9, 1, 1 / 9, i % 2 ? c[1] : c[0]);
       box(0, 0, 5 / 9, 5 / 9, c[0]); box(2 / 9, 0, 1 / 9, 5 / 9, c[1]); box(0, 2 / 9, 5 / 9, 1 / 9, c[1]); break;
@@ -385,7 +385,7 @@ function makeFlag({name, motif, colors: c}, ring = '#2B3550', S = 160) {
     case 'chile': box(0, 0, 1, 0.5, c[1]); box(0, 0.5, 1, 0.5, c[2]); box(0, 0, 0.42, 0.5, c[0]); star(g, S * 0.21, S * 0.26, S * 0.1, c[1]); break;
   }
   g.restore();
-  g.strokeStyle = ring; g.lineWidth = 6 * u;   // contour bleu-gris foncé (jamais de noir, Bazil 02/11)
+  g.strokeStyle = ring; g.lineWidth = 6 * u;   // contour bleu-gris foncé (jamais de noir, team 02/11)
   g.beginPath(); g.arc(S / 2, S / 2, S / 2 - 3 * u, 0, Math.PI * 2); g.stroke();
   return canvas;
 }
